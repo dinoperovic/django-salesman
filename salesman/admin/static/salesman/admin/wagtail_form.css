@@ -1,0 +1,10 @@
+/* Style for order items table. */
+.salesman-order-items .object-layout {
+  flex-direction: row;
+  overflow: auto;
+  padding-top: 4em;
+}
+.salesman-order-items table.listing {
+  margin: 0;
+  min-width: 1200px;
+}

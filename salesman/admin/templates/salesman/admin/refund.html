@@ -1,0 +1,22 @@
+{% extends "admin/delete_confirmation.html" %}
+{% load i18n admin_urls %}
+
+{% block extrahead %}
+  {{ media }}
+  {% include "salesman/admin/includes/refund_js.html" %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}">{{ object|truncatewords:"18" }}</a>
+&rsaquo; {% trans 'Refund' %}
+</div>
+{% endblock %}
+
+{% block content %}
+  {% url 'admin:salesman_order_change' object.pk as object_url %}
+  {% include "salesman/admin/includes/refund_content.html" with object_url=object_url %}
+{% endblock %}

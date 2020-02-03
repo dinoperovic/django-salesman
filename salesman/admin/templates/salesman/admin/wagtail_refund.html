@@ -1,0 +1,12 @@
+{% extends "modeladmin/delete.html" %}
+
+{% block extra_js %}
+  {{ block.super }}
+  {% include "salesman/admin/includes/refund_js.html" with object=instance %}
+{% endblock %}
+
+{% block content_main %}
+  <div class="nice-padding">
+    {% include "salesman/admin/includes/refund_content.html" with object=instance object_url=view.edit_url %}
+  </div>
+{% endblock %}

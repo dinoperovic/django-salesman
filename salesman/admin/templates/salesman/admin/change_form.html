@@ -1,0 +1,14 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block submit_buttons_bottom %}
+  {# Add refund button if needed. #}
+  {% url 'admin:salesman_order_refund' original.id as order_refund_url %}
+  {% if order_refund_url %}
+    <div class="submit-row">
+      <a href="{{ order_refund_url }}" class="button">{% trans "Refund order" %}</a>
+    </div>
+  {% endif %}
+
+  {{ block.super }}
+{% endblock %}

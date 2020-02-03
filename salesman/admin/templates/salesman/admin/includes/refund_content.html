@@ -1,0 +1,29 @@
+{% load i18n %}
+
+{% if object.status == object.get_statuses.REFUNDED %}
+  <p>{% trans "Order is already marked as Refunded." %}</p>
+  <form>
+    <a href="{{ object_url }}" class="button cancel-link button-secondary" style="margin: 0;">{% trans "Go back" %}</a>
+  </form>
+{% else %}
+  <p>{% trans "Are you sure you want to refund the Order" %} <strong>{{ object }}</strong>?</p>
+  {% if object.payments.count %}
+    <p>{% trans "All of the following payments will be refunded" %}:</p>
+    <ul>
+      {% for payment in object.payments.all %}
+        <li><strong>{{ payment }}</strong>{% if payment.payment_method %} {% trans "using" %} <strong>{{ payment.payment_method_display }}</strong>{% endif %} {% trans "on" %} <i>{{ payment.date_created|date }}</i>.</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <br>
+  <form id="refund-form">
+    <input type="submit" value="{% trans 'Yes, I’m sure' %}" class="button serious">
+    <a href="{{ object_url }}" class="button cancel-link button-secondary">{% trans "No, take me back" %}</a>
+  </form>
+  <form id="refund-form-success" method="post">{% csrf_token %}
+    <input class="msg" type="hidden" name="_refund-success">
+  </form>
+  <form id="refund-form-error" method="post">{% csrf_token %}
+    <input class="msg" type="hidden" name="_refund-error">
+  </form>
+{% endif %}

@@ -1,0 +1,4 @@
+[flake8]
+exclude = .git,.venv,dist,migrations
+max-line-length = 88
+extend-ignore = E203

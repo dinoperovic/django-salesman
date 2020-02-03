@@ -1,0 +1,25 @@
+{% extends "modeladmin/edit.html" %}
+{% load i18n %}
+
+{% block footer %}
+<footer role="contentinfo">
+  <ul>
+    <li class="actions">
+      <div class="dropdown dropup dropdown-button match-width">
+        <button type="submit" class="button action-save button-longrunning" data-clicked-text="{% trans 'Saving…' %}">
+          <span class="icon icon-spinner"></span><em>{% trans 'Save' %}</em>
+        </button>
+      </div>
+    </li>
+
+    {# Add refund button if needed. #}
+    {% url 'salesman_order_modeladmin_refund' instance.id as order_refund_url %}
+    {% if order_refund_url %}
+    <li class="preview">
+      <a href="{{ order_refund_url }}" class="button">{% trans "Refund order" %}</a>
+    </li>
+    {% endif %}
+
+  </ul>
+</footer>
+{% endblock %}

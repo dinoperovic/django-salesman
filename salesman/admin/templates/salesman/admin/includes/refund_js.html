@@ -1,0 +1,35 @@
+<script type="text/javascript">
+  (function($) {
+
+    var refund = function() {
+      $.ajax({
+        type: 'post',
+        url: '{% url 'salesman-order-refund' object.ref %}',
+        data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success: function(data) {
+          var $form = $('#refund-form-success');
+          $form.find('.msg').val(data['failed'].length);
+          $form.submit();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          var data = jqXHR.responseJSON;
+          if (data['non_field_errors']) {
+            alert(data['non_field_errors'][0]);
+          } else {
+            var $form = $('#refund-form-error');
+            $form.find('.msg').val(data['detail']);
+            $form.submit();
+          }
+        }
+      });
+    };
+
+    $(document).ready(function() {
+      $('#refund-form').on('submit', function(event) {
+        event.preventDefault();
+        refund();
+      });
+    });
+
+  })($ || django.jQuery);
+</script>
