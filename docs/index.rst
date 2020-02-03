@@ -9,7 +9,7 @@ Salesman
 .. image:: https://img.shields.io/pypi/v/django-salesman
     :target: https://pypi.org/project/django-salesman/
     :alt: PyPI
-.. image:: https://img.shields.io/github/workflow/status/dinoperovic/django-salesman/test/master
+.. image:: https://img.shields.io/github/workflow/status/dinoperovic/django-salesman/Test/master
     :target: https://github.com/dinoperovic/django-salesman/actions?query=workflow:Test
     :alt: GitHub Workflow Status (branch)
 .. image:: https://img.shields.io/codecov/c/github/dinoperovic/django-salesman/master
