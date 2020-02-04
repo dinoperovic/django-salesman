@@ -23,6 +23,7 @@ override the :meth:`salesman.checkout.payment.PaymentMethod.basket_payment` meth
 
     # payment.py
     from salesman.checkout.payment import PaymentMethod
+    from salesman.orders.models import Order
 
 
     class PayInAdvance(PaymentMethod):
