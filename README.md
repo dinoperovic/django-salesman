@@ -3,9 +3,7 @@
         <img src="https://cdn.jsdelivr.net/gh/dinoperovic/django-salesman@master/docs/_static/logo.svg" width="250" alt="Salesman logo">
     </a>
 </p>
-<p align="center">
-    <h3 align="center">Headless e-commerce framework for Django.</h3>
-</p>
+<h3 align="center">Headless e-commerce framework for Django.</h3>
 <p align="center">
     <a href="https://pypi.org/project/django-salesman/">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/django-salesman">
