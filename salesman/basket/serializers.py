@@ -160,7 +160,7 @@ class BasketSerializer(serializers.ModelSerializer):
         return super().to_representation(basket)
 
 
-class BasketExtraSerializer(BasketSerializer):
+class BasketExtraSerializer(serializers.ModelSerializer):
     """
     Serializer for updating basket ``extra`` data.
     """
@@ -168,6 +168,10 @@ class BasketExtraSerializer(BasketSerializer):
     extra = serializers.JSONField(
         help_text=_("Extra is updated and null values are removed.")
     )
+
+    class Meta:
+        model = Basket
+        fields = ['extra']
 
     def validate_extra(self, value):
         # Update basket extra instead of replacing it, remove null values.

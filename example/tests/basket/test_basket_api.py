@@ -70,8 +70,11 @@ def test_basket_api():
     assert response.json()['quantity'] == 9
 
     # test basket extra
+    response = client.get(reverse('salesman-basket-extra'))
+    assert response.status_code == 200
+    assert 'extra' in response.json()
     data = dict(extra={'x': 1})
-    response = client.post(reverse('salesman-basket-extra'), data, format='json')
+    response = client.put(reverse('salesman-basket-extra'), data, format='json')
     assert response.status_code == 200
     assert response.json()['extra']['x'] == 1
 

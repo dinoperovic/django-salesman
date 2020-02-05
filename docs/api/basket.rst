@@ -62,7 +62,17 @@ Api docs for Basket.
 
     Clear all items from basket.
 
-.. http:post:: /basket/extra/
+.. http:get:: /basket/extra/
+
+    Get basket extra data.
+
+    .. sourcecode:: json
+
+        {
+            "extra": {}
+        }
+
+.. http:put:: /basket/extra/
 
     Update basket extra data.
 

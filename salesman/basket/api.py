@@ -91,12 +91,20 @@ class BasketViewSet(viewsets.ModelViewSet):
         self.get_basket().clear()
         return self.list(request)
 
-    @action(detail=False, methods=['post'], serializer_class=BasketExtraSerializer)
+    @action(
+        detail=False, methods=['get', 'put'], serializer_class=BasketExtraSerializer
+    )
     def extra(self, request):
         """
         Update basket extra data.
         """
-        serializer = self.get_serializer(self.get_basket(), data=request.data)
+        basket = self.get_basket()
+
+        if request.method == 'GET':
+            serializer = self.get_serializer(basket)
+            return Response(serializer.data)
+
+        serializer = self.get_serializer(basket, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)

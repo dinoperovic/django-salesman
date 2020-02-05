@@ -56,7 +56,7 @@ def test_checkout_api(settings):
     assert 'url' in response.json()
 
     # test `PaymentError` caught
-    client.post(
+    client.put(
         reverse('salesman-basket-extra'), {'extra': {'raise_error': 1}}, format='json'
     )
     response = client.post(url, valid_data)

@@ -56,7 +56,7 @@ jobs:
         poetry config virtualenvs.create false
         poetry install --no-dev -E tests
     - name: Test with pytest
-      run: pytest
+      run: pytest --cov-report=xml
     - name: Send to codecov
       if: matrix.codecov
       uses: codecov/codecov-action@v1

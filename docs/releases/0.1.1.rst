@@ -1,0 +1,10 @@
+#####
+0.1.1
+#####
+
+*2020-02-05*
+
+Changed
+-------
+
+- Basket extra endpoint now supports GET and uses PUT instead of POST for updating.
