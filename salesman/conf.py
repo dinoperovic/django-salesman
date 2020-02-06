@@ -198,7 +198,7 @@ class DefaultSettings:
     @property
     def SALESMAN_ADMIN_REGISTER(self) -> bool:
         """
-        Set to ``False`` to skip saleman admin registration, in case
+        Set to ``False`` to skip Salesman admin registration, in case
         you wish to build your own ``ModelAdmin`` for Django or Wagtail.
         """
         return self._setting('SALESMAN_ADMIN_REGISTER', True)
