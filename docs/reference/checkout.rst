@@ -18,7 +18,7 @@ To use the payment methods:
     basket_payments = payment_methods_pool.get_payments('basket')
     order_payments = payment_methods_pool.get_payments('order')
 
-    payment = payment_methods_pool.get_payments('pay-in-advance')
+    payment = payment_methods_pool.get_payment('pay-in-advance')
 
 
 .. autoclass:: salesman.checkout.payment.PaymentError
