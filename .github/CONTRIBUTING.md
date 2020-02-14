@@ -6,7 +6,7 @@ Before you continue please consider discussing your desired changes using an iss
 
 ## Setup
 
-To get started you should fork and clone the repo and setup your project using [Poetry](https://python-poetry.org/):
+To get started you should fork and clone the repo, then setup your project using [Poetry](https://python-poetry.org/):
 
 ```bash
 poetry install --extras "tests docs"
