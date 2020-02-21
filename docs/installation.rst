@@ -41,6 +41,8 @@ A guide on how to install Salesman.
 
 .. code:: python
 
+    from django.urls import include, path
+
     urlpatterns = [
         ...
         path('api/', include('salesman.urls')),
