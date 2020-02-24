@@ -77,7 +77,7 @@ class DefaultSettings:
         """
         A list of strings formated as ``path.to.CustomPayment``.
         Payments must extend ``salesman.checkout.payment.PaymentMethod`` class
-        and define a unique ``namespace`` attribute.
+        and define a unique ``identifier`` attribute.
         """
         from django.utils.module_loading import import_string
         from salesman.checkout.payment import PaymentMethod
