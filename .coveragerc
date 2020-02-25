@@ -1,8 +1,0 @@
-[run]
-omit =
-  .venv/*,
-  example/*,
-  *migrations/*,
-  *tests/*,
-  *tests.py,
-  *test_*.py

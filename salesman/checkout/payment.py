@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from salesman.basket.models import Basket
@@ -138,6 +139,18 @@ class PaymentMethodsPool(object):
             method = f'{kind}_payment'
             return [p for p in self._payments if method in p.__class__.__dict__]
         return self._payments
+
+    def get_urls(self) -> list:
+        """
+        Returns a list of url patterns for payments to be included.
+        """
+        urlpatterns = []
+        for payment in self.get_payments():
+            urls = payment.get_urls()
+            if urls:
+                base_url = f'payment/{payment.identifier}/'
+                urlpatterns.append(path(base_url, include(urls)))
+        return urlpatterns
 
     def get_choices(self, kind: Optional[str] = None) -> list:
         """

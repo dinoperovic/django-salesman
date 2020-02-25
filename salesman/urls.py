@@ -1,4 +1,3 @@
-from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from salesman.basket.api import BasketViewSet
@@ -10,11 +9,5 @@ router = DefaultRouter()
 router.register('basket', BasketViewSet, basename='salesman-basket')
 router.register('checkout', CheckoutViewSet, basename='salesman-checkout')
 router.register('orders', OrderViewSet, basename='salesman-order')
-urlpatterns = router.urls
 
-# Add extra url patterns for payments defined in `PaymentMethod.get_urls()`.
-for payment in payment_methods_pool.get_payments():
-    urls = payment.get_urls()
-    if urls:
-        base_url = f'payment/{payment.identifier}/'
-        urlpatterns.append(path(base_url, include(urls)))
+urlpatterns = router.urls + payment_methods_pool.get_urls()
