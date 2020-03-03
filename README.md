@@ -40,7 +40,7 @@ processing the checkout and payment operations as well as managing customer orde
 
 ## Documentation
 
-Documentation is availiable on [Read the Docs](https://django-salesman.readthedocs.org).
+Documentation is available on [Read the Docs](https://django-salesman.readthedocs.org).
 
 <p>
     <a href="https://www.buymeacoffee.com/dinoperovic">

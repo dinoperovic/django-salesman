@@ -26,8 +26,8 @@ poetry run example/manage.py runserver
 **Done!** You can now:
 
 - Navigate to `/api/` and start adding products to the basket and purchase items.
-- View orders in both the regular Django admin (`/admin/`) or in [Wagtail](https://wagtail.io) cms (`/cms/`).
+- View orders in both the regular Django admin (`/admin/`) or [Wagtail](https://wagtail.io) cms (`/cms/`).
 
 ## Documentation
 
-Documentation is availiable on [Read the Docs](https://django-salesman.readthedocs.org).
+Documentation is available on [Read the Docs](https://django-salesman.readthedocs.org).
