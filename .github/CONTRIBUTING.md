@@ -16,4 +16,4 @@ Run the tests using `poetry run pytest` and check code style using `make check`.
 
 ## Pull request
 
-When you're ready open up a pull request and we'll go from there.
+When you're ready, open up a pull request and we'll go from there.
