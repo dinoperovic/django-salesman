@@ -108,16 +108,16 @@ class which checks that transition is available for the current order status:
 Custom reference generator
 ==========================
 
-Order reference is generated when a new order get's created and represents a unique idetifier
+Order reference is generated when a new order get's created and represents a unique identifier
 for that order. By default reference is generated in a ``{year}-{5-digit-increment}`` format using
 :func:`salesman.orders.utils.generate_ref` function.
 
 You can change it by providing a dotted path in ``SALESMAN_ORDER_REFERENCE_GENERATOR`` setting that
-points to a function which returns a unique reference string.
+points to a function that returns a unique reference string.
 
 .. note::
 
-    Reference generators function output will be slugified.
+    Reference generators function output will be *slugified*.
 
 .. code:: python
 
@@ -139,4 +139,4 @@ points to a function which returns a unique reference string.
         increment = int(last.ref.split('-')[1]) + 1 if last and last.ref else 1
         return f'{year}-{increment:05d}'
 
-Your custom function sould accept django's ``request`` object as a parameter.
+Your custom function should accept Django's ``request`` object as a parameter.

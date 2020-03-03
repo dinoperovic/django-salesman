@@ -44,7 +44,7 @@ def format_price(value: Decimal, order: Order, request: HttpRequest) -> str:
         request (HttpRequest): Django request
 
     Returns:
-        str: Formatted price as string
+        str: Formatted price as a string
     """
     context = {
         'request': request,

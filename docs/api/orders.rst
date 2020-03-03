@@ -171,9 +171,9 @@ Api docs for Orders.
 
 .. http:post:: /orders/(str:ref)/pay/
 
-    Pay for order. Get redirect url to either the next payment step
+    Pay for order. Get redirect URL to either the next payment step
     or the order success page. Depending on the used payment method
-    redirect to this url.
+    redirect to this URL.
 
     .. sourcecode:: json
 

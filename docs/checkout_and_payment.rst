@@ -9,7 +9,7 @@ which accepts a list of dotted paths to :class:`salesman.checkout.payment.Paymen
 
 .. note::
 
-    For this example we assume your custom app is named ``shop``.
+    For this example, we assume your custom app is named ``shop``.
 
 .. raw:: html
 

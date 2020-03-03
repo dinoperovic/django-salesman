@@ -5,12 +5,12 @@ Sending notifications
 #####################
 
 Most of the time you'll want to notify customers via email when an order
-has been made or it's status has changed. For that scenario Salesman provides a
+has been made or its status has changed. For that scenario, Salesman provides a
 :attr:`salesman.orders.signals.status_changed` signal that you can use. Eg:
 
 .. note::
 
-    For this example we assume your custom app is named ``shop``.
+    For this example, we assume your custom app is named ``shop``.
 
 .. code:: python
 

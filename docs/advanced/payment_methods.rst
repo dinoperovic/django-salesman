@@ -12,18 +12,18 @@ two main components in Salesman's payment method interface:
 
 You can optionally support either one or both methods in your payment method.
 
-Payment methods are registered in ``SALESMAN_PAYMENT_METHODS`` setting and should be formated
+Payment methods are registered in ``SALESMAN_PAYMENT_METHODS`` setting and should be formatted
 as a list of dotted paths to a class extending :class:`salesman.checkout.payment.PaymentMethod`
 class. Defined payments are required to specify a ``label`` and a unique ``identifier`` property.
 
 .. note::
 
-    For this example we assume your custom app is named ``shop``.
+    For this example, we assume your custom app is named ``shop``.
 
 Validate payments
 =================
 
-Payment methods can be validated for both the basket and order instances. This is usefull when
+Payment methods can be validated for both the basket and order instances. This is useful when
 you wish to disable certain payments for a given request.
 
 Default validations are included with base :class:`salesman.checkout.payment.PaymentMethod` class:
@@ -69,7 +69,7 @@ Default validations are included with base :class:`salesman.checkout.payment.Pay
 Basket validation example
 -------------------------
 
-In this example we create an *on-delivery* payment method that is only valid when less
+In this example, we create an *on-delivery* payment method that is only valid when less
 that 10 items are in the basket.
 
 .. code:: python
@@ -236,7 +236,7 @@ A more complex example using an *off-site* dummy gateway.
 Register payments
 =================
 
-To enable payment methods add them in ``settings.py``:
+Enable payment methods by adding in ``settings.py``:
 
 .. code:: python
 

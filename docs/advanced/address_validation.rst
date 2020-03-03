@@ -4,11 +4,11 @@
 Address validation
 ##################
 
-During the checkout process both the *shipping* and *billing* addresses can be specified.
+During the checkout process, both the *shipping* and *billing* addresses can be specified.
 The default address validator is set to :func:`salesman.checkout.utils.validate_address`
 that simply makes both address fields required to be entered by the customer.
 
-This behaviour can be overrided by providing a dotted path in ``SALESMAN_ADDRESS_VALIDATOR``
+This behavior can be overridden by providing a dotted path in ``SALESMAN_ADDRESS_VALIDATOR``
 setting that points to your custom validator function.
 
 .. tip::
@@ -37,5 +37,5 @@ setting that points to your custom validator function.
         return value
 
 Your custom validator should accept a text ``value`` and return the validated version.
-Also recieves a ``context`` dictionary with additional context data like ``request``,
+It also receives a ``context`` dictionary with additional context data like ``request``,
 a ``basket`` object and ``address`` type (set to either *shipping* or *billing*).

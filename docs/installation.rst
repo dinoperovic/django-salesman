@@ -16,7 +16,7 @@ A guide on how to install Salesman.
 
 .. note::
 
-    Optionally install `Pygments <https://pygments.org/>`_ library for a nicer code display in admin.
+    Optionally install the `Pygments <https://pygments.org/>`_ library for a nicer code display in admin.
 
 .. raw:: html
 

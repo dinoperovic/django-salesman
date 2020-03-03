@@ -2,8 +2,8 @@
 Credits
 #######
 
-Bits and pieces of Salesman are ispired by these community packages.
-For alternative e-commerce options be sure to check them out:
+Bits and pieces of Salesman are inspired by these community packages.
+For alternative e-commerce options, be sure to check them out:
 
 - `django-shop <https://github.com/awesto/django-shop>`_
 - `django-oscar <https://github.com/django-oscar/django-oscar>`_

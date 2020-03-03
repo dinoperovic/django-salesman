@@ -11,6 +11,6 @@ def format_price(value: Decimal, context: dict = {}) -> str:
         context (dict, optional): Format context data. Defaults to {}.
 
     Returns:
-        str: Formatted price as string
+        str: Formatted price as a string
     """
     return f'{value:.2f}'

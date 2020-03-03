@@ -4,18 +4,18 @@
 Adding products
 ###############
 
-To add products to the basket they need be registered in ``SALESMAN_PRODUCT_TYPES``
-dictionary setting with values formated as ``'app_name.Model': 'path.to.ModelSerializer'``.
+To add products to the basket they need to be registered in ``SALESMAN_PRODUCT_TYPES``
+dictionary setting with values formatted as ``'app_name.Model': 'path.to.ModelSerializer'``.
 
 .. note::
 
-    For this example we assume your custom app is named ``shop``.
+    For this example, we assume your custom app is named ``shop``.
 
 .. raw:: html
 
     <h3>1. Create product model</h3>
 
-First create a product model. Requirements are that it implements ``get_price(self, request)``
+First, create a product model. Requirements are that it implements ``get_price(self, request)``
 method and has properties ``name`` and ``code``. Eg:
 
 .. code:: python
@@ -59,7 +59,7 @@ Then create a serializer for the product. Eg:
 
     <h3>3. Register the product</h3>
 
-Only thing left is to register it in ``settings.py``:
+The only thing left is to register it in ``settings.py``:
 
 .. code:: python
 
@@ -68,5 +68,5 @@ Only thing left is to register it in ``settings.py``:
     }
 
 You can now add the product to the basket by sending a :http:post:`/basket/` request.
-In your request you should include ``product_type`` with value ``shop.Product`` and ``product_id``
-with product instance id as value.
+In your request, you should include ``product_type`` with a value ``shop.Product``
+and ``product_id`` with product instance id as the value.
