@@ -31,7 +31,7 @@ djangorestframework = "~3.11"
 
 # Optional dependencies
 Pygments = {version = "~2.5", optional = true}
-wagtail = {version = "~2.8", optional = true}
+wagtail = {version = ">=2.8,<2.10", optional = true}
 pytest = {version = "~5.3", optional = true}
 pytest-django = {version = "~3.7", optional = true}
 pytest-cov = {version = "~2.8", optional = true}
