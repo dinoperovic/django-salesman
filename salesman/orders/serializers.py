@@ -156,8 +156,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     def validate_status(self, status):
         order = self.context['order']
-        app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
-        return status
+        return app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

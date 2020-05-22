@@ -34,7 +34,8 @@ overriding the :meth:`salesman.orders.status.BaseOrderStatus.validate_transition
 
 .. tip::
 
-    Eg. you could enforce a check that order is fully paid before it can be marked as *Completed*.
+    Eg. you could enforce a check that the order has been fully paid for before it can be marked
+    as *Completed*, or even return and force a different status entirely.
 
 A default status transition validation is provided with :class:`salesman.orders.status.BaseOrderStatus`
 class which checks that transition is available for the current order status:

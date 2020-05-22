@@ -100,8 +100,7 @@ class OrderModelForm(forms.ModelForm):
 
     def clean_status(self):
         status, order = self.cleaned_data['status'], self.instance
-        app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
-        return status
+        return app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
 
 
 class OrderStatusFilter(admin.SimpleListFilter):

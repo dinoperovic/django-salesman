@@ -15,6 +15,7 @@ Changed
 
 - Make basket merge a transaction.
 - When saving order in wagtail, stay on the order edit page.
+- Method ``OrderStatus.validate_transition()`` now returns the validated status as string.
 
 Fixed
 -----

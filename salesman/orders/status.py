@@ -26,7 +26,7 @@ class BaseOrderStatus(models.TextChoices):
         return {}
 
     @classmethod
-    def validate_transition(cls, status: str, order: Order) -> None:
+    def validate_transition(cls, status: str, order: Order) -> str:
         """
         Validate a given status transition for the order.
         By default check status is defined in transitions.
@@ -37,6 +37,9 @@ class BaseOrderStatus(models.TextChoices):
 
         Raises:
             ValidationError: If transition not valid
+
+        Returns:
+            str: Validated status
         """
         transitions = cls.get_transitions().get(order.status, [status])
         transitions.append(order.status)
@@ -44,6 +47,7 @@ class BaseOrderStatus(models.TextChoices):
             current, new = cls[order.status].label, cls[status].label
             msg = _(f"Can't change order with status '{current}' to '{new}'.")
             raise ValidationError(msg)
+        return status
 
 
 class OrderStatus(BaseOrderStatus):
