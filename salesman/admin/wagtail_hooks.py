@@ -113,6 +113,9 @@ class OrderEditView(EditView):
         self.model.request = request
         return super().dispatch(request, *args, **kwargs)
 
+    def get_success_url(self):
+        return self.edit_url
+
     def get_meta_title(self):
         return _('Viewing Order')
 

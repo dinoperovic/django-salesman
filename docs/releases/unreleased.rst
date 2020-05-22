@@ -14,6 +14,7 @@ Changed
 -------
 
 - Make basket merge a transaction.
+- When saving order in wagtail, stay on order edit page.
 
 Fixed
 -----
