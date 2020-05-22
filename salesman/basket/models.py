@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import models, transaction
 from django.http import HttpRequest
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -160,6 +160,7 @@ class Basket(models.Model):
         self.items.all().delete()
         self._cached_items = None
 
+    @transaction.atomic
     def merge(self, other: 'Basket') -> None:
         """
         Merge other basket with this one, delete afterwards.
