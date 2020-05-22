@@ -14,16 +14,16 @@ class DefaultSettings:
 
         raise ImproperlyConfigured(message)
 
-    def _callable(self, value):
+    def _callable(self, path):
         from django.utils.module_loading import import_string
 
         try:
-            cb = import_string(value)
+            value = import_string(path)
         except ImportError as e:
             self._error(e)
-        if not callable(cb):
-            self._error(f"Specified `{cb}` is not callable.")
-        return cb
+        if not callable(value):
+            self._error(f"Specified `{value}` is not a callable.")
+        return value
 
     @property
     def SALESMAN_PRODUCT_TYPES(self) -> dict:
