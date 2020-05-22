@@ -23,7 +23,8 @@ Api docs for Basket.
 
 .. http:post:: /basket/
 
-    Add item to basket.
+    Add an item to the basket. To add the same product with a different configuration to the basket
+    you can send a custom ``ref`` parameter. Otherwise a default one is auto-generated.
 
     :jsonparam str ref: unique item reference, default is slugified ``product_type-product_id``
     :jsonparam str product_type: type formated as ``app_name.Model``
