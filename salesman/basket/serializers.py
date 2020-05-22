@@ -163,9 +163,6 @@ class BasketSerializer(serializers.ModelSerializer):
         model = Basket
         fields = ['id', 'items', 'subtotal', 'total', 'extra', 'extra_rows']
 
-    def validate_extra(self, value):
-        return app_settings.SALESMAN_EXTRA_VALIDATOR(value, context=self.context)
-
     def to_representation(self, basket):
         basket.update(self.context['request'])
         return super().to_representation(basket)

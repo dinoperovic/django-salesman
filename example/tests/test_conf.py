@@ -75,6 +75,21 @@ def test_basket_modifiers(settings):
         assert app_settings.SALESMAN_BASKET_MODIFIERS
 
 
+not_callable_extra_validator_function = 1
+
+
+def test_basket_extra_validator(settings):
+    assert app_settings.SALESMAN_EXTRA_VALIDATOR
+    with pytest.raises(ImproperlyConfigured):
+        settings.SALESMAN_EXTRA_VALIDATOR = 'invalid.path.to.function'
+        assert app_settings.SALESMAN_EXTRA_VALIDATOR
+    with pytest.raises(ImproperlyConfigured):
+        settings.SALESMAN_EXTRA_VALIDATOR = (
+            'tests.test_conf.not_callable_extra_validator_function'
+        )
+        assert app_settings.SALESMAN_EXTRA_VALIDATOR
+
+
 class InvalidPayment(object):
     pass
 

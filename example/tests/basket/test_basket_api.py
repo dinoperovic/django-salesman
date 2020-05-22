@@ -28,16 +28,17 @@ def test_basket_api():
         'product_type': 'shop.Product',
         'product_id': product.id,
         'quantity': 2,
+        'extra': {'test': 1},
     }
-    response = client.post(url, data)
+    response = client.post(url, data, format='json')
     data['ref'] = '1-new'
-    response = client.post(url, data)
+    response = client.post(url, data, format='json')
     assert response.status_code == 201
     item_ref = response.json()['ref']
 
     # test wrong product id
     data['product_id'] = 13
-    response = client.post(url, data)
+    response = client.post(url, data, format='json')
     assert response.status_code == 400
     assert api_settings.NON_FIELD_ERRORS_KEY in response.json()
 
@@ -77,9 +78,6 @@ def test_basket_api():
     response = client.put(reverse('salesman-basket-extra'), data, format='json')
     assert response.status_code == 200
     assert response.json()['extra']['x'] == 1
-
-    # test basket extra validation
-    # TODO
 
     # test basket destroy item
     response = client.delete(reverse('salesman-basket-detail', args=[item_ref]))
