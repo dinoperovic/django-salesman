@@ -4,6 +4,11 @@ Unreleased
 
 *TBA*
 
+Added
+-----
+
+- Added the ability to specify a custom validator for ``extra`` field on basket and basket item.
+
 Changed
 -------
 
