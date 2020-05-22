@@ -57,6 +57,7 @@ def test_order_admin(rf, client, django_user_model):
 
     # test index/edit view
     edit_view = modeladmin.edit_view_class(modeladmin, str(order.id))
+    assert edit_view.get_success_url() == edit_url
     assert edit_view.get_meta_title() == 'Viewing Order'
     client.login(username='user', password='password')
     client.get(edit_url)
