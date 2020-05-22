@@ -78,6 +78,9 @@ def test_basket_api():
     assert response.status_code == 200
     assert response.json()['extra']['x'] == 1
 
+    # test basket extra validation
+    # TODO
+
     # test basket destroy item
     response = client.delete(reverse('salesman-basket-detail', args=[item_ref]))
     assert response.status_code == 204

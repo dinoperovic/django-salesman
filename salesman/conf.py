@@ -73,6 +73,27 @@ class DefaultSettings:
         return ret
 
     @property
+    def SALESMAN_EXTRA_VALIDATOR(self) -> callable:
+        """
+        A dotted path to extra validator function. Function should accept a dict
+        value and return a validated version. Also recieves a ``context`` dictionary
+        with additional validator context data like ``request``, a ``basket`` object
+        and ``basket_item`` in case validation is for bakset item.
+        """
+        from django.utils.module_loading import import_string
+
+        value = self._setting(
+            'SALESMAN_EXTRA_VALIDATOR', 'salesman.basket.utils.validate_extra'
+        )
+        try:
+            validator = import_string(value)
+        except ImportError as e:
+            self._error(e)
+        if not callable(validator):
+            self._error(f"Specified extra validator `{validator}` is not callable.")
+        return validator
+
+    @property
     def SALESMAN_PAYMENT_METHODS(self) -> list:
         """
         A list of strings formated as ``path.to.CustomPayment``.

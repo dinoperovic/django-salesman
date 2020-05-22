@@ -24,6 +24,11 @@ To use the modifiers:
     :members:
 .. autoattribute:: salesman.basket.modifiers.basket_modifiers_pool
 
+Utils
+=====
+
+.. autofunction:: salesman.basket.utils.validate_extra
+
 Models
 ======
 

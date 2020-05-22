@@ -88,7 +88,10 @@ class BasketItemSerializer(serializers.ModelSerializer):
         if value:
             extra.update(value)
             extra = {k: v for k, v in extra.items() if v is not None}
-        return extra
+        # Validate using extra validator.
+        context = self.context.copy()
+        context['basket_item'] = self.instance
+        return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=context)
 
     def to_representation(self, item):
         item.update(self.context['request'])
@@ -127,6 +130,11 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(msg.format(**attrs))
         return attrs
 
+    def validate_extra(self, value):
+        context = self.context.copy()
+        context['basket_item'] = self.instance
+        return app_settings.SALESMAN_EXTRA_VALIDATOR(value, context=context)
+
     def create(self, validated_data) -> BasketItem:
         basket = self.context['basket']
         return basket.add(
@@ -155,6 +163,9 @@ class BasketSerializer(serializers.ModelSerializer):
         model = Basket
         fields = ['id', 'items', 'subtotal', 'total', 'extra', 'extra_rows']
 
+    def validate_extra(self, value):
+        return app_settings.SALESMAN_EXTRA_VALIDATOR(value, context=self.context)
+
     def to_representation(self, basket):
         basket.update(self.context['request'])
         return super().to_representation(basket)
@@ -179,4 +190,5 @@ class BasketExtraSerializer(serializers.ModelSerializer):
         if value:
             extra.update(value)
             extra = {k: v for k, v in extra.items() if v is not None}
-        return extra
+        # Validate using extra validator.
+        return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=self.context)
