@@ -19,24 +19,8 @@ First create your custom payment method. Payment methods are required to specify
 a unique ``identifier`` property on class. To enable payment for the basket you should also
 override the :meth:`salesman.checkout.payment.PaymentMethod.basket_payment` method. Eg:
 
-.. code:: python
-
-    # payment.py
-    from salesman.checkout.payment import PaymentMethod
-    from salesman.orders.models import Order
-
-
-    class PayInAdvance(PaymentMethod):
-        """
-        Payment method that requires advance payment via bank account.
-        """
-        identifier = 'pay-in-advance'
-        label = 'Pay in advance'
-
-        def basket_payment(self, basket, request):
-            order = Order.objects.create_from_basket(basket, request, status='HOLD')
-            basket.delete()
-            return f'/success/?token={order.token}'
+.. literalinclude:: /../example/shop/payment.py
+    :lines: 1,10-32
 
 .. raw:: html
 

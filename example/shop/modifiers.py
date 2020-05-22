@@ -1,6 +1,4 @@
-"""
-Example use of basket modifiers.
-"""
+# modifiers.py
 from salesman.basket.modifiers import BasketModifier
 
 

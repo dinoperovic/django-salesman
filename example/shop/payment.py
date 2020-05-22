@@ -1,6 +1,4 @@
-"""
-Example use of payment methods.
-"""
+# payment.py
 import uuid
 
 from django.core.exceptions import ValidationError

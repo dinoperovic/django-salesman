@@ -1,15 +1,16 @@
+# serializers.py
 from rest_framework import serializers
 
-from .models import PhoneVariant, Product
+from . import models
 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Product
+        model = models.Product
         fields = ['name', 'code']
 
 
 class PhoneVariantSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PhoneVariant
+        model = models.PhoneVariant
         fields = ['name', 'code', 'color', 'capacity']
