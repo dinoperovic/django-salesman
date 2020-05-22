@@ -55,8 +55,8 @@ Features
     advanced/payment_methods
     advanced/order_customization
     advanced/sending_notifications
-    advanced/address_validation
     advanced/price_formatting
+    advanced/custom_validators
 
 .. toctree::
     :caption: API Documentation
