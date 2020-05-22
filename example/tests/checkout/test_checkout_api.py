@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from salesman.checkout.api import CheckoutViewSet
+from salesman.orders.models import Order
 from shop.models import Product
 
 
@@ -33,8 +34,9 @@ def test_checkout_api(settings):
         'shipping_address': "Test",
         'billing_address': "Test",
         'payment_method': 'dummy',
+        'extra': {'test': 1},
     }
-    response = client.post(url, valid_data)
+    response = client.post(url, valid_data, format='json')
     assert response.status_code == 400
 
     # add item to cart
@@ -51,14 +53,21 @@ def test_checkout_api(settings):
     assert response.status_code == 400
 
     # test process new checkout
-    response = client.post(url, valid_data)
+    response = client.post(url, valid_data, format='json')
     assert response.status_code == 201
     assert 'url' in response.json()
+
+    # test created order
+    order = Order.objects.first()
+    assert order.email == valid_data['email']
+    assert order.shipping_address == valid_data['shipping_address']
+    assert order.billing_address == valid_data['billing_address']
+    assert order.extra['test'] == valid_data['extra']['test']
 
     # test `PaymentError` caught
     client.put(
         reverse('salesman-basket-extra'), {'extra': {'raise_error': 1}}, format='json'
     )
-    response = client.post(url, valid_data)
+    response = client.post(url, valid_data, format='json')
     assert response.status_code == 402
     assert response.json()['detail'] == 'Dummy payment error'

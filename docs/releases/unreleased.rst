@@ -8,6 +8,7 @@ Added
 -----
 
 - Added the ability to specify a custom validator for ``extra`` field on basket and basket item.
+- Added the ability to set ``extra`` data directly in :http:post:`/checkout/` request.
 
 Changed
 -------

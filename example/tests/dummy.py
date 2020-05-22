@@ -1,6 +1,7 @@
 from django.urls import path
 
 from salesman.checkout.payment import PaymentError, PaymentMethod
+from salesman.orders.models import Order
 
 
 class DummyPaymentMethod(PaymentMethod):
@@ -15,7 +16,8 @@ class DummyPaymentMethod(PaymentMethod):
     def basket_payment(self, basket, request):
         if 'raise_error' in basket.extra:
             raise PaymentError("Dummy payment error")
-        # pretend order was created...
+        # create order
+        Order.objects.create_from_basket(basket, request)
         return '/success/'
 
     def order_payment(self, order, request):

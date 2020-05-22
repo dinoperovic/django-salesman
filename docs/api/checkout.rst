@@ -39,5 +39,6 @@ Api docs for Checkout.
     :jsonparam string shipping_address: shipping address text
     :jsonparam string billing_address: billing address text
     :jsonparam string payment_method: payment method used to purchase
+    :jsonparam json extra: update basket extra, null values are removed
     :statuscode 400: if supplied params are invalid
     :statuscode 402: if payment error appears
