@@ -18,7 +18,7 @@ class BaseOrderStatus(models.TextChoices):
         return []
 
     @classmethod
-    def get_transitions(cls) -> list:
+    def get_transitions(cls) -> dict:
         """
         Returns a dict of statuses with their transitions.
         If not specified for status, any transition is valid.
@@ -71,7 +71,7 @@ class OrderStatus(BaseOrderStatus):
         return [cls.CREATED, cls.HOLD, cls.FAILED]
 
     @classmethod
-    def get_transitions(cls) -> list:
+    def get_transitions(cls) -> dict:
         """
         Returns default status transitions.
         """

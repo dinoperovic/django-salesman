@@ -42,7 +42,7 @@ that points to a class extending :class:`salesman.orders.status.BaseOrderStatus`
             return [cls.CREATED, cls.HOLD, cls.FAILED]
 
         @classmethod
-        def get_transitions(cls) -> list:
+        def get_transitions(cls) -> dict:
             """
             Returns default status transitions.
             """
