@@ -42,14 +42,25 @@ class BasketViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return BasketItemCreateSerializer
-        if self.action == 'list':
-            return BasketSerializer
         return super().get_serializer_class()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['basket'] = self.get_basket()
         return context
+
+    def get_basket_response(self):
+        context = self.get_serializer_context()
+        serializer = BasketSerializer(self.get_basket(), context=context)
+        return Response(dict(serializer.data))
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        """
+        Patch response to render the Basket when `?basket` is present in the url.
+        """
+        if request.method != 'GET' and 'basket' in request.GET:
+            response = self.get_basket_response()
+        return super().finalize_response(request, response, *args, **kwargs)
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
@@ -59,8 +70,7 @@ class BasketViewSet(viewsets.ModelViewSet):
         """
         Show basket and items.
         """
-        serializer = self.get_serializer(self.get_basket())
-        return Response(serializer.data)
+        return self.get_basket_response()
 
     def delete(self, request, *args, **kwargs):
         """

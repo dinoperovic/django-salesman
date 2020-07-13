@@ -7,6 +7,7 @@ Unreleased
 Added
 -----
 
+- Added the ability to display the Basket after other API operations by appending ``?basket`` to url.
 - Added the ability to specify a custom validator for ``extra`` field on basket and basket item.
 - Added the ability to set ``extra`` data directly in :http:post:`/checkout/` request.
 

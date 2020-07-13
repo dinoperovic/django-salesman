@@ -26,6 +26,7 @@ Api docs for Basket.
     Add an item to the basket. To add the same product with a different configuration to the basket
     you can send a custom ``ref`` parameter. Otherwise a default one is auto-generated.
 
+    :query str basket: pass in ``?basket`` to return an updated basket after the operation.
     :jsonparam str ref: unique item reference, default is slugified ``product_type-product_id``
     :jsonparam str product_type: type formated as ``app_name.Model``
     :jsonparam int product_id: instance id
@@ -37,6 +38,7 @@ Api docs for Basket.
 
     Delete basket.
 
+    :query str basket: pass in ``?basket`` to return an updated basket after the operation.
     :statuscode 204: if deleted
 
 .. http:get:: /basket/count/
@@ -63,6 +65,8 @@ Api docs for Basket.
 
     Clear all items from basket.
 
+    :query str basket: pass in ``?basket`` to return an updated basket after the operation.
+
 .. http:get:: /basket/extra/
 
     Get basket extra data.
@@ -77,6 +81,7 @@ Api docs for Basket.
 
     Update basket extra data.
 
+    :query str basket: pass in ``?basket`` to return an updated basket after the operation.
     :jsonparam json extra: update item extra, null values are removed
     :statuscode 400: if supplied params are invalid
 
@@ -84,8 +89,7 @@ Api docs for Basket.
 
     Get basket item.
 
-    :param ref: basket item ref
-    :type ref: str
+    :param str ref: basket item ref
 
     .. sourcecode:: json
 
@@ -110,8 +114,8 @@ Api docs for Basket.
 
     Update basket item.
 
-    :param ref: basket item ref
-    :type ref: str
+    :param str ref: basket item ref
+    :query str basket: pass in ``?basket`` to return an updated basket after the operation.
     :jsonparam int quantity: update item quantity
     :jsonparam json extra: update item extra, null values are removed
     :statuscode 400: if supplied params are invalid
@@ -120,6 +124,6 @@ Api docs for Basket.
 
     Remove item from basket.
 
-    :param ref: basket item id
-    :type ref: str
+    :param str ref: basket item id
+    :query str basket: pass in ``?basket`` to return an updated basket after the operation.
     :statuscode 204: if deleted
