@@ -42,8 +42,6 @@ class BasketViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return BasketItemCreateSerializer
-        if self.action == 'list':
-            return BasketSerializer
         return super().get_serializer_class()
 
     def get_serializer_context(self):
