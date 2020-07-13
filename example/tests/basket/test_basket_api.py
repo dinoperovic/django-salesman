@@ -62,6 +62,14 @@ def test_basket_api():
     assert response.json()['extra']['y'] == 2
     assert response.json()['quantity'] == 7
 
+    # test basket update with `?basket` in url
+    response = client.put(
+        reverse('salesman-basket-detail', args=[item_ref]) + '?basket',
+        data,
+        format='json',
+    )
+    assert 'items' in response.json()
+
     # test basket count
     response = client.get(reverse('salesman-basket-count'))
     assert response.json()['count'] == 2
