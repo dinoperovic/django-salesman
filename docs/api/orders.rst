@@ -67,8 +67,7 @@ Api docs for Orders.
             "notes": []
         }
 
-    :param ref: order ref
-    :type ref: str
+    :param str ref: order ref
     :query token: Token to get order when user is not logged in
 
 .. http:get:: /orders/(str:ref)/status/
@@ -129,8 +128,7 @@ Api docs for Orders.
             ]
         }
 
-    :param ref: order ref
-    :type ref: str
+    :param str ref: order ref
 
 .. http:put:: /orders/(str:ref)/status/
 
@@ -143,8 +141,7 @@ Api docs for Orders.
             "status_display": "Processing"
         }
 
-    :param ref: order ref
-    :type ref: str
+    :param str ref: order ref
     :jsonparam str status: new order status
     :statuscode 400: if supplied params are invalid
 
@@ -165,8 +162,7 @@ Api docs for Orders.
             ]
         }
 
-    :param ref: order ref
-    :type ref: str
+    :param str ref: order ref
     :query token: Token to get order when user is not logged in
 
 .. http:post:: /orders/(str:ref)/pay/
@@ -181,8 +177,7 @@ Api docs for Orders.
             "url": "https://credit-card-payment.com/?order=2020-00001&total=33.00"
         }
 
-    :param ref: order ref
-    :type ref: str
+    :param str ref: order ref
     :query token: Token to get order when user is not logged in
     :statuscode 400: if supplied params are invalid
     :statuscode 402: if payment error appears
@@ -205,7 +200,6 @@ Api docs for Orders.
             "failed": []
         }
 
-    :param ref: order ref
-    :type ref: str
+    :param str ref: order ref
     :statuscode 206: if some payments failed while refunding
 
