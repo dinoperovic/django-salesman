@@ -58,7 +58,11 @@ class BasketViewSet(viewsets.ModelViewSet):
         """
         Patch response to render the Basket when `?basket` is present in the url.
         """
-        if request.method != 'GET' and 'basket' in request.GET:
+        if (
+            request.method != 'GET'
+            and 'basket' in request.GET
+            and status.is_success(response.status_code)
+        ):
             response = self.get_basket_response()
         return super().finalize_response(request, response, *args, **kwargs)
 

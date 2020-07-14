@@ -70,6 +70,10 @@ def test_basket_api():
     )
     assert 'items' in response.json()
 
+    # test validation works with `?basket` present
+    response = client.post(url + '?basket', {}, format='json')
+    assert response.status_code == 400
+
     # test basket count
     response = client.get(reverse('salesman-basket-count'))
     assert response.json()['count'] == 2
