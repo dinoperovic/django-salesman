@@ -1,0 +1,10 @@
+#####
+0.1.5
+#####
+
+*2020-07-23*
+
+Fixed
+-----
+
+- Check for extra on checkout before updating `None` value.

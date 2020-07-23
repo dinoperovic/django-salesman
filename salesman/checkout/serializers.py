@@ -75,9 +75,12 @@ class CheckoutSerializer(serializers.Serializer):
         return payment
 
     def validate_extra(self, value):
+        # Update basket `extra` instead of replacing it, remove null values.
         extra = self.context['basket'].extra
-        extra.update(value)
-        extra = {k: v for k, v in extra.items() if v is not None}
+        if value:
+            extra.update(value)
+            extra = {k: v for k, v in extra.items() if v is not None}
+        # Validate using extra validator.
         return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=self.context)
 
     def save(self):
