@@ -28,7 +28,7 @@ jobs:
           poetry config virtualenvs.create false
           poetry install
       - name: Check imports using isort
-        run: isort --check-only
+        run: isort . --check
       - name: Check formatting using Black
         run: black --check .
       - name: Lint using Flake8
