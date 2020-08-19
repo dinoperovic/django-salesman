@@ -20,8 +20,8 @@ from .signals import status_changed
 
 try:
     # Add support for Wagtail admin.
-    from modelcluster.models import ClusterableModel
     from modelcluster.fields import ParentalKey
+    from modelcluster.models import ClusterableModel
 except ImportError:  # pragma: no cover
     ClusterableModel = models.Model
     ParentalKey = models.ForeignKey
@@ -180,7 +180,7 @@ class Order(ClusterableModel):
             basket (Basket): Basket instance
             request (HttpRequest): Django request
         """
-        from salesman.basket.serializers import ProductField, ExtraRowsField
+        from salesman.basket.serializers import ExtraRowsField, ProductField
 
         if not hasattr(basket, 'total'):
             basket.update(request)

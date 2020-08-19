@@ -11,6 +11,7 @@ def protect_basket_items(sender, instance, **kwargs):
     Protect against deletion of products already added to basket.
     """
     from django.contrib.contenttypes.models import ContentType
+
     from salesman.basket.models import BasketItem
 
     content_type = ContentType.objects.get_for_model(sender)

@@ -3,6 +3,6 @@ clean:
 	find . -name "*.pyc" -exec rm -f {} \;
 
 check:
-	poetry run isort --check-only
+	poetry run isort . --check
 	poetry run black --check .
 	poetry run flake8 .
