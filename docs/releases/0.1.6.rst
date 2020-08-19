@@ -1,0 +1,11 @@
+#####
+0.1.6
+#####
+
+*2020-08-19*
+
+Added
+-----
+
+- Add support for ``Django 3.1``
+- Add support for ``Wagtail 2.10``
