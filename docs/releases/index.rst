@@ -18,6 +18,7 @@ Release notes and upgrade information. This project adheres to
     :caption: Versions
     :maxdepth: 1
 
+    0.1.6
     0.1.5
     0.1.4
     0.1.3

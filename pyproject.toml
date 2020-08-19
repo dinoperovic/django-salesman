@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-salesman"
-version = "0.1.5"
+version = "0.1.6"
 description = "Headless e-commerce framework for Django."
 authors = ["Dino Perovic <dino.perovic@gmail.com>"]
 license = "BSD-3-Clause"
