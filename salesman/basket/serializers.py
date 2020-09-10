@@ -54,11 +54,11 @@ class BasketItemSerializer(serializers.ModelSerializer):
     quantity = serializers.IntegerField(min_value=1)
     unit_price = PriceField(read_only=True)
     subtotal = PriceField(read_only=True)
+    extra_rows = ExtraRowsField(read_only=True)
     total = PriceField(read_only=True)
     extra = serializers.JSONField(
         required=False, help_text=_("Extra is updated and null values are removed.")
     )
-    extra_rows = ExtraRowsField(read_only=True)
 
     class Meta:
         model = BasketItem
@@ -155,13 +155,13 @@ class BasketSerializer(serializers.ModelSerializer):
 
     items = BasketItemSerializer(source='get_items', many=True, read_only=True)
     subtotal = PriceField(read_only=True)
+    extra_rows = ExtraRowsField(read_only=True)
     total = PriceField(read_only=True)
     extra = serializers.JSONField(read_only=True)
-    extra_rows = ExtraRowsField(read_only=True)
 
     class Meta:
         model = Basket
-        fields = ['id', 'items', 'subtotal', 'total', 'extra', 'extra_rows']
+        fields = ['id', 'items', 'subtotal', 'extra_rows', 'total', 'extra']
 
     def to_representation(self, basket):
         basket.update(self.context['request'])

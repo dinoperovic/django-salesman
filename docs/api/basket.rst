@@ -16,9 +16,9 @@ Api docs for Basket.
             "id": 1,
             "items": [],
             "subtotal": "0.00",
+            "extra_rows": [],
             "total": "0.00",
-            "extra": {},
-            "extra_rows": []
+            "extra": {}
         }
 
 .. http:post:: /basket/
