@@ -41,13 +41,18 @@ class CheckoutSerializer(serializers.Serializer):
     url = serializers.CharField(read_only=True)
     email = serializers.EmailField(write_only=True)
     shipping_address = serializers.CharField(
-        allow_blank=True, write_only=True, style={'base_template': 'textarea.html'},
+        allow_blank=True,
+        write_only=True,
+        style={'base_template': 'textarea.html'},
     )
     billing_address = serializers.CharField(
-        allow_blank=True, write_only=True, style={'base_template': 'textarea.html'},
+        allow_blank=True,
+        write_only=True,
+        style={'base_template': 'textarea.html'},
     )
     payment_method = serializers.ChoiceField(
-        choices=payment_methods_pool.get_choices('basket'), write_only=True,
+        choices=payment_methods_pool.get_choices('basket'),
+        write_only=True,
     )
     extra = serializers.JSONField(
         required=False,

@@ -172,7 +172,8 @@ class OrderPaySerializer(serializers.Serializer):
 
     url = serializers.CharField(read_only=True)
     payment_method = serializers.ChoiceField(
-        choices=payment_methods_pool.get_choices('order'), write_only=True,
+        choices=payment_methods_pool.get_choices('order'),
+        write_only=True,
     )
 
     # Show payment methods with error on GET.

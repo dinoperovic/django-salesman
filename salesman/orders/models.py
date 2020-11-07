@@ -171,7 +171,10 @@ class Order(ClusterableModel):
 
     @transaction.atomic
     def populate_from_basket(
-        self, basket: Basket, request: HttpRequest, **kwargs,
+        self,
+        basket: Basket,
+        request: HttpRequest,
+        **kwargs,
     ) -> None:
         """
         Populate order with items from basket.
@@ -268,7 +271,10 @@ class Order(ClusterableModel):
 
 class OrderItem(models.Model):
     order = ParentalForeignKey(
-        Order, on_delete=models.CASCADE, related_name='items', verbose_name=_("Order"),
+        Order,
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name=_("Order"),
     )
 
     product_type = models.CharField(_("Product type"), max_length=128)
@@ -370,7 +376,10 @@ class OrderPayment(models.Model):
 
 class OrderNote(models.Model):
     order = ParentalForeignKey(
-        Order, on_delete=models.CASCADE, related_name='notes', verbose_name=_("Order"),
+        Order,
+        on_delete=models.CASCADE,
+        related_name='notes',
+        verbose_name=_("Order"),
     )
 
     message = models.TextField(_("Message"))
