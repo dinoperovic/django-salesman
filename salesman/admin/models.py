@@ -2,12 +2,13 @@ from django.utils.formats import date_format
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from salesman.conf import app_settings
 from salesman.orders.models import Order as BaseOrder
 from salesman.orders.models import OrderItem as BaseOrderItem
 from salesman.orders.models import OrderNote as BaseOrderNote
 from salesman.orders.models import OrderPayment as BaseOrderPayment
 
-from .utils import format_json, format_price
+from .utils import format_price
 
 __all__ = ['Order', 'OrderItem', 'OrderPayment', 'OrderNote']
 
@@ -22,12 +23,18 @@ class Order(BaseOrder):
         verbose_name_plural = BaseOrder._meta.verbose_name_plural
 
     def extra_display(self):
-        return format_json(self.extra)
+        return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+            self.extra,
+            context={'order': True},
+        )
 
     extra_display.short_description = _("Extra")
 
     def extra_rows_display(self):
-        return format_json(self.extra_rows)
+        return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+            self.extra_rows,
+            context={'order': True},
+        )
 
     extra_rows_display.short_description = _("Extra rows")
 
@@ -88,7 +95,10 @@ class OrderItem(BaseOrderItem):
         verbose_name_plural = BaseOrderItem._meta.verbose_name_plural
 
     def product_data_display(self):
-        return format_json(self.product_data)
+        return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+            self.product_data,
+            context={'order_item': True},
+        )
 
     product_data_display.short_description = _("Product data")
 
@@ -108,12 +118,18 @@ class OrderItem(BaseOrderItem):
     total_display.short_description = _("Total")
 
     def extra_display(self):
-        return format_json(self.extra)
+        return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+            self.extra,
+            context={'order_item': True},
+        )
 
     extra_display.short_description = _("Extra")
 
     def extra_rows_display(self):
-        return format_json(self.extra_rows)
+        return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+            self.extra_rows,
+            context={'order_item': True},
+        )
 
     extra_rows_display.short_description = _("Extra rows")
 

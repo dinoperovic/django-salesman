@@ -3,8 +3,10 @@ from salesman.admin import utils
 
 def test_format_json():
     data = {'test': 1}
-    assert utils.format_json(data).startswith('<div><style>')
-    assert utils.format_json(data, styled=False).startswith(
+    value = utils.format_json(data)
+    assert value.startswith('<div><style>')
+    assert '<span class="nt">&quot;test&quot;</span>' in value
+    assert utils.format_json(data, context={'styled': False}).startswith(
         '<div><pre style="margin: 0;">'
     )
 

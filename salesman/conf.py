@@ -202,5 +202,16 @@ class DefaultSettings:
         """
         return self._setting('SALESMAN_ADMIN_REGISTER', True)
 
+    @property
+    def SALESMAN_ADMIN_JSON_FORMATTER(self) -> callable:
+        """
+        A dotted path to JSON formatter function. Function should accept a dict
+        value and return an HTML formatted string. Also recieves a ``context``
+        dictionary with additional render data.
+        """
+        default = 'salesman.admin.utils.format_json'
+        value = self._setting('SALESMAN_ADMIN_JSON_FORMATTER', default)
+        return self._callable(value)
+
 
 app_settings = DefaultSettings()

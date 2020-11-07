@@ -7,5 +7,5 @@
 Added
 -----
 
-- Add support for ``Django 3.1``
-- Add support for ``Wagtail 2.10``
+- Add support for ``Django 3.1``.
+- Add support for ``Wagtail 2.10``.

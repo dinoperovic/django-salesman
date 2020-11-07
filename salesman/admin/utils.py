@@ -10,13 +10,14 @@ from salesman.conf import app_settings
 from salesman.orders.models import Order
 
 
-def format_json(value: dict, styled: bool = True) -> str:
+def format_json(value: dict, context: dict = {}) -> str:
+
     """
     Format json and add color using pygments with fallback.
 
     Args:
         value (dict): Dict to be formated to json
-        styled (bool): True if output should be styled
+        context (dict, optional): Format context data. Defaults to {}.
 
     Returns:
         str: JSON formated html string
@@ -24,6 +25,7 @@ def format_json(value: dict, styled: bool = True) -> str:
     value = json.dumps(value, indent=2)
     value = pygments_highlight(value, 'json', 'tango')
     style = pygments_css('tango')
+    styled = context.get('styled', True)  # Used for testing.
     if styled and style:
         html = (
             f'<style>{style}</style>'

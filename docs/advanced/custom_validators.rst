@@ -1,10 +1,10 @@
 .. _address-validation:
 
-#################
-Custom validators
-#################
+##############################
+Custom validators & formatters
+##############################
 
-A list of validators that can be overridden in Salesman.
+A list of validators and formatters that can be overridden in Salesman.
 
 Address validator
 =================
@@ -44,3 +44,21 @@ setting that points to your custom validator function.
 Your custom validator should accept a dictionary ``value`` and return the validated version.
 It also receives a ``context`` dictionary with additional context data like  ``request``,
 a ``basket`` object and ``basket_item`` in case validation is happening on the basket item.
+
+
+.. _admin-json-formatter:
+
+Admin JSON formatter
+====================
+
+When displaying JSON data in admin, a formatter function is used. The default function
+:func:`salesman.admin.utils.format_json` uses the ``Pygments`` library to create the
+default JSON display. You can override the JSON formatter by providing a dotted path
+to a function in ``SALESMAN_ADMIN_JSON_FORMATTER`` setting.
+
+.. literalinclude:: /../salesman/admin/utils.py
+    :pyobject: format_json
+
+Your custom formatter should accept a dictionary ``value`` and return the HTML string.
+It also receives a ``context`` dictionary with additional context. Either an ``order`` or
+``order_item`` boolean will be passed in depending on the formatting location.

@@ -1,0 +1,13 @@
+#####
+0.1.7
+#####
+
+*2020-11-01*
+
+Added
+-----
+
+- Add support for ``Python 3.9``.
+- Add support for ``DRF 3.12``.
+- Add support for ``Wagtail 2.10``.
+- Added an option to customize JSON formatting in admin, see: :ref:`admin-json-formatter`.

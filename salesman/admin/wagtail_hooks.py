@@ -25,7 +25,7 @@ from .admin import OrderModelForm as BaseOrderModelForm
 from .admin import OrderStatusFilter
 from .edit_handlers import ReadOnlyPanel
 from .models import Order
-from .utils import format_json, format_price
+from .utils import format_price
 from .widgets import OrderStatusSelect, PaymentSelect
 
 
@@ -34,7 +34,10 @@ def _format_json(value, obj, request):
     Wrapper for ``format_json`` temporarily used to display
     json values on inline order models.
     """
-    return format_json(value)
+    return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+        value,
+        context={'order_item': True},
+    )
 
 
 def _format_date(value, obj, request):
