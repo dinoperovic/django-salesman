@@ -38,7 +38,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        if self.detail:
+        if self.detail and self.lookup_field in self.kwargs:
             context['order'] = self.get_object()
         return context
 
