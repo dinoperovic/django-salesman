@@ -8,7 +8,7 @@ Added
 -----
 
 - Add support for ``Wagtail 2.12``.
-- Optimize Basket ``get_items`` by prefetching the related products.
+- Optimize basket by prefetching the related products in ``get_items``.
 
 Fixed
 -----
