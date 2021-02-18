@@ -184,7 +184,7 @@ class Basket(models.Model):
         Returns items from cache or stores new ones.
         """
         if self._cached_items is None:
-            self._cached_items = list(self.items.all())
+            self._cached_items = list(self.items.all().prefetch_related("product"))
         return self._cached_items
 
     @property
