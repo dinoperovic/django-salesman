@@ -202,9 +202,12 @@ class Order(ClusterableModel):
             setattr(self, attr, value)
         self.save()
 
+        product_field = ProductField()
+        product_field._context = {"request": request}
+
         for item in basket.get_items():
             # Store serialized product with `name` and `code`.
-            product_data = ProductField().to_representation(item.product)
+            product_data = product_field.to_representation(item.product)
             product_data.update({'name': item.product.name, 'code': item.product.code})
 
             extra_rows = ExtraRowsField().to_representation(item.extra_rows)

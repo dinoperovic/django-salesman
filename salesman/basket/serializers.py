@@ -17,10 +17,12 @@ class ProductField(serializers.DictField):
     taken from ``SALESMAN_PRODUCT_TYPES`` setting.
     """
 
-    def to_representation(self, product):
+    def to_representation(self, product, request=None):
         product_types = app_settings.SALESMAN_PRODUCT_TYPES
         serializer_class = product_types.get(product._meta.label, None)
-        return serializer_class(product).data if serializer_class else product.pk
+        if not serializer_class:
+            return product.pk
+        return serializer_class(context=self.context).to_representation(product)
 
 
 class ExtraRowsField(serializers.ListField):

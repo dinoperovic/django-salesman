@@ -13,3 +13,4 @@ Fixed
 -----
 
 - Allow ``OrderViewSet`` to be called without a ``lookup_field`` to fix schema generation.
+- Ensure that ``ProductField`` has ``request`` available through context.
