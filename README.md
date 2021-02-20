@@ -26,7 +26,7 @@
 </p>
 
 **Salesman** provides a configurable system for building an online store.
-It provides a **RESTful** API with endpoints for manipulating the basket,
+It includes a **RESTful** API with endpoints for manipulating the basket,
 processing the checkout and payment operations as well as managing customer orders.
 
 ## Features
