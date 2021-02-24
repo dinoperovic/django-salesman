@@ -57,6 +57,13 @@ def _format_is_paid(value, obj, request):
     return format_html(template, icon, color)
 
 
+def _format_customer(value, obj, request):
+    """
+    Wrapper for displaying customer in Wagtail.
+    """
+    return obj.customer_display(context={'wagtail': True})
+
+
 def _render_items(value, obj, request):
     """
     Renderer to display items table statically in html format.
@@ -179,7 +186,7 @@ class BaseOrderAdmin(ModelAdmin):
         ),
         MultiFieldPanel(
             [
-                ReadOnlyPanel('user'),
+                ReadOnlyPanel('customer_display', formatter=_format_customer),
                 ReadOnlyPanel('email'),
                 ReadOnlyPanel('shipping_address_display'),
                 ReadOnlyPanel('billing_address_display'),

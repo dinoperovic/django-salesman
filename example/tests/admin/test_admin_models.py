@@ -5,8 +5,10 @@ from salesman.admin import models, utils
 
 
 @pytest.mark.django_db
-def test_order():
+def test_order(django_user_model):
     order = models.Order.objects.create(ref="1", subtotal=100, total=120)
+    user = django_user_model.objects.create_user(username='user', password='password')
+
     order.extra = {'test': 1}
     order.extra_rows = [1, 2, 3]
     order.save()
@@ -19,6 +21,16 @@ def test_order():
         order.date_updated, format="DATETIME_FORMAT"
     )
     assert order.is_paid_display() == order.is_paid
+
+    # Customer display
+    assert order.customer_display() == '-'
+    order.user = user
+    order.save(update_fields=["user"])
+    assert order.customer_display().startswith(f'<a href="/admin/auth/user/{user.id}')
+    assert order.customer_display(context={'wagtail': True}).startswith(
+        f'<a href="/cms/users/{user.id}'
+    )
+
     result = order.shipping_address.replace('\n', '<br>') or '-'
     assert order.shipping_address_display() == result
     result = order.billing_address.replace('\n', '<br>') or '-'

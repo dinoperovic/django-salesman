@@ -54,6 +54,13 @@ class Order(BaseOrder):
     is_paid_display.boolean = True
     is_paid_display.short_description = _("Is paid")
 
+    def customer_display(self, context={}):
+        if not self.user:
+            return '-'
+        return app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER(self.user, context)
+
+    customer_display.short_description = _("Customer")
+
     def shipping_address_display(self):
         return mark_safe(self.shipping_address.replace('\n', '<br>')) or '-'
 

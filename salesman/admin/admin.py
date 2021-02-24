@@ -151,6 +151,7 @@ class BaseOrderAdmin(admin.ModelAdmin):
         'is_paid_display',
         'date_created',
         'date_updated',
+        'customer_display',
         'email',
         'shipping_address_display',
         'billing_address_display',
@@ -171,7 +172,7 @@ class BaseOrderAdmin(admin.ModelAdmin):
             _("Contact"),
             {
                 'fields': [
-                    'user',
+                    'customer_display',
                     'email',
                     'shipping_address_display',
                     'billing_address_display',

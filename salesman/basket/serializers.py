@@ -19,9 +19,7 @@ class ProductField(serializers.DictField):
 
     def to_representation(self, product, request=None):
         product_types = app_settings.SALESMAN_PRODUCT_TYPES
-        serializer_class = product_types.get(product._meta.label, None)
-        if not serializer_class:
-            return product.pk
+        serializer_class = product_types[product._meta.label]
         return serializer_class(context=self.context).to_representation(product)
 
 

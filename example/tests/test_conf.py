@@ -205,6 +205,21 @@ def test_price_formatter(settings):
         assert app_settings.SALESMAN_PRICE_FORMATTER
 
 
+not_callable_admin_customer_formatter_function = 1
+
+
+def test_admin_customer_formatter(settings):
+    assert app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER
+    with pytest.raises(ImproperlyConfigured):
+        settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER = 'invalid.path.to.function'
+        assert app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER
+    with pytest.raises(ImproperlyConfigured):
+        settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER = (
+            'tests.test_conf.not_callable_admin_customer_formatter_function'
+        )
+        assert app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER
+
+
 not_callable_admin_json_formatter_function = 1
 
 

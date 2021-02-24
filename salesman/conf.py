@@ -203,6 +203,17 @@ class DefaultSettings:
         return self._setting('SALESMAN_ADMIN_REGISTER', True)
 
     @property
+    def SALESMAN_ADMIN_CUSTOMER_FORMATTER(self) -> callable:
+        """
+        A dotted path to Customer formatter function. Function should accept
+        user as argument and return a string for customer display. Also recieves
+        a ``context`` dictionary with additional render data.
+        """
+        default = 'salesman.admin.utils.format_customer'
+        value = self._setting('SALESMAN_ADMIN_CUSTOMER_FORMATTER', default)
+        return self._callable(value)
+
+    @property
     def SALESMAN_ADMIN_JSON_FORMATTER(self) -> callable:
         """
         A dotted path to JSON formatter function. Function should accept a dict
