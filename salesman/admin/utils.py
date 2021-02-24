@@ -75,5 +75,8 @@ def format_customer(user: User, context: dict = {}) -> str:
     else:
         url_name = 'admin:auth_user_change'
 
-    url = reverse(url_name, args=[user.pk])
-    return mark_safe(f'<a href="{url}">{user}</a>')
+    try:
+        url = reverse(url_name, args=[user.pk])
+        return mark_safe(f'<a href="{url}">{user}</a>')
+    except NoReverseMatch:  # pragma: no cover
+        return str(user)
