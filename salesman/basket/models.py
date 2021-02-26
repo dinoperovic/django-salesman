@@ -263,6 +263,20 @@ class BasketItem(models.Model):
         for modifier in basket_modifiers_pool.get_modifiers():
             modifier.process_item(self, request)
 
+    @property
+    def name(self):
+        """
+        Returns product `name`.
+        """
+        return self.product.name
+
+    @property
+    def code(self):
+        """
+        Returns product `name`.
+        """
+        return self.product.code
+
     @classmethod
     def get_product_ref(cls, product: object) -> str:
         """

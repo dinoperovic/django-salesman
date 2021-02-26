@@ -120,6 +120,9 @@ def test_basket_item(rf):
     assert item.ref == BasketItem.get_product_ref(product) == 'shopproduct-1'
     assert str(item) == f"1x {product}"
 
+    assert item.name == product.name
+    assert item.code == product.code
+
 
 @pytest.mark.django_db
 def test_basket_item_update(rf):
