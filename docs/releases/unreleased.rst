@@ -15,7 +15,7 @@ Added
 Changed
 -------
 
-- Extra field on basket now always defaluts to ``{}`` so that the validators are called when empty.
+- Extra field on basket now always defaults to ``{}`` so that the validator gets called when empty.
 
 Fixed
 -----
