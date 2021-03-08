@@ -57,7 +57,7 @@ class BasketItemSerializer(serializers.ModelSerializer):
     extra_rows = ExtraRowsField(read_only=True)
     total = PriceField(read_only=True)
     extra = serializers.JSONField(
-        required=False, help_text=_("Extra is updated and null values are removed.")
+        default=dict, help_text=_("Extra is updated and null values are removed.")
     )
 
     class Meta:
@@ -111,7 +111,7 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
     )
     product_id = serializers.IntegerField(min_value=1)
     quantity = serializers.IntegerField(default=1, min_value=1)
-    extra = serializers.JSONField(required=False, help_text=_("Store extra JSON data."))
+    extra = serializers.JSONField(default=dict, help_text=_("Store extra JSON data."))
 
     class Meta:
         model = BasketItem

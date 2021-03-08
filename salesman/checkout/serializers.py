@@ -55,7 +55,7 @@ class CheckoutSerializer(serializers.Serializer):
         write_only=True,
     )
     extra = serializers.JSONField(
-        required=False,
+        default=dict,
         write_only=True,
         help_text=_("Extra is updated and null values are removed."),
     )
