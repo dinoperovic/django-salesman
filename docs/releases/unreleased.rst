@@ -8,7 +8,6 @@ Added
 -----
 
 - Add support for ``Wagtail 2.12``.
-- Optimize basket by prefetching the related products in ``get_items``.
 - Added an option to customize Customer formatting in admin, see: :ref:`admin-customer-formatter`.
 - Added ``name`` and ``code`` properties on Basket item to make it consistent with Order item.
 - Added the ability to override order serializer through ``SALESMAN_ORDER_SERIALIZER`` setting.
@@ -23,3 +22,5 @@ Fixed
 
 - Allow ``OrderViewSet`` to be called without a ``lookup_field`` to fix schema generation.
 - Ensure that ``ProductField`` has ``request`` available through context.
+- Optimize basket by prefetching the related products in ``get_items``.
+- Optimize order views by pre-fetching related data.
