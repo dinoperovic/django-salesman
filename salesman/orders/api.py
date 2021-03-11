@@ -26,15 +26,29 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'ref'
 
     def get_queryset(self):
+        queryset = Order.objects.all()
+
+        if self.action in ["list", "retrieve", "last", "all"]:
+            # Optimize full order views by pre-fetching data.
+            fields = self.serializer_class.Meta.prefetched_fields
+            queryset = queryset.prefetch_related(*fields)
+
         if self.request.user.is_authenticated:
             if self.request.user.is_staff and self.action != 'list':
                 # Allow access for admin user to all orders except on `list`.
-                return Order.objects.all()
-            return Order.objects.filter(user=self.request.user)
+                return queryset
+            return queryset.filter(user=self.request.user)
+
         if 'token' in self.request.GET:
             # Allow non-authenticated users access to order with token.
-            return Order.objects.filter(token=self.request.GET['token'])
+            return queryset.filter(token=self.request.GET['token'])
+
         return Order.objects.none()
+
+    def get_object(self):
+        if not hasattr(self, '_object'):
+            self._object = super().get_object()
+        return self._object
 
     def get_serializer_context(self):
         context = super().get_serializer_context()

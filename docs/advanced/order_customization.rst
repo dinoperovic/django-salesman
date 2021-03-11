@@ -71,3 +71,6 @@ Custom order serializer
 
 You can override order serializer by providing a dotted path in ``SALESMAN_ORDER_SERIALIZER`` setting.
 Default serializer is set to :class:`salesman.orders.serializers.OrderSerializer`.
+
+You can also override the ``OrderSerializer.Meta.prefetched_fields`` property to optimize for any added
+relations to your custom serializer.

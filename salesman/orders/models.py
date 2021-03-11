@@ -229,8 +229,7 @@ class Order(ClusterableModel):
         """
         Returns amount already paid for this order.
         """
-        aggr = self.payments.aggregate(amount=models.Sum('amount'))
-        return Decimal(aggr['amount'] or 0)
+        return Decimal(sum([x.amount for x in self.payments.all()]))
 
     @property
     def amount_outstanding(self) -> Decimal:
