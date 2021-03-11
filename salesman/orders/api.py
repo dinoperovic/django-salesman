@@ -7,12 +7,12 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from salesman.checkout.payment import PaymentError, payment_methods_pool
+from salesman.conf import app_settings
 
 from .models import Order
 from .serializers import (
     OrderPaySerializer,
     OrderRefundSerializer,
-    OrderSerializer,
     OrderStatusSerializer,
 )
 
@@ -22,7 +22,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     Orders API endpoint.
     """
 
-    serializer_class = OrderSerializer
+    serializer_class = app_settings.SALESMAN_ORDER_SERIALIZER
     lookup_field = 'ref'
 
     def get_queryset(self):

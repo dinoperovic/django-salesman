@@ -159,6 +159,15 @@ class DefaultSettings:
         return self._callable(value)
 
     @property
+    def SALESMAN_ORDER_SERIALIZER(self) -> type:
+        """
+        A dotted path to a serializer class for Order.
+        """
+        default = 'salesman.orders.serializers.OrderSerializer'
+        value = self._setting("SALESMAN_ORDER_SERIALIZER", default)
+        return self._callable(value)
+
+    @property
     def SALESMAN_PRICE_FORMATTER(self) -> callable:
         """
         A dotted path to price formatter function. Function should accept a value

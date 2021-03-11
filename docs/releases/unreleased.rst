@@ -11,6 +11,7 @@ Added
 - Optimize basket by prefetching the related products in ``get_items``.
 - Added an option to customize Customer formatting in admin, see: :ref:`admin-customer-formatter`.
 - Added ``name`` and ``code`` properties on Basket item to make it consistent with Order item.
+- Added the ability to override order serializer through ``SALESMAN_ORDER_SERIALIZER`` setting.
 
 Changed
 -------
