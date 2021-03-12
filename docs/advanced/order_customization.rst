@@ -66,6 +66,8 @@ points to a function that returns a unique reference string.
 
 Your custom function should accept Django's ``request`` object as a parameter.
 
+.. _custom-order-serializer:
+
 Custom order serializer
 =======================
 

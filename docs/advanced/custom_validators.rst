@@ -1,10 +1,11 @@
-.. _address-validation:
+#################
+Custom validators
+#################
 
-##############################
-Custom validators & formatters
-##############################
+A list of validators that can be overridden in Salesman.
 
-A list of validators and formatters that can be overridden in Salesman.
+
+.. _address-validator:
 
 Address validator
 =================
@@ -28,6 +29,31 @@ It also receives a ``context`` dictionary with additional context data like ``re
 a ``basket`` object and ``address`` type (set to either *shipping* or *billing*).
 
 
+.. _basket-item-validator:
+
+Basket item validator
+=====================
+
+Custom basket item validation is possible through a custom validator function. By default no
+extra validation is enforced through a placeholder :func:`salesman.basket.utils.validate_basket_item` function.
+
+You can add custom validation by providing a dotted path in ``SALESMAN_BASKET_ITEM_VALIDATOR``
+setting that points to your custom validator function.
+
+.. tip::
+
+    You can use this validator to check if an item can be added to the basket.
+    If basket item instance in ``context['basket_item']`` is ``None``, a new item beeing added.
+
+
+.. literalinclude:: /../salesman/basket/utils.py
+    :pyobject: validate_basket_item
+
+Your custom validator should accept a dictionary ``attrs`` value and return the validated version.
+It also receives a ``context`` dictionary with additional context data like  ``request``,
+a ``basket`` object and ``basket_item`` instance in case an existing item is validated.
+
+
 Extra validator
 ===============
 
@@ -44,38 +70,3 @@ setting that points to your custom validator function.
 Your custom validator should accept a dictionary ``value`` and return the validated version.
 It also receives a ``context`` dictionary with additional context data like  ``request``,
 a ``basket`` object and ``basket_item`` in case validation is happening on the basket item.
-
-
-.. _admin-json-formatter:
-
-Admin JSON formatter
-====================
-
-When displaying JSON data in admin, a formatter function is used. The default function
-:func:`salesman.admin.utils.format_json` uses the ``Pygments`` library to create the
-default JSON display. You can override the JSON formatter by providing a dotted path
-to a function in ``SALESMAN_ADMIN_JSON_FORMATTER`` setting.
-
-.. literalinclude:: /../salesman/admin/utils.py
-    :pyobject: format_json
-
-Your custom formatter should accept a dictionary ``value`` and return the HTML string.
-It also receives a ``context`` dictionary with additional context. Either an ``order`` or
-``order_item`` boolean will be passed in depending on the formatting location.
-
-
-.. _admin-customer-formatter:
-
-Admin Customer formatter
-========================
-
-To display customer on an order, a formatter function is used. The default function
-:func:`salesman.admin.utils.format_customer` returns the link to the default User models
-for both the Django and Wagtail admins. You can override the Customer formatter by providing
-a dotted path to a function in ``SALESMAN_ADMIN_CUSTOMER_FORMATTER`` setting.
-
-.. literalinclude:: /../salesman/admin/utils.py
-    :pyobject: format_customer
-
-Your custom formatter should accept a ``user`` instnance and return a string. It also receives a
-``context`` dictionary with additional context.

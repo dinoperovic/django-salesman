@@ -82,12 +82,18 @@ class BasketItemSerializer(serializers.ModelSerializer):
         url = reverse('salesman-basket-detail', args=[obj.ref])
         return request.build_absolute_uri(url) if request else url
 
+    def validate(self, attrs):
+        context = self.context.copy()
+        context['basket_item'] = self.instance
+        return app_settings.SALESMAN_BASKET_ITEM_VALIDATOR(attrs, context=context)
+
     def validate_extra(self, value):
         # Update basket `extra` instead of replacing it, remove null values.
         extra = self.instance.extra if self.instance else {}
         if value:
             extra.update(value)
             extra = {k: v for k, v in extra.items() if v is not None}
+
         # Validate using extra validator.
         context = self.context.copy()
         context['basket_item'] = self.instance
@@ -128,7 +134,11 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
         except ObjectDoesNotExist:
             msg = _("Product '{product_type}' with id '{product_id}' doesn't exist.")
             raise serializers.ValidationError(msg.format(**attrs))
-        return attrs
+
+        # Validate using basket item validator.
+        context = self.context.copy()
+        context['basket_item'] = self.instance
+        return app_settings.SALESMAN_BASKET_ITEM_VALIDATOR(attrs, context=context)
 
     def validate_extra(self, value):
         context = self.context.copy()

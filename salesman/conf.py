@@ -88,6 +88,15 @@ class DefaultSettings:
         return ret
 
     @property
+    def SALESMAN_BASKET_ITEM_VALIDATOR(self) -> callable:
+        """
+        A dotted path to basket item validator function.
+        """
+        default = "salesman.basket.utils.validate_basket_item"
+        value = self._setting('SALESMAN_BASKET_ITEM_VALIDATOR', default)
+        return self._callable(value)
+
+    @property
     def SALESMAN_PAYMENT_METHODS(self) -> list:
         """
         A list of strings formated as ``path.to.CustomPayment``.
