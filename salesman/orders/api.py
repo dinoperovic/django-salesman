@@ -28,10 +28,10 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Order.objects.all()
 
-        if self.action in ["list", "retrieve", "last", "all"]:
-            # Optimize full order views by pre-fetching data.
-            fields = self.serializer_class.Meta.prefetched_fields
-            queryset = queryset.prefetch_related(*fields)
+        # Optimize views by pre-fetching data.
+        prefetched_fields = self.get_prefetched_fields()
+        if prefetched_fields:
+            queryset = queryset.prefetch_related(*prefetched_fields)
 
         if self.request.user.is_authenticated:
             if self.request.user.is_staff and self.action != 'list':
@@ -50,11 +50,22 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             self._object = super().get_object()
         return self._object
 
+    def get_serializer_class(self):
+        if self.action in ["list", "all"]:
+            return app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
+        return super().get_serializer_class()
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
         if self.detail and self.lookup_field in self.kwargs:
             context['order'] = self.get_object()
         return context
+
+    def get_prefetched_fields(self):
+        serializer_class = self.get_serializer_class()
+        if hasattr(serializer_class, "Meta"):
+            return getattr(serializer_class.Meta, "prefetched_fields", None)
+        return None
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):

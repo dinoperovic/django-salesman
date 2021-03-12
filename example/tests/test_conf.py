@@ -190,6 +190,20 @@ def test_order_reference_generator(settings):
         assert app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR
 
 
+def test_order_serializer(settings):
+    assert app_settings.SALESMAN_ORDER_SERIALIZER
+    assert (
+        app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
+        == app_settings.SALESMAN_ORDER_SERIALIZER
+    )
+
+    with pytest.raises(ImproperlyConfigured):
+        settings.SALESMAN_ORDER_SUMMARY_SERIALIZER = (
+            'salesman.orders.serializers.DummyOrderSerializer'
+        )
+        assert app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
+
+
 not_callable_price_formatter_function = 1
 
 
