@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-salesman"
-version = "0.1.7"
+version = "1.0.0"
 description = "Headless e-commerce framework for Django."
 authors = ["Dino Perovic <dino.perovic@gmail.com>"]
 license = "BSD-3-Clause"
@@ -10,7 +10,7 @@ repository = "https://github.com/dinoperovic/django-salesman"
 documentation = "https://django-salesman.readthedocs.io"
 keywords = ["e-commerce", "headless", "rest-api", "shop", "framework"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Framework :: Django",
     "Framework :: Django :: 3.0",
     "Framework :: Django :: 3.1",
