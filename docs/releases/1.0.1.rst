@@ -1,0 +1,11 @@
+#####
+1.0.1
+#####
+
+*2021-05-13*
+
+Added
+-----
+
+- Add support for ``Wagtail 2.13``.
+- Add support for ``Django 3.2``.

@@ -283,6 +283,9 @@ class BaseOrderAdmin(ModelAdmin):
 
     admin_is_paid.short_description = Order.is_paid_display.short_description
 
+    def get_edit_template(self):
+        return super().get_edit_template()
+
 
 class OrderRefundView(DeleteView):
     """
