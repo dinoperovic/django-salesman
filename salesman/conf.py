@@ -161,7 +161,6 @@ class DefaultSettings:
         """
         A dotted path to reference generator function for new orders.
         Function should accept a django request object as param: ``request``.
-        Value returned from the function will be slugified.
         """
         default = 'salesman.orders.utils.generate_ref'
         value = self._setting('SALESMAN_ORDER_REFERENCE_GENERATOR', default)

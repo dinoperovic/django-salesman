@@ -9,7 +9,7 @@ from django.db import models, transaction
 from django.db.models import TextChoices
 from django.http import HttpRequest
 from django.utils.functional import cached_property
-from django.utils.text import Truncator, slugify
+from django.utils.text import Truncator
 from django.utils.translation import gettext_lazy as _
 
 from salesman.basket.models import Basket, BasketItem
@@ -44,7 +44,7 @@ class OrderManager(models.Manager):
             Order: Order instance
         """
         generate_ref = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR
-        kwargs['ref'] = slugify(generate_ref(request))
+        kwargs['ref'] = generate_ref(request)
         return super().create(**kwargs)
 
     def create_from_basket(
@@ -70,7 +70,7 @@ class Order(ClusterableModel):
     )
 
     # A unique reference to this order, could be used as order number.
-    ref = models.SlugField(
+    ref = models.CharField(
         _("Reference"),
         max_length=128,
         unique=True,

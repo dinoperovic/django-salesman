@@ -57,10 +57,6 @@ for that order. By default reference is generated in a ``{year}-{5-digit-increme
 You can change it by providing a dotted path in ``SALESMAN_ORDER_REFERENCE_GENERATOR`` setting that
 points to a function that returns a unique reference string.
 
-.. note::
-
-    Reference generators function output will be *slugified*.
-
 .. literalinclude:: /../salesman/orders/utils.py
     :pyobject: generate_ref
 
