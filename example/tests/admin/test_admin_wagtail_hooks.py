@@ -26,11 +26,6 @@ def test_order_admin(rf, client, django_user_model):
     modeladmin = wagtail_hooks.OrderAdmin()
     modeladmin.model.request = request
     edit_url = modeladmin.url_helper.get_action_url('edit', order.id)
-    title = (
-        '<div class="title"><div class="title-wrapper">'
-        f'<a href="{edit_url}">2020-00001</a></div></div>'
-    )
-    assert modeladmin.admin_title(order) == title
     result = f'<span class="status-tag primary">{order.statuses.NEW.label}</span>'
     assert modeladmin.admin_status(order) == result
     order.status = order.statuses.REFUNDED

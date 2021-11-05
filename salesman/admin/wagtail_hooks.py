@@ -155,7 +155,7 @@ class BaseOrderAdmin(ModelAdmin):
     index_view_class = OrderIndexView
     edit_view_class = OrderEditView
     list_display = [
-        'admin_title',
+        '__str__',
         'email',
         'admin_status',
         'total_display',
@@ -257,18 +257,6 @@ class BaseOrderAdmin(ModelAdmin):
         ],
         base_form_class=OrderModelForm,
     )
-
-    def admin_title(self, obj):
-        url = self.url_helper.get_action_url('edit', obj.id)
-        return format_html(
-            '<div class="title">'
-            '<div class="title-wrapper"><a href="{}">{}</a></div>'
-            '</div>',
-            url,
-            obj,
-        )
-
-    admin_title.short_description = _('Order')
 
     def admin_status(self, obj):
         faded_statuses = [obj.statuses.CANCELLED, obj.statuses.REFUNDED]

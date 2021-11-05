@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-salesman"
-version = "1.0.3"
+version = "1.0.4"
 description = "Headless e-commerce framework for Django."
 authors = ["Dino Perovic <dino.perovic@gmail.com>"]
 license = "BSD-3-Clause"
@@ -33,7 +33,7 @@ djangorestframework = ">=3.11,<3.13"
 
 # Optional dependencies
 Pygments = {version = "^2.6", optional = true}
-wagtail = {version = ">=2.9,<2.15", optional = true}
+wagtail = {version = ">=2.9,<2.16", optional = true}
 pytest = {version = "~6.2", optional = true}
 pytest-django = {version = "~4.2", optional = true}
 pytest-cov = {version = "~2.11", optional = true}

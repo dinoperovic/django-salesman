@@ -1,0 +1,11 @@
+#####
+1.0.4
+#####
+
+*2021-11-05*
+
+Added
+-----
+
+- Add support for ``Python 3.10``.
+- Add support for ``Wagtail 2.15``.
