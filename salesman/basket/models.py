@@ -34,10 +34,10 @@ class BasketManager(models.Manager):
 
         if hasattr(request, 'user') and request.user.is_authenticated:
             try:
-                basket, created = self.get_or_create(owner=request.user)
+                basket, created = self.get_or_create(owner_id=request.user.id)
             except self.model.MultipleObjectsReturned:
                 # User has multiple baskets, merge them.
-                baskets = list(self.filter(owner=request.user))
+                baskets = list(self.filter(owner=request.user.id))
                 basket, created = baskets[0], False
                 for other in baskets[1:]:
                     basket.merge(other)

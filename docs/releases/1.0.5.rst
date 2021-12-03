@@ -1,0 +1,10 @@
+#####
+1.0.5
+#####
+
+*TBA*
+
+Changed
+-------
+
+- Use `user.id` instead of `user` when possible.

@@ -37,7 +37,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             if self.request.user.is_staff and self.action != 'list':
                 # Allow access for admin user to all orders except on `list`.
                 return queryset
-            return queryset.filter(user=self.request.user)
+            return queryset.filter(user=self.request.user.id)
 
         if 'token' in self.request.GET:
             # Allow non-authenticated users access to order with token.
