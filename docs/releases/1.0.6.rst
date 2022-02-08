@@ -1,0 +1,16 @@
+#####
+1.0.6
+#####
+
+*2022-02-08*
+
+Added
+-----
+
+- Add support for ``Django 4.0``.
+- Add support for ``Wagtail 2.16``.
+
+Removed
+-------
+
+- Removed support for ``Python 3.6`` and ``Python 3.7``
