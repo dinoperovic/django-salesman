@@ -9,8 +9,12 @@ from salesman.checkout.payment import payment_methods_pool
 from salesman.checkout.serializers import PaymentMethodSerializer
 from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
+from salesman.core.utils import get_salesman_model
 
-from .models import Order, OrderItem, OrderNote, OrderPayment
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
+OrderNote = get_salesman_model('OrderNote')
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

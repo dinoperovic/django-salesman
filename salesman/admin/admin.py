@@ -6,12 +6,18 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
+from salesman.core.utils import get_salesman_model
 
-from .models import Order, OrderItem, OrderNote, OrderPayment
+from .mixins import OrderAdminMixin, OrderItemAdminMixin
 from .widgets import OrderStatusSelect, PaymentSelect
 
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
+OrderNote = get_salesman_model('OrderNote')
 
-class OrderItemInline(admin.TabularInline):
+
+class OrderItemInline(OrderItemAdminMixin, admin.TabularInline):
     model = OrderItem
     fields = [
         'name',
@@ -39,19 +45,19 @@ class OrderItemInline(admin.TabularInline):
         template = '<div style="margin-top: -8px">{}</div>'
         return format_html(template, obj.extra_rows_display())
 
-    extra_rows_display.short_description = _("Extra rows")
+    extra_rows_display.short_description = _("Extra rows")  # type: ignore
 
     def extra_display(self, obj):
         template = '<div style="margin-top: -8px">{}</div>'
         return format_html(template, obj.extra_display())
 
-    extra_display.short_description = _("Extra")
+    extra_display.short_description = _("Extra")  # type: ignore
 
 
 class OrderPaymentModelForm(forms.ModelForm):
     class Meta:
         model = OrderPayment
-        exclude = []
+        exclude: list = []
         widgets = {
             'payment_method': PaymentSelect,
         }
@@ -72,7 +78,7 @@ class OrderPaymentInline(admin.TabularInline):
 class OrderNoteModelForm(forms.ModelForm):
     class Meta:
         model = OrderNote
-        exclude = []
+        exclude: list = []
         widgets = {
             'message': forms.Textarea(attrs={'rows': 4, 'cols': 60}),
         }
@@ -89,7 +95,7 @@ class OrderNoteInline(admin.TabularInline):
 class OrderModelForm(forms.ModelForm):
     class Meta:
         model = Order
-        exclude = []
+        exclude: list = []
         widgets = {
             'status': OrderStatusSelect,
         }
@@ -129,7 +135,7 @@ class OrderIsPaidFilter(admin.SimpleListFilter):
             return queryset.filter(id__in=[x.id for x in queryset if not x.is_paid])
 
 
-class BaseOrderAdmin(admin.ModelAdmin):
+class BaseOrderAdmin(OrderAdminMixin, admin.ModelAdmin):
     form = OrderModelForm
     change_form_template = 'salesman/admin/change_form.html'
     date_hierarchy = 'date_created'

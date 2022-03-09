@@ -2,8 +2,12 @@ import pytest
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
 
-from salesman.basket.models import BASKET_ID_SESSION_KEY, Basket, BasketItem
+from salesman.basket.models import BASKET_ID_SESSION_KEY
+from salesman.core.utils import get_salesman_model
 from shop.models import Phone, PhoneVariant, Product
+
+Basket = get_salesman_model('Basket')
+BasketItem = get_salesman_model('BasketItem')
 
 
 @pytest.mark.django_db

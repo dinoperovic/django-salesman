@@ -30,7 +30,7 @@ SECRET_KEY = 'f(dxledn4p#f&=u!e255jl$@n(eraky==(=ddt3(g73oyc^(_$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list = []
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -171,6 +171,13 @@ SALESMAN_PAYMENT_METHODS = [
 ]
 SALESMAN_ADDRESS_VALIDATOR = 'shop.utils.custom_address_validator'
 SALESMAN_PRICE_FORMATTER = 'shop.utils.custom_price_format'
+
+SALESMAN_BASKET_MODEL = 'shop.Basket'
+SALESMAN_BASKET_ITEM_MODEL = 'shop.BasketItem'
+SALESMAN_ORDER_MODEL = 'shop.Order'
+SALESMAN_ORDER_ITEM_MODEL = 'shop.OrderItem'
+SALESMAN_ORDER_PAYMENT_MODEL = 'shop.OrderPayment'
+SALESMAN_ORDER_NOTE_MODEL = 'shop.OrderNote'
 
 # wagtail
 WAGTAIL_SITE_NAME = 'My Example Site'

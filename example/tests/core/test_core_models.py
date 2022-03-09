@@ -1,7 +1,9 @@
 import pytest
 
-from salesman.basket.models import Basket
 from salesman.core.models import JSONField
+from salesman.core.utils import get_salesman_model
+
+Basket = get_salesman_model('Basket')
 
 
 @pytest.mark.django_db

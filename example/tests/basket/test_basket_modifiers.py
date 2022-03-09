@@ -1,9 +1,11 @@
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 
-from salesman.basket.models import Basket
 from salesman.basket.modifiers import BasketModifier, BasketModifiersPool
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+Basket = get_salesman_model('Basket')
 
 
 class DummyModifier(BasketModifier):

@@ -8,13 +8,15 @@ from rest_framework.response import Response
 
 from salesman.checkout.payment import PaymentError, payment_methods_pool
 from salesman.conf import app_settings
+from salesman.core.utils import get_salesman_model
 
-from .models import Order
 from .serializers import (
     OrderPaySerializer,
     OrderRefundSerializer,
     OrderStatusSerializer,
 )
+
+Order = get_salesman_model('Order')
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):

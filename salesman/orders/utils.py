@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from django.utils import timezone
 
-from .models import Order
+from salesman.core.utils import get_salesman_model
 
 
 def generate_ref(request: HttpRequest) -> str:
@@ -18,6 +18,7 @@ def generate_ref(request: HttpRequest) -> str:
         str: New order reference
     """
     year = timezone.now().year
+    Order = get_salesman_model('Order')
     last = Order.objects.filter(date_created__year=year, ref__isnull=False).first()
     increment = int(last.ref.split('-')[1]) + 1 if last and last.ref else 1
     return f'{year}-{increment:05d}'

@@ -1,9 +1,7 @@
 from django import forms
 from django.shortcuts import redirect
 from django.urls import re_path
-from django.utils.formats import date_format
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
 from wagtail.admin.edit_handlers import (
@@ -19,87 +17,23 @@ from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.contrib.modeladmin.views import DeleteView, EditView, IndexView
 
 from salesman.conf import app_settings
+from salesman.core.utils import get_salesman_model
 
 from .admin import OrderIsPaidFilter
 from .admin import OrderModelForm as BaseOrderModelForm
 from .admin import OrderStatusFilter
-from .edit_handlers import ReadOnlyPanel
-from .models import Order
-from .utils import format_price
+from .edit_handlers import (
+    OrderAdminPanel,
+    OrderCheckboxPanel,
+    OrderCustomerPanel,
+    OrderDatePanel,
+    OrderItemsPanel,
+    ReadOnlyPanel,
+)
+from .mixins import OrderAdminMixin
 from .widgets import OrderStatusSelect, PaymentSelect
 
-
-def _format_json(value, obj, request):
-    """
-    Wrapper for ``format_json`` temporarily used to display
-    json values on inline order models.
-    """
-    return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-        value,
-        context={'order_item': True},
-    )
-
-
-def _format_date(value, obj, request):
-    """
-    Wrapper for ``date_format`` used to display date values
-    on inline order models.
-    """
-    return date_format(value, format='DATETIME_FORMAT')
-
-
-def _format_is_paid(value, obj, request):
-    """
-    Formatter for is_paid to display colored tick or cross.
-    """
-    icon, color = ('tick', '#157b57') if obj.is_paid else ('cross', '#cd3238')
-    template = '<span class="icon icon-{}" style="color: {};"></span>'
-    return format_html(template, icon, color)
-
-
-def _format_customer(value, obj, request):
-    """
-    Wrapper for displaying customer in Wagtail.
-    """
-    return obj.customer_display(context={'wagtail': True})
-
-
-def _render_items(value, obj, request):
-    """
-    Renderer to display items table statically in html format.
-    """
-    head = f'''<tr>
-        <td>{_('Name')}</td>
-        <td>{_('Code')}</td>
-        <td>{_('Unit price')}</td>
-        <td>{_('Quantity')}</td>
-        <td>{_('Subtotal')}</td>
-        <td>{_('Extra rows')}</td>
-        <td>{_('Total')}</td>
-        <td>{_('Extra')}</td>
-        </tr>'''
-
-    body = ''
-    for item in obj.items.all():
-        body += '<tr>'
-        body += f'<td class="title"><h2>{item.name}</h2></td>'
-        body += f'<td>{item.code}</td>'
-        body += f'<td>{format_price(item.unit_price, obj, request)}</td>'
-        body += f'<td>{item.quantity}</td>'
-        body += f'<td>{format_price(item.subtotal, obj, request)}</td>'
-        body += f'<td>{_format_json(item.extra_rows, obj, request)}</td>'
-        body += f'<td>{format_price(item.total, obj, request)}</td>'
-        body += f'<td>{_format_json(item.extra, obj, request)}</td>'
-        body += '</tr>'
-
-    return format_html(
-        '<table class="listing full-width">'
-        '<thead>{}</thead>'
-        '<tbody>{}</tbody>'
-        '</table>',
-        mark_safe(head),
-        mark_safe(body),
-    )
+Order = get_salesman_model('Order')
 
 
 class OrderIndexView(IndexView):
@@ -149,7 +83,7 @@ class OrderModelForm(BaseOrderModelForm, WagtailAdminModelForm):
     pass
 
 
-class BaseOrderAdmin(ModelAdmin):
+class BaseOrderAdmin(OrderAdminMixin, ModelAdmin):
     model = Order
     menu_icon = 'form'
     index_view_class = OrderIndexView
@@ -159,7 +93,7 @@ class BaseOrderAdmin(ModelAdmin):
         'email',
         'admin_status',
         'total_display',
-        'admin_is_paid',
+        'is_paid_display',
         'date_created',
     ]
     list_filter = [OrderStatusFilter, OrderIsPaidFilter, 'date_created', 'date_updated']
@@ -176,49 +110,40 @@ class BaseOrderAdmin(ModelAdmin):
         MultiFieldPanel(
             [
                 FieldPanel(
-                    'status', classname='choice_field', widget=OrderStatusSelect
+                    'status',
+                    classname='choice_field',
+                    widget=OrderStatusSelect,
                 ),
-                ReadOnlyPanel('date_created_display'),
-                ReadOnlyPanel('date_updated_display'),
-                ReadOnlyPanel('is_paid_display', formatter=_format_is_paid),
+                OrderDatePanel('date_created'),
+                OrderDatePanel('date_updated'),
+                OrderCheckboxPanel('is_paid', heading=_("Is paid")),
             ],
             heading=_("Status"),
         ),
         MultiFieldPanel(
             [
-                ReadOnlyPanel('customer_display', formatter=_format_customer),
+                OrderCustomerPanel('customer_display'),
                 ReadOnlyPanel('email'),
-                ReadOnlyPanel('shipping_address_display'),
-                ReadOnlyPanel('billing_address_display'),
+                OrderAdminPanel('shipping_address_display'),
+                OrderAdminPanel('billing_address_display'),
             ],
             heading=_("Contact"),
         ),
         MultiFieldPanel(
             [
-                ReadOnlyPanel('subtotal_display'),
-                ReadOnlyPanel('extra_rows_display'),
-                ReadOnlyPanel('total_display'),
-                ReadOnlyPanel('amount_paid_display'),
-                ReadOnlyPanel('amount_outstanding_display'),
+                OrderAdminPanel('subtotal_display'),
+                OrderAdminPanel('extra_rows_display'),
+                OrderAdminPanel('total_display'),
+                OrderAdminPanel('amount_paid_display'),
+                OrderAdminPanel('amount_outstanding_display'),
             ],
             heading=_("Totals"),
         ),
-        MultiFieldPanel([ReadOnlyPanel('extra_display')], heading=_("Extra")),
+        MultiFieldPanel([OrderAdminPanel('extra_display')], heading=_("Extra")),
     ]
 
-    # Currently proxy related models don't work in Django and can't be used when
-    # accessing them on an Order proxy through a related manager. It points back to
-    # original models for items and payments. For that reason we can't use "display"
-    # methods defined on proxy related models and are using formatter/renderer
-    # functions instead.
-
     items_panels = [
-        ReadOnlyPanel(
-            'items',
-            classname='salesman-order-items',
-            renderer=_render_items,
-            heading=_("Items"),
-        ),
+        OrderItemsPanel('items', heading=_("Items")),
     ]
 
     payments_panels = [
@@ -230,7 +155,7 @@ class BaseOrderAdmin(ModelAdmin):
                 FieldPanel(
                     'payment_method', classname='choice_field', widget=PaymentSelect
                 ),
-                ReadOnlyPanel('date_created', formatter=_format_date),
+                OrderDatePanel('date_created'),
             ],
             heading=_("Payments"),
         ),
@@ -242,7 +167,7 @@ class BaseOrderAdmin(ModelAdmin):
             [
                 FieldPanel('message', widget=forms.Textarea(attrs={'rows': 4})),
                 FieldPanel('public'),
-                ReadOnlyPanel('date_created', formatter=_format_date),
+                OrderDatePanel('date_created'),
             ],
             heading=_("Notes"),
         )
@@ -264,12 +189,7 @@ class BaseOrderAdmin(ModelAdmin):
         template = '<span class="status-tag {}">{}</span>'
         return format_html(template, tag_class, obj.status_display)
 
-    admin_status.short_description = _('Status')
-
-    def admin_is_paid(self, obj):
-        return _format_is_paid(None, obj, None)
-
-    admin_is_paid.short_description = Order.is_paid_display.short_description
+    admin_status.short_description = _('Status')  # type: ignore
 
     def get_edit_template(self):
         return super().get_edit_template()

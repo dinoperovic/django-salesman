@@ -4,8 +4,10 @@ from rest_framework.settings import api_settings
 from rest_framework.test import APIClient
 
 from salesman.basket.api import BasketViewSet
-from salesman.basket.models import BasketItem
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+BasketItem = get_salesman_model('BasketItem')
 
 
 @pytest.mark.django_db

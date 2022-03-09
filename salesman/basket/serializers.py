@@ -5,10 +5,13 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from salesman.basket.models import BaseBasketItem
 from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
+from salesman.core.utils import get_salesman_model
 
-from .models import Basket, BasketItem
+Basket = get_salesman_model('Basket')
+BasketItem = get_salesman_model('BasketItem')
 
 
 class ProductField(serializers.DictField):
@@ -145,7 +148,7 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
         context['basket_item'] = self.instance
         return app_settings.SALESMAN_EXTRA_VALIDATOR(value, context=context)
 
-    def create(self, validated_data) -> BasketItem:
+    def create(self, validated_data) -> BaseBasketItem:
         basket = self.context['basket']
         return basket.add(
             product=validated_data['product'],

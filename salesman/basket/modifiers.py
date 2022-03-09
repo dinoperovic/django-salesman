@@ -1,14 +1,14 @@
 from decimal import Decimal
-from typing import List, TypeVar
+from typing import List, Optional, TypeVar
 
 from django.http import HttpRequest
 
 from salesman.conf import app_settings
 
-from .models import Basket, BasketItem
+from .models import BaseBasket, BaseBasketItem
 from .serializers import ExtraRowSerializer
 
-BasketOrItem = TypeVar('BasketOrItem', Basket, BasketItem)
+BasketOrItem = TypeVar('BasketOrItem', BaseBasket, BaseBasketItem)
 
 
 class BasketModifier(object):
@@ -17,7 +17,7 @@ class BasketModifier(object):
     in ``SALESMAN_BASKET_MODIFIERS`` must extend this class.
     """
 
-    identifier = None
+    identifier: Optional[str] = None
 
     def add_extra_row(
         self,
@@ -42,7 +42,7 @@ class BasketModifier(object):
         if charge:
             obj.total += Decimal(amount)
 
-    def process_item(self, item: BasketItem, request: HttpRequest) -> None:
+    def process_item(self, item: BaseBasketItem, request: HttpRequest) -> None:
         """
         Process item. Add extra row to item using ``self.add_extra_row()`` method.
 
@@ -51,7 +51,7 @@ class BasketModifier(object):
             request (HttpRequest): Django request
         """
 
-    def process_basket(self, basket: Basket, request: HttpRequest) -> None:
+    def process_basket(self, basket: BaseBasket, request: HttpRequest) -> None:
         """
         Process basket. Add extra row to bakset using ``self.add_extra_row()`` method.
 
@@ -66,7 +66,7 @@ class BasketModifiersPool(object):
     Pool for storing modifier instances.
     """
 
-    _modifiers = None
+    _modifiers: Optional[list] = None
 
     def get_modifiers(self) -> List[BasketModifier]:
         """

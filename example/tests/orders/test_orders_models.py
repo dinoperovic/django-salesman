@@ -2,10 +2,15 @@ from decimal import Decimal
 
 import pytest
 
-from salesman.basket.models import Basket
 from salesman.conf import app_settings
-from salesman.orders.models import Order, OrderItem, OrderNote, OrderPayment
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+Basket = get_salesman_model('Basket')
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
+OrderNote = get_salesman_model('OrderNote')
 
 
 @pytest.mark.django_db

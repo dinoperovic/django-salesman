@@ -1,7 +1,14 @@
 from django.core.exceptions import FieldDoesNotExist
+from django.utils.formats import date_format
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import EditHandler
+
+from salesman.conf import app_settings
+
+from .admin import OrderAdminMixin
+from .utils import format_price
 
 
 class ReadOnlyPanel(EditHandler):
@@ -28,28 +35,39 @@ class ReadOnlyPanel(EditHandler):
         """
         Set field data from model.
         """
+        field, heading = None, ''
         try:
             field = self.model._meta.get_field(self.attr)
             heading = getattr(field, 'verbose_name', '')
         except FieldDoesNotExist:
-            field = getattr(self.model, self.attr)
-            heading = getattr(field, 'short_description', '')
-        if not self.heading:
+            try:
+                field = getattr(self.model, self.attr)
+                heading = getattr(field, 'short_description', '')
+            except AttributeError:
+                pass
+        if heading and not self.heading:
             self.heading = heading
-        if not self.help_text:
+        if field and not self.help_text:
             self.help_text = getattr(field, 'help_text', '')
 
-    def render(self):
+    def get_value(self):
         value = getattr(self.instance, self.attr)
         if callable(value):
             value = value()
+        return value
+
+    def format_value(self, value):
         if self.formatter and value is not None:
             value = self.formatter(value, self.instance, self.request)
         return value
 
+    def render(self):
+        value = self.get_value()
+        return self.format_value(value)
+
     def render_as_object(self):
         if self.renderer:
-            return self.renderer(self.render(), self.instance, self.request)
+            return self.renderer(self.get_value(), self.instance, self.request)
         return format_html(
             '<fieldset><legend>{}</legend>'
             '<ul class="fields"><li><div class="field">'
@@ -62,7 +80,7 @@ class ReadOnlyPanel(EditHandler):
 
     def render_as_field(self):
         if self.renderer:
-            return self.renderer(self.render(), self.instance, self.request)
+            return self.renderer(self.get_value(), self.instance, self.request)
         help_html = (
             format_html('<p class="help">{}</p>', self.help_text)
             if self.help_text
@@ -80,3 +98,88 @@ class ReadOnlyPanel(EditHandler):
             self.render(),
             help_html,
         )
+
+
+class OrderDatePanel(ReadOnlyPanel):
+    def format_value(self, value):
+        if value:
+            value = date_format(value, format='DATETIME_FORMAT')
+        return value
+
+
+class OrderCheckboxPanel(ReadOnlyPanel):
+    def format_value(self, value):
+        icon, color = ('tick', '#157b57') if value else ('cross', '#cd3238')
+        template = '<span class="icon icon-{}" style="color: {};"></span>'
+        return format_html(template, icon, color)
+
+
+class OrderItemsPanel(ReadOnlyPanel):
+    def classes(self):
+        return ['salesman-order-items']
+
+    def render_as_field(self):
+        return self.render()
+
+    def render_as_object(self):
+        return self.render()
+
+    def format_json(self, value, obj, request):
+        return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
+            value, context={'order_item': True}
+        )
+
+    def render(self):
+        head = f'''<tr>
+            <td>{_('Name')}</td>
+            <td>{_('Code')}</td>
+            <td>{_('Unit price')}</td>
+            <td>{_('Quantity')}</td>
+            <td>{_('Subtotal')}</td>
+            <td>{_('Extra rows')}</td>
+            <td>{_('Total')}</td>
+            <td>{_('Extra')}</td>
+            </tr>'''
+
+        body = ''
+        for item in self.instance.items.all():
+            body += f'''<tr>
+            <td class="title"><h2>{item.name}</h2></td>
+            <td>{item.code}</td>
+            <td>{format_price(item.unit_price, self.instance, self.request)}</td>
+            <td>{item.quantity}</td>
+            <td>{format_price(item.subtotal, self.instance, self.request)}</td>
+            <td>{self.format_json(item.extra_rows, self.instance, self.request)}</td>
+            <td>{format_price(item.total, self.instance, self.request)}</td>
+            <td>{self.format_json(item.extra, self.instance, self.request)}</td>
+            </tr>'''
+
+        return format_html(
+            '<table class="listing full-width">'
+            '<thead>{}</thead>'
+            '<tbody>{}</tbody>'
+            '</table>',
+            mark_safe(head),
+            mark_safe(body),
+        )
+
+
+class OrderAdminPanel(ReadOnlyPanel):
+    """
+    Retrieves value from `OrderAdminMixin`.
+    """
+
+    def on_model_bound(self):
+        self.admin = OrderAdminMixin(request=self.request)
+        field = getattr(self.admin, self.attr)
+        heading = getattr(field, 'short_description', '')
+        if heading and not self.heading:
+            self.heading = heading
+
+    def get_value(self):
+        return getattr(self.admin, self.attr)(self.instance)
+
+
+class OrderCustomerPanel(OrderAdminPanel):
+    def get_value(self):
+        return getattr(self.admin, self.attr)(self.instance, context={'wagtail': True})

@@ -2,8 +2,12 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from salesman.orders.models import Order, OrderItem, OrderPayment
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
 
 
 @pytest.mark.django_db

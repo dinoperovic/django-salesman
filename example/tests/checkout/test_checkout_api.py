@@ -3,8 +3,10 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from salesman.checkout.api import CheckoutViewSet
-from salesman.orders.models import Order
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+Order = get_salesman_model('Order')
 
 
 @pytest.mark.django_db

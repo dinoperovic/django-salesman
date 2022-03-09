@@ -8,7 +8,7 @@ from django.urls import path, reverse
 
 from salesman.basket.models import Basket
 from salesman.checkout.payment import PaymentMethod
-from salesman.orders.models import Order
+from shop.models import Order
 
 
 class PayInAdvance(PaymentMethod):

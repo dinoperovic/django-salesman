@@ -1,7 +1,7 @@
 import json
 from decimal import Decimal
 
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.http import HttpRequest
 from django.urls import NoReverseMatch, reverse
 from django.utils.html import format_html
@@ -10,8 +10,6 @@ from rest_framework.compat import pygments_css, pygments_highlight
 
 from salesman.conf import app_settings
 from salesman.orders.models import Order
-
-User = get_user_model()
 
 
 def format_json(value: dict, context: dict = {}) -> str:
@@ -25,17 +23,17 @@ def format_json(value: dict, context: dict = {}) -> str:
     Returns:
         str: JSON formated html string
     """
-    value = json.dumps(value, indent=2)
-    value = pygments_highlight(value, 'json', 'tango')
+    output = json.dumps(value, indent=2)
+    output = pygments_highlight(output, 'json', 'tango')
     style = pygments_css('tango')
     styled = context.get('styled', True)  # Used for testing.
     if styled and style:
         html = (
             f'<style>{style}</style>'
-            f'<pre class="highlight" style="margin: 0; padding: 1em;">{value}</pre>'
+            f'<pre class="highlight" style="margin: 0; padding: 1em;">{output}</pre>'
         )
     else:
-        html = f'<pre style="margin: 0;">{value}</pre>'
+        html = f'<pre style="margin: 0;">{output}</pre>'
     return format_html('<div>{}</div>', mark_safe(html))
 
 
@@ -59,7 +57,7 @@ def format_price(value: Decimal, order: Order, request: HttpRequest) -> str:
     return app_settings.SALESMAN_PRICE_FORMATTER(value, context=context)
 
 
-def format_customer(user: User, context: dict = {}) -> str:
+def format_customer(user: settings.AUTH_USER_MODEL, context: dict = {}) -> str:
     """
     Format the customer display in admin orders.
 

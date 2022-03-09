@@ -4,13 +4,16 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Basket
+from salesman.core.utils import get_salesman_model
+
 from .serializers import (
     BasketExtraSerializer,
     BasketItemCreateSerializer,
     BasketItemSerializer,
     BasketSerializer,
 )
+
+Basket = get_salesman_model('Basket')
 
 
 class BasketViewSet(viewsets.ModelViewSet):
