@@ -7,7 +7,6 @@ from wagtail.admin.edit_handlers import EditHandler
 
 from salesman.conf import app_settings
 
-from .admin import OrderAdminMixin
 from .utils import format_price
 
 
@@ -166,20 +165,20 @@ class OrderItemsPanel(ReadOnlyPanel):
 
 class OrderAdminPanel(ReadOnlyPanel):
     """
-    Retrieves value from `OrderAdminMixin`.
+    Retrieves value from model_admin which is bound to the form in `get_edit_handler`.
     """
 
     def on_model_bound(self):
-        self.admin = OrderAdminMixin(request=self.request)
-        field = getattr(self.admin, self.attr)
+        pass
+
+    def on_form_bound(self):
+        if not hasattr(self.form, 'model_admin'):
+            raise AssertionError("OrderAdminPanel can only be used in OrderModelAdmin.")
+
+        field = getattr(self.form.model_admin, self.attr)
         heading = getattr(field, 'short_description', '')
         if heading and not self.heading:
             self.heading = heading
 
     def get_value(self):
-        return getattr(self.admin, self.attr)(self.instance)
-
-
-class OrderCustomerPanel(OrderAdminPanel):
-    def get_value(self):
-        return getattr(self.admin, self.attr)(self.instance, context={'wagtail': True})
+        return getattr(self.form.model_admin, self.attr)(self.instance)

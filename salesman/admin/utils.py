@@ -1,9 +1,7 @@
 import json
 from decimal import Decimal
 
-from django.conf import settings
 from django.http import HttpRequest
-from django.urls import NoReverseMatch, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from rest_framework.compat import pygments_css, pygments_highlight
@@ -55,26 +53,3 @@ def format_price(value: Decimal, order: Order, request: HttpRequest) -> str:
         'admin': True,
     }
     return app_settings.SALESMAN_PRICE_FORMATTER(value, context=context)
-
-
-def format_customer(user: settings.AUTH_USER_MODEL, context: dict = {}) -> str:
-    """
-    Format the customer display in admin orders.
-
-    Args:
-        user (User): Order user.
-        context (dict, optional): Format context data. Defaults to {}.
-
-    Returns:
-        str: Formatted customer display as string
-    """
-    if context.get("wagtail", False):
-        url_name = 'wagtailusers_users:edit'
-    else:
-        url_name = 'admin:auth_user_change'
-
-    try:
-        url = reverse(url_name, args=[user.pk])
-        return mark_safe(f'<a href="{url}">{user}</a>')
-    except NoReverseMatch:  # pragma: no cover
-        return str(user)

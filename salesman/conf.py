@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Any, Callable
+
+from django.db.models import Model
 
 from salesman.orders.status import BaseOrderStatus
 
@@ -71,14 +73,18 @@ class DefaultSettings:
         """
         A dotted path to the Basket model. Must be set before migrations.
         """
-        return self._setting('SALESMAN_BASKET_MODEL', 'salesmanbasket.Basket')
+        value = self._setting('SALESMAN_BASKET_MODEL', 'salesmanbasket.Basket')
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_BASKET_ITEM_MODEL(self) -> str:
         """
         A dotted path to the Basket Item model. Must be set before migrations.
         """
-        return self._setting('SALESMAN_BASKET_ITEM_MODEL', 'salesmanbasket.BasketItem')
+        value = self._setting('SALESMAN_BASKET_ITEM_MODEL', 'salesmanbasket.BasketItem')
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_PAYMENT_METHODS(self) -> list:
@@ -172,30 +178,38 @@ class DefaultSettings:
         """
         A dotted path to the Order model. Must be set before migrations.
         """
-        return self._setting('SALESMAN_ORDER_MODEL', 'salesmanorders.Order')
+        value = self._setting('SALESMAN_ORDER_MODEL', 'salesmanorders.Order')
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_ORDER_ITEM_MODEL(self) -> str:
         """
         A dotted path to the Order Item model. Must be set before migrations.
         """
-        return self._setting('SALESMAN_ORDER_ITEM_MODEL', 'salesmanorders.OrderItem')
+        value = self._setting('SALESMAN_ORDER_ITEM_MODEL', 'salesmanorders.OrderItem')
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_ORDER_PAYMENT_MODEL(self) -> str:
         """
         A dotted path to the Order Payment model. Must be set before migrations.
         """
-        return self._setting(
+        value = self._setting(
             'SALESMAN_ORDER_PAYMENT_MODEL', 'salesmanorders.OrderPayment'
         )
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_ORDER_NOTE_MODEL(self) -> str:
         """
         A dotted path to the Order Note model. Must be set before migrations.
         """
-        return self._setting('SALESMAN_ORDER_NOTE_MODEL', 'salesmanorders.OrderNote')
+        value = self._setting('SALESMAN_ORDER_NOTE_MODEL', 'salesmanorders.OrderNote')
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_PRICE_FORMATTER(self) -> Callable:
@@ -242,17 +256,6 @@ class DefaultSettings:
         return self._setting('SALESMAN_ADMIN_REGISTER', True)
 
     @property
-    def SALESMAN_ADMIN_CUSTOMER_FORMATTER(self) -> Callable:
-        """
-        A dotted path to Customer formatter function. Function should accept
-        user as argument and return a string for customer display. Also recieves
-        a ``context`` dictionary with additional render data.
-        """
-        default = 'salesman.admin.utils.format_customer'
-        value = self._setting('SALESMAN_ADMIN_CUSTOMER_FORMATTER', default)
-        return self._callable(value)
-
-    @property
     def SALESMAN_ADMIN_JSON_FORMATTER(self) -> Callable:
         """
         A dotted path to JSON formatter function. Function should accept a dict
@@ -263,29 +266,33 @@ class DefaultSettings:
         value = self._setting('SALESMAN_ADMIN_JSON_FORMATTER', default)
         return self._callable(value)
 
-    def _setting(self, name, default=None):
+    def _setting(self, name: str, default: Any = None) -> Any:
         from django.conf import settings
 
         return getattr(settings, name, default)
 
-    def _error(self, message):
+    def _error(self, message: str | Exception) -> None:
         from django.core.exceptions import ImproperlyConfigured
 
         raise ImproperlyConfigured(message)
 
-    def _model(self, label):
+    def _model_label(self, value: str) -> tuple[str, str]:
+        try:
+            app_label, model_name = value.split('.')
+        except ValueError:
+            self._error(f"Invalid model `{value}`, format as `app_label.model_name`.")
+        return app_label, model_name
+
+    def _model(self, label: str) -> Model:
         from django.apps import apps
 
-        try:
-            app_label, model_name = label.split('.')
-        except ValueError:
-            self._error(f"Invalid model `{label}`, format as `app_label.Model`.")
+        app_label, model_name = self._model_label(label)
         try:
             return apps.get_model(app_label, model_name)
-        except LookupError as e:
+        except (LookupError, ValueError) as e:
             self._error(e)
 
-    def _callable(self, path):
+    def _callable(self, path: str) -> Any:
         from django.utils.module_loading import import_string
 
         try:

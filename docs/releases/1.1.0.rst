@@ -1,0 +1,20 @@
+#####
+1.1.0
+#####
+
+*TBA*
+
+Added
+-----
+
+- Added Django swappable models feature for all Salesman models.
+
+Changed
+-------
+
+- Refactored Admin module.
+
+Removed
+-------
+
+- Removed ``format_customer`` admin formatter.
