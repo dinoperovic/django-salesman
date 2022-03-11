@@ -108,6 +108,8 @@ class OrderAdminMixin(BaseAdminMixin):
     is_paid_display.short_description = _("Is paid")  # type: ignore
 
     def customer_display(self, obj):
+        if not obj.user:
+            return '-'
         app_label, model_name = settings.AUTH_USER_MODEL.lower().split('.')
         url = reverse(f'admin:{app_label}_{model_name}_change', args=[obj.user.id])
         return mark_safe(f'<a href="{url}">{obj.user}</a>')
@@ -147,6 +149,8 @@ class OrderAdminMixin(BaseAdminMixin):
 
 class WagtailOrderAdminMixin(OrderAdminMixin):
     def customer_display(self, obj):
+        if not obj.user:
+            return '-'
         url = reverse('wagtailusers_users:edit', args=[obj.user.id])
         return mark_safe(f'<a href="{url}">{obj.user}</a>')
 

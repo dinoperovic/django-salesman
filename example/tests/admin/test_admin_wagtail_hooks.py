@@ -29,28 +29,13 @@ def test_order_admin(rf, client, django_user_model):
     modeladmin.model.request = request
     edit_url = modeladmin.url_helper.get_action_url('edit', order.id)
     result = f'<span class="status-tag primary">{order.statuses.NEW.label}</span>'
-    assert modeladmin.admin_status(order) == result
+    assert modeladmin.status_display(order) == result
     order.status = order.statuses.REFUNDED
     order.save()
     result = (
         f'<span class="status-tag secondary">{order.statuses.REFUNDED.label}</span>'
     )
-    assert modeladmin.admin_status(order) == result
-    result = wagtail_hooks._format_is_paid(None, order, None)
-    assert modeladmin.admin_is_paid(order) == result
-
-    # test _formatters.
-    result = utils.format_json({'test': 1})
-    assert wagtail_hooks._format_json({'test': 1}, None, None) == result
-    result = '<span class="icon icon-cross" style="color: #cd3238;"></span>'
-    assert wagtail_hooks._format_is_paid(None, order, None) == result
-    result = date_format(order.date_created, format='DATETIME_FORMAT')
-    assert wagtail_hooks._format_date(order.date_created, order, request) == result
-
-    # test _renderers.
-    result = wagtail_hooks._render_items(None, order, request)
-    assert result.startswith('<table class="listing full-width">')
-    assert result.count('<tr>') == 3
+    assert modeladmin.status_display(order) == result
 
     # test index/edit view
     edit_view = modeladmin.edit_view_class(modeladmin, str(order.id))

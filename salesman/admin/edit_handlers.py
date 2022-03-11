@@ -38,7 +38,7 @@ class ReadOnlyPanel(EditHandler):
         try:
             field = self.model._meta.get_field(self.attr)
             heading = getattr(field, 'verbose_name', '')
-        except FieldDoesNotExist:
+        except (FieldDoesNotExist, AttributeError):
             try:
                 field = getattr(self.model, self.attr)
                 heading = getattr(field, 'short_description', '')
@@ -52,7 +52,7 @@ class ReadOnlyPanel(EditHandler):
     def get_value(self):
         value = getattr(self.instance, self.attr)
         if callable(value):
-            value = value()
+            value = value(self.instance)
         return value
 
     def format_value(self, value):

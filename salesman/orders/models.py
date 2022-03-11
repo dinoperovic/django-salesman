@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from decimal import Decimal
 from secrets import token_urlsafe
 from typing import Optional, Type
@@ -135,7 +136,7 @@ class BaseOrder(ClusterableModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.extra = self._extra
+        self.extra = copy.deepcopy(self._extra)
         self.extra_rows = self.extra.pop('rows', [])
         self._current_status = self.status
 
@@ -313,7 +314,7 @@ class BaseOrderItem(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.extra = self._extra
+        self.extra = copy.deepcopy(self._extra)
         self.extra_rows = self.extra.pop('rows', [])
 
     def __str__(self):

@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 import pytest
 from django.utils.formats import date_format
@@ -12,6 +13,7 @@ from salesman.admin.edit_handlers import (
     ReadOnlyPanel,
 )
 from salesman.admin.forms import WagtailOrderModelForm
+from salesman.admin.mixins import OrderAdminMixin
 from salesman.admin.wagtail_hooks import OrderAdmin
 from salesman.core.utils import get_salesman_model
 
@@ -61,12 +63,17 @@ def test_read_only_panel():
     assert panel.render_as_field() == "<div>New</div>"
 
     # test callable property
-    # panel = ReadOnlyPanel('total_display')
-    # panel.model = Order
-    # panel.instance = order
-    # panel.on_model_bound()
-    # assert panel.heading == Order.total_display.short_description
-    # assert panel.render() == utils.format_price(120, order=None, request=None)
+    panel = ReadOnlyPanel('total_display')
+    panel.model = OrderAdminMixin
+    panel.instance = OrderAdminMixin()
+    panel.instance.total = Decimal('120')
+    panel.on_model_bound()
+    panel.on_form_bound()
+    assert panel.heading == "Total"
+    assert panel.render() == "120.00"
+    panel.attr = "total_display_missing"
+    panel.on_model_bound()
+    assert panel.heading == "Total"
 
 
 def test_order_date_panel():
