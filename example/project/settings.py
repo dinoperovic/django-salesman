@@ -179,5 +179,7 @@ SALESMAN_ORDER_ITEM_MODEL = 'shop.OrderItem'
 SALESMAN_ORDER_PAYMENT_MODEL = 'shop.OrderPayment'
 SALESMAN_ORDER_NOTE_MODEL = 'shop.OrderNote'
 
+# SALESMAN_ADMIN_REGISTER = False
+
 # wagtail
 WAGTAIL_SITE_NAME = 'My Example Site'

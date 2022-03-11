@@ -8,6 +8,7 @@ Added
 -----
 
 - Added Django swappable models feature for all Salesman models.
+- Added ``Status`` class property on Order model.
 
 Changed
 -------
@@ -18,3 +19,4 @@ Removed
 -------
 
 - Removed ``format_customer`` admin formatter.
+- Removed ``get_statuses`` class method and ``statuses`` property on Order model in favor of new ``Status`` class property.

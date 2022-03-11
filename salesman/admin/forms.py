@@ -21,7 +21,8 @@ class OrderModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['status'].widget.order = self.instance
+        if 'status' in self.fields:
+            self.fields['status'].widget.order = self.instance
 
     def clean_status(self):
         status, order = self.cleaned_data['status'], self.instance

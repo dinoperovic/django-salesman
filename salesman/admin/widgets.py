@@ -1,6 +1,5 @@
 from django import forms
 
-from salesman.checkout.payment import payment_methods_pool
 from salesman.conf import app_settings
 
 EMPTY_CHOICE = ('', '---------')
@@ -36,5 +35,7 @@ class PaymentSelect(forms.Select):
     """
 
     def __init__(self, *args, **kwargs):
+        from salesman.checkout.payment import payment_methods_pool
+
         super().__init__(*args, **kwargs)
         self.choices = [EMPTY_CHOICE] + payment_methods_pool.get_choices()

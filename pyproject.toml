@@ -29,7 +29,7 @@ include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-django = ">=3.0,<4.1"
+django = ">=3.1,<4.1"
 djangorestframework = ">=3.11,<3.14"
 
 # Optional dependencies

@@ -1,3 +1,4 @@
+from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
@@ -6,14 +7,27 @@ from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    InlinePanel,
+    MultiFieldPanel,
+    ObjectList,
+    TabbedInterface,
+)
 
 from salesman.admin.views import OrderRefundView
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 
+from .edit_handlers import (
+    OrderAdminPanel,
+    OrderCheckboxPanel,
+    OrderDatePanel,
+    OrderItemsPanel,
+    ReadOnlyPanel,
+)
 from .utils import format_price
-
-Order = get_salesman_model('Order')
+from .widgets import OrderStatusSelect, PaymentSelect
 
 
 class BaseAdminMixin:
@@ -148,6 +162,96 @@ class OrderAdminMixin(BaseAdminMixin):
 
 
 class WagtailOrderAdminMixin(OrderAdminMixin):
+    """
+    Wagtail Order admin mixin.
+    Panel definitions are here to avoid circular dependencies when importing.
+    """
+
+    default_panels = [
+        MultiFieldPanel(
+            [
+                ReadOnlyPanel('ref'),
+                ReadOnlyPanel('token'),
+            ],
+            heading=_("Info"),
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel(
+                    'status',
+                    classname='choice_field',
+                    widget=OrderStatusSelect,
+                ),
+                OrderDatePanel('date_created'),
+                OrderDatePanel('date_updated'),
+                OrderCheckboxPanel('is_paid', heading=_("Is paid")),
+            ],
+            heading=_("Status"),
+        ),
+        MultiFieldPanel(
+            [
+                OrderAdminPanel('customer_display'),
+                ReadOnlyPanel('email'),
+                OrderAdminPanel('shipping_address_display'),
+                OrderAdminPanel('billing_address_display'),
+            ],
+            heading=_("Contact"),
+        ),
+        MultiFieldPanel(
+            [
+                OrderAdminPanel('subtotal_display'),
+                OrderAdminPanel('extra_rows_display'),
+                OrderAdminPanel('total_display'),
+                OrderAdminPanel('amount_paid_display'),
+                OrderAdminPanel('amount_outstanding_display'),
+            ],
+            heading=_("Totals"),
+        ),
+        MultiFieldPanel([OrderAdminPanel('extra_display')], heading=_("Extra")),
+    ]
+
+    default_items_panels = [
+        OrderItemsPanel('items', heading=_("Items")),
+    ]
+
+    default_payments_panels = [
+        InlinePanel(
+            'payments',
+            [
+                FieldPanel('amount'),
+                FieldPanel('transaction_id'),
+                FieldPanel(
+                    'payment_method',
+                    classname='choice_field',
+                    widget=PaymentSelect,
+                ),
+                OrderDatePanel('date_created'),
+            ],
+            heading=_("Payments"),
+        ),
+    ]
+
+    default_notes_panels = [
+        InlinePanel(
+            'notes',
+            [
+                FieldPanel('message', widget=forms.Textarea(attrs={'rows': 4})),
+                FieldPanel('public'),
+                OrderDatePanel('date_created'),
+            ],
+            heading=_("Notes"),
+        )
+    ]
+
+    default_edit_handler = TabbedInterface(
+        [
+            ObjectList(default_panels, heading=_("Summary")),
+            ObjectList(default_items_panels, heading=_("Items")),
+            ObjectList(default_payments_panels, heading=_("Payments")),
+            ObjectList(default_notes_panels, heading=_("Notes")),
+        ]
+    )
+
     def customer_display(self, obj):
         if not obj.user:
             return '-'
@@ -181,6 +285,7 @@ class OrderAdminRefundMixin:
         ] + urls
 
     def refund_view(self, request, object_id):
+        Order = get_salesman_model('Order')
         order = get_object_or_404(Order, id=object_id)
         order_app_label = app_settings.SALESMAN_ORDER_MODEL.split('.')[0]
 

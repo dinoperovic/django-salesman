@@ -86,7 +86,7 @@ def test_order_api(django_user_model):
     client.force_authenticate(admin)
     response = client.get(url)
     assert response.status_code == 200
-    assert len(response.json()['status_transitions']) == len(Order.get_statuses())
+    assert len(response.json()['status_transitions']) == len(Order.Status)
     response = client.put(url, {'status': 'CREATED'})
     assert response.status_code == 200
     assert response.json()['status'] == 'CREATED'

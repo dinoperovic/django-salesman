@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% if object.status == object.get_statuses.REFUNDED %}
+{% if object.status == object.Status.REFUNDED %}
   <p>{% trans "Order is already marked as Refunded." %}</p>
   <form>
     <a href="{{ object_url }}" class="button cancel-link button-secondary" style="margin: 0;">{% trans "Go back" %}</a>

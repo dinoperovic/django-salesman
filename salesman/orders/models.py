@@ -3,15 +3,14 @@ from __future__ import annotations
 import copy
 from decimal import Decimal
 from secrets import token_urlsafe
-from typing import Optional, Type
+from typing import Any, Optional, Type
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
-from django.db.models import TextChoices
 from django.http import HttpRequest
-from django.utils.functional import cached_property
+from django.utils.functional import cached_property, classproperty
 from django.utils.text import Truncator
 from django.utils.translation import gettext_lazy as _
 
@@ -19,6 +18,7 @@ from salesman.basket.models import Basket, BasketItem
 from salesman.conf import app_settings
 from salesman.core.models import JSONField
 from salesman.core.utils import get_salesman_model
+from salesman.orders.status import BaseOrderStatus
 
 from .signals import status_changed
 
@@ -223,22 +223,22 @@ class BaseOrder(ClusterableModel):
             obj.populate_from_basket_item(item, request)
             obj.save()
 
+    @classproperty
+    def Status(cls) -> Type[BaseOrderStatus]:
+        """
+        Return order status enum from settings.
+        """
+        return app_settings.SALESMAN_ORDER_STATUS
+
     @property
     def status_display(self) -> str:
         """
         Returns display label for current status.
         """
-        return str(dict(self.get_statuses().choices).get(self.status, self.status))
+        return str(dict(self.Status.choices).get(self.status, self.status))
 
     status_display.fget.short_description = _("Status")  # type: ignore
     status_display.fget.admin_order_field = 'status'  # type: ignore
-
-    @property
-    def statuses(self) -> Type[TextChoices]:
-        """
-        Shorthand on order instance to get statuses enum.
-        """
-        return self.get_statuses()
 
     @cached_property
     def amount_paid(self) -> Decimal:
@@ -262,12 +262,41 @@ class BaseOrder(ClusterableModel):
         return self.amount_paid >= self.total
 
     @classmethod
-    def get_statuses(cls) -> Type[TextChoices]:
+    def get_wagtail_admin_attribute(cls, name: str) -> Optional[Any]:
         """
-        Return order status enum from settings.
-        Defaults to ``salesman.orders.status.OrderStatus``.
+        Return attribute from Wagtail order admin mixin.
+
+        Args:
+            name (str): Attribute name
+
+        Returns:
+            Optional[Any]: Attribute value
         """
-        return app_settings.SALESMAN_ORDER_STATUS
+        if 'salesman.admin' in settings.INSTALLED_APPS:
+            from salesman.admin.mixins import WagtailOrderAdminMixin
+
+            return getattr(WagtailOrderAdminMixin, name, None)
+        return None
+
+    @classproperty
+    def default_panels(cls) -> Optional[list]:
+        return cls.get_wagtail_admin_attribute("default_panels")
+
+    @classproperty
+    def default_items_panels(cls) -> Optional[list]:
+        return cls.get_wagtail_admin_attribute("default_items_panels")
+
+    @classproperty
+    def default_payments_panels(cls) -> Optional[list]:
+        return cls.get_wagtail_admin_attribute("default_payments_panels")
+
+    @classproperty
+    def default_notes_panels(cls) -> Optional[list]:
+        return cls.get_wagtail_admin_attribute("default_notes_panels")
+
+    @classproperty
+    def default_edit_handler(cls) -> Optional[Any]:
+        return cls.get_wagtail_admin_attribute("default_edit_handler")
 
 
 class Order(BaseOrder):
