@@ -8,7 +8,7 @@ from salesman.core.utils import get_salesman_model
 
 from .filters import OrderIsPaidFilter, OrderStatusFilter
 from .forms import WagtailOrderModelForm
-from .helpers import OrderButtonHelper, OrderPermissionHelper
+from .helpers import OrderAdminURLHelper, OrderButtonHelper, OrderPermissionHelper
 from .mixins import WagtailOrderAdminMixin, WagtailOrderAdminRefundMixin
 from .views import OrderEditView, OrderIndexView
 
@@ -33,6 +33,7 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
     edit_template_name = 'salesman/admin/wagtail_edit.html'
     permission_helper_class = OrderPermissionHelper
     button_helper_class = OrderButtonHelper
+    url_helper_class = OrderAdminURLHelper
     form_view_extra_css = ['salesman/admin/wagtail_form.css']
 
     def get_base_form_class(self) -> type[WagtailOrderModelForm]:

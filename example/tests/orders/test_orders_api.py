@@ -103,12 +103,12 @@ def test_order_api(django_user_model):
     assert response.status_code == 200
     assert len(response.json()['payment_methods']) == 2
     # test pay order - invalid order status
-    order1.status = order1.statuses.NEW
+    order1.status = order1.Status.NEW
     order1.save(update_fields=['status'])
     url = reverse('salesman-order-pay', args=[order1.ref])
     response = client.post(url, {'payment_method': 'dummy'})
     assert response.status_code == 400
-    order1.status = order1.statuses.CREATED
+    order1.status = order1.Status.CREATED
     order1.save(update_fields=['status'])
     # test pay order - success
     response = client.post(url, {'payment_method': 'dummy'})
@@ -121,7 +121,7 @@ def test_order_api(django_user_model):
     OrderPayment.objects.create(
         order=order1, amount=order1.total, transaction_id=1, payment_method='dummy'
     )
-    order1.status = order1.statuses.CREATED
+    order1.status = order1.Status.CREATED
     order1.save(update_fields=['status'])
     response = client.post(url, {'payment_method': 'dummy'})
     assert response.status_code == 400

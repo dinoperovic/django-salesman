@@ -99,4 +99,4 @@ class CheckoutSerializer(serializers.Serializer):
         # Process the payment.
         payment = self.validated_data['payment_method']
         url = payment.basket_payment(basket, request)
-        self.validated_data['url'] = url
+        self.validated_data['url'] = url  # type: ignore

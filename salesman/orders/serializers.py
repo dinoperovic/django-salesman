@@ -152,7 +152,9 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     # Show status transitions with error on GET.
     status_transitions = StatusTransitionSerializer(
-        source='statuses', many=True, read_only=True
+        source='statuses',
+        many=True,
+        read_only=True,
     )
 
     class Meta:
@@ -195,7 +197,7 @@ class OrderPaySerializer(serializers.Serializer):
         order, request = self.context['order'], self.context['request']
         payment = self.validated_data['payment_method']
         url = payment.order_payment(order, request)
-        self.validated_data['url'] = url
+        self.validated_data['url'] = url  # type: ignore
 
 
 class OrderRefundSerializer(serializers.Serializer):
@@ -208,7 +210,7 @@ class OrderRefundSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         order = self.context['order']
-        if order.status == order.statuses.REFUNDED:
+        if order.status == order.Status.REFUNDED:
             raise serializers.ValidationError(_("Order is already marked as Refunded."))
         return attrs
 
@@ -226,5 +228,5 @@ class OrderRefundSerializer(serializers.Serializer):
         # Set data and change order status.
         self.validated_data.update({'refunded': refunded, 'failed': failed})
         if not failed:
-            order.status = order.statuses.REFUNDED
+            order.status = order.Status.REFUNDED
             order.save(update_fields=['status'])

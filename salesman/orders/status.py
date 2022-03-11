@@ -16,14 +16,14 @@ class BaseOrderStatus(models.TextChoices):
     """
 
     @classmethod
-    def get_payable(cls) -> list:
+    def get_payable(cls) -> list[str]:
         """
         Returns list of statuses from which an order is eligible for payment.
         """
         return []
 
     @classmethod
-    def get_transitions(cls) -> dict:
+    def get_transitions(cls) -> dict[str, list[str]]:
         """
         Returns a dict of statuses with their transitions.
         If not specified for status, any transition is valid.

@@ -1,9 +1,8 @@
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.messages.storage.fallback import FallbackStorage
-from django.utils.formats import date_format
 
-from salesman.admin import utils, wagtail_hooks
+from salesman.admin import wagtail_hooks
 from salesman.core.utils import get_salesman_model
 
 site = AdminSite()
@@ -28,13 +27,11 @@ def test_order_admin(rf, client, django_user_model):
     modeladmin = wagtail_hooks.OrderAdmin()
     modeladmin.model.request = request
     edit_url = modeladmin.url_helper.get_action_url('edit', order.id)
-    result = f'<span class="status-tag primary">{order.statuses.NEW.label}</span>'
+    result = f'<span class="status-tag primary">{order.Status.NEW.label}</span>'
     assert modeladmin.status_display(order) == result
-    order.status = order.statuses.REFUNDED
+    order.status = order.Status.REFUNDED
     order.save()
-    result = (
-        f'<span class="status-tag secondary">{order.statuses.REFUNDED.label}</span>'
-    )
+    result = f'<span class="status-tag secondary">{order.Status.REFUNDED.label}</span>'
     assert modeladmin.status_display(order) == result
 
     # test index/edit view

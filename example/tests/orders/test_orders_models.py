@@ -43,8 +43,8 @@ def test_create_and_populate_from_basket(rf):
     assert len(order.extra_rows) == len(extra_rows)
     # Test populate with kwargs
     order2 = Order.objects.create_from_request(request)
-    order2.populate_from_basket(basket, request, status=order2.statuses.COMPLETED)
-    assert order2.status == order2.statuses.COMPLETED
+    order2.populate_from_basket(basket, request, status=order2.Status.COMPLETED)
+    assert order2.status == order2.Status.COMPLETED
 
 
 @pytest.mark.django_db
@@ -76,7 +76,7 @@ def test_order_properties(rf):
     assert order.amount_outstanding == 0
     assert order.is_paid
     # status
-    order.status = order.statuses.COMPLETED
+    order.status = order.Status.COMPLETED
     order.save(update_fields=['status'])
     assert order.status_display == 'Completed'
 

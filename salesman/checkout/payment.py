@@ -70,7 +70,7 @@ class PaymentMethod(object):
         if order.is_paid:
             raise ValidationError(_("This order has already been paid for."))
 
-        if order.status not in order.statuses.get_payable():
+        if order.status not in order.Status.get_payable():
             msg = _("Payment for order with status '{status}' is not allowed.")
             raise ValidationError(msg.format(status=order.status_display))
 

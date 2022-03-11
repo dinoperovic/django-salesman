@@ -1,4 +1,6 @@
 from django.shortcuts import redirect
+from django.urls import NoReverseMatch
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
 from wagtail.contrib.modeladmin.views import DeleteView, EditView, IndexView
@@ -30,6 +32,13 @@ class OrderEditView(EditView):
 
     def get_meta_title(self):
         return _('Viewing Order')
+
+    @cached_property
+    def refund_url(self):
+        try:
+            return self.url_helper.get_action_url('refund', self.pk_quoted)
+        except NoReverseMatch:
+            return None
 
 
 class OrderRefundView(DeleteView):

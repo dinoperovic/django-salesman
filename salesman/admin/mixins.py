@@ -261,7 +261,7 @@ class WagtailOrderAdminMixin(OrderAdminMixin):
     customer_display.short_description = _("Customer")  # type: ignore
 
     def status_display(self, obj):
-        faded_statuses = [obj.statuses.CANCELLED, obj.statuses.REFUNDED]
+        faded_statuses = [obj.Status.CANCELLED, obj.Status.REFUNDED]
         tag_class = 'secondary' if obj.status in faded_statuses else 'primary'
         template = '<span class="status-tag {}">{}</span>'
         return format_html(template, tag_class, obj.status_display)
@@ -287,13 +287,15 @@ class OrderAdminRefundMixin:
     def refund_view(self, request, object_id):
         Order = get_salesman_model('Order')
         order = get_object_or_404(Order, id=object_id)
-        order_app_label = app_settings.SALESMAN_ORDER_MODEL.split('.')[0]
+
+        app_label, model_name = app_settings.SALESMAN_ORDER_MODEL.lower().split('.')
+        object_url = reverse(f'admin:{app_label}_{model_name}_change', args=[object_id])
 
         if '_refund-error' in request.POST:
             # Refund error, add error message and redirect to change view.
             msg = _("There was an error while trying to refund order.")
             self.message_user(request, msg, messages.ERROR, fail_silently=True)
-            return redirect(f'admin:{order_app_label}_order_change', object_id)
+            return redirect(object_url)
 
         if '_refund-success' in request.POST:
             # Refund success, add success message and redirect to change view.
@@ -305,13 +307,14 @@ class OrderAdminRefundMixin:
                 msg = _("The Order “{}” was successfully refunded.")
                 status = messages.SUCCESS
             self.message_user(request, msg.format(order), status, fail_silently=True)
-            return redirect(f'admin:{order_app_label}_order_change', object_id)
+            return redirect(object_url)
 
         context = {
             'title': _("Refund Order"),
             'object': order,
             'media': self.media,
             'opts': self.model._meta,
+            'object_url': object_url,
         }
         return render(request, 'salesman/admin/refund.html', context)
 

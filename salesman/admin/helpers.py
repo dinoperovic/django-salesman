@@ -1,5 +1,9 @@
 from django.utils.translation import gettext_lazy as _
-from wagtail.contrib.modeladmin.helpers import ButtonHelper, PermissionHelper
+from wagtail.contrib.modeladmin.helpers import (
+    AdminURLHelper,
+    ButtonHelper,
+    PermissionHelper,
+)
 
 
 class OrderPermissionHelper(PermissionHelper):
@@ -15,3 +19,7 @@ class OrderButtonHelper(ButtonHelper):
         button = super().edit_button(*args, **kwargs)
         button.update({'label': _("View"), 'title': _("View this Order")})
         return button
+
+
+class OrderAdminURLHelper(AdminURLHelper):
+    pass

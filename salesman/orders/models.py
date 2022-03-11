@@ -211,8 +211,8 @@ class BaseOrder(ClusterableModel):
         self.total = basket.total
         self.extra = basket.extra
         self.extra_rows = ExtraRowsField().to_representation(basket.extra_rows)
-        if self.status == self.statuses.NEW:
-            self.status = self.statuses.CREATED
+        if self.status == self.Status.NEW:
+            self.status = self.Status.CREATED
         for attr, value in kwargs.items():
             setattr(self, attr, value)
         self.save()
