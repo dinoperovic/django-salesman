@@ -9,7 +9,6 @@ has been made or its status has changed. For that scenario, Salesman provides a
 :attr:`salesman.orders.signals.status_changed` signal that you can use. Eg:
 
 .. note::
-
     For this example, we assume your custom app is named ``shop``.
 
 .. literalinclude:: /../example/shop/signals.py

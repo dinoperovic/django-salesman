@@ -36,7 +36,7 @@ def test_product_types(settings):
         assert app_settings.SALESMAN_PRODUCT_TYPES
 
 
-class InvalidModifier(object):
+class InvalidModifier:
     pass
 
 
@@ -90,7 +90,7 @@ def test_basket_extra_validator(settings):
         assert app_settings.SALESMAN_EXTRA_VALIDATOR
 
 
-class InvalidPayment(object):
+class InvalidPayment:
     pass
 
 
@@ -154,7 +154,7 @@ def test_address_validator(settings):
         assert app_settings.SALESMAN_ADDRESS_VALIDATOR
 
 
-class InvalidOrderStatusClass(object):
+class InvalidOrderStatusClass:
     pass
 
 

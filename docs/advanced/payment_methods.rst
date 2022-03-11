@@ -17,7 +17,6 @@ as a list of dotted paths to a class extending :class:`salesman.checkout.payment
 class. Defined payments are required to specify a ``label`` and a unique ``identifier`` property.
 
 .. note::
-
     For this example, we assume your custom app is named ``shop``.
 
 Validate payments
@@ -29,10 +28,12 @@ you wish to disable certain payments for a given request.
 Default validations are included with base :class:`salesman.checkout.payment.PaymentMethod` class:
 
 .. literalinclude:: /../salesman/checkout/payment.py
-    :lines: 36-66
+    :pyobject: PaymentMethod.validate_basket
+
+.. literalinclude:: /../salesman/checkout/payment.py
+    :pyobject: PaymentMethod.validate_order
 
 .. note::
-
     To include base validation be sure to call ``super()`` when overriding validation.
 
 Basket validation example
@@ -41,8 +42,7 @@ Basket validation example
 In this example, we create an *on-delivery* payment method that is only valid when less
 that 10 items are in the basket.
 
-.. literalinclude:: /../example/shop/payment.py
-    :lines: 1,4,3,10-11,12-13,35-60
+.. literalinclude:: /../example/shop/payment/on_delivery.py
 
 Now only baskets with less than 10 items will be eligible for payment on delivery.
 
@@ -51,8 +51,7 @@ Credit card example
 
 A more complex example using an *off-site* dummy gateway.
 
-.. literalinclude:: /../example/shop/payment.py
-    :lines: 1-3,5-13,63-166
+.. literalinclude:: /../example/shop/payment/credit_card.py
 
 Register payments
 =================

@@ -11,7 +11,7 @@ from .serializers import ExtraRowSerializer
 BasketOrItem = TypeVar('BasketOrItem', BaseBasket, BaseBasketItem)
 
 
-class BasketModifier(object):
+class BasketModifier:
     """
     Basket modifier base, all modifiers defined
     in ``SALESMAN_BASKET_MODIFIERS`` must extend this class.
@@ -61,7 +61,7 @@ class BasketModifier(object):
         """
 
 
-class BasketModifiersPool(object):
+class BasketModifiersPool:
     """
     Pool for storing modifier instances.
     """

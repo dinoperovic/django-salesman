@@ -41,7 +41,6 @@ You can add custom validation by providing a dotted path in ``SALESMAN_BASKET_IT
 setting that points to your custom validator function.
 
 .. tip::
-
     You can use this validator to check if an item can be added to the basket.
     If basket item instance in ``context['basket_item']`` is ``None``, a new item beeing added.
 

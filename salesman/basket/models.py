@@ -303,7 +303,7 @@ class BaseBasketItem(models.Model):
         Returns default item ``ref`` for given product.
 
         Args:
-            product (object): Product instance
+            product (models.Model): Product instance
 
         Returns:
             str: Item ref

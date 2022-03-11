@@ -4,7 +4,7 @@ Salesman
 
 .. raw:: html
 
-    <h3>Headless e-commerce framework for Django.</h3>
+    <h3>Headless e-commerce framework for Django and Wagtail.</h3>
 
 .. image:: https://img.shields.io/pypi/v/django-salesman
     :target: https://pypi.org/project/django-salesman/
@@ -36,7 +36,8 @@ Features
 - Support for as many **Product** types needed using generic relations
 - Pluggable **Modifier** system for basket processing
 - **Payment** methods interface to support any gateway necessary
-- Customizable **Order** model
+- Customizable **Order** implementation
+- Fully swappable **Order** and **Basket** models
 - `Wagtail <https://wagtail.io/>`_ and **Django** admin implementation
 
 .. toctree::
@@ -57,6 +58,7 @@ Features
     advanced/sending_notifications
     advanced/custom_validators
     advanced/custom_formatters
+    advanced/swappable_models
 
 .. toctree::
     :caption: API Documentation

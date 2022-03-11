@@ -1,7 +1,6 @@
 # payment.py
 import uuid
 
-from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import path, reverse
@@ -9,55 +8,6 @@ from django.urls import path, reverse
 from salesman.basket.models import Basket
 from salesman.checkout.payment import PaymentMethod
 from shop.models import Order
-
-
-class PayInAdvance(PaymentMethod):
-    """
-    Payment method that requires advance payment via bank account.
-    """
-
-    identifier = 'pay-in-advance'
-    label = 'Pay in advance'
-
-    def basket_payment(self, basket, request):
-        """
-        Create a new order and mark it on-hold. Reserve items from stock and await
-        manual payment from customer via back account. When paid order status should be
-        changed to `PROCESSING`, `SHIPPED` or `COMPLETED` and a new payment should be
-        added to order.
-        """
-        order = Order.objects.create_from_basket(basket, request, status='HOLD')
-        basket.delete()
-        url = reverse('salesman-order-last') + f'?token={order.token}'
-        return request.build_absolute_uri(url)
-
-
-class PayOnDelivery(PaymentMethod):
-    """
-    Payment method that expects payment on delivery.
-    """
-
-    identifier = 'pay-on-delivery'
-    label = 'Pay on delivery'
-
-    def validate_basket(self, basket, request):
-        """
-        Payment only available when purchasing 10 items or less.
-        """
-        super().validate_basket(basket, request)
-        if basket.quantity > 10:
-            raise ValidationError("Can't pay for more than 10 items on delivery.")
-
-    def basket_payment(self, basket, request):
-        """
-        Create order and mark it as shipped. Order status should be changed
-        to `COMPLETED` and a new payment should be added manually by the merchant
-        when the order items are received and paid for by the customer.
-        """
-        order = Order.objects.create_from_basket(basket, request, status='SHIPPED')
-        basket.delete()
-        url = reverse('salesman-order-last') + f'?token={order.token}'
-        return request.build_absolute_uri(url)
 
 
 class CreditCardPayment(PaymentMethod):

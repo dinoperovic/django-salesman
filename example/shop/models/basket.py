@@ -1,3 +1,4 @@
+# models.py
 from salesman.basket.models import BaseBasket, BaseBasketItem
 
 

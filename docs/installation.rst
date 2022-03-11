@@ -57,5 +57,10 @@ A guide on how to install Salesman.
     python manage.py migrate
     python manage.py runserver
 
+.. tip::
+    It is recommended to configure and setup all Salesman models as swappable even if it's not neccesary at the begining.
+    This will future proof your application in case you wish to add it later.
+    This has to be done before the initial migrations are created. See :ref:`swappable_models`.
+
 **Done!** Salesman is installed and you can navigate the API by going to ``http://localhost:8000/api/``.
 But since no product types are configured there is nothing to be added to the basket yet.

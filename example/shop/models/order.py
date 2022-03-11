@@ -1,3 +1,4 @@
+# models.py
 from salesman.orders.models import (
     BaseOrder,
     BaseOrderItem,

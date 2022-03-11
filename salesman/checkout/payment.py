@@ -25,7 +25,7 @@ class PaymentError(Exception):
     """
 
 
-class PaymentMethod(object):
+class PaymentMethod:
     """
     Base payment method, all payment methods defined
     in ``SALESMAN_PAYMENT_METHODS`` must extend this class.
@@ -125,7 +125,7 @@ class PaymentMethod(object):
         return False
 
 
-class PaymentMethodsPool(object):
+class PaymentMethodsPool:
     """
     Pool for storing payment method instances.
     """

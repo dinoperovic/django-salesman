@@ -12,7 +12,6 @@ as a list of dotted paths to a class extending :class:`salesman.basket.modifiers
 class.
 
 .. note::
-
     For this example, we assume your custom app is named ``shop``.
 
 Create modifiers

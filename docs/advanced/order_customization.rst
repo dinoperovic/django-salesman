@@ -26,6 +26,8 @@ returns a list of statuses from which an order is eligible for payment, and
 :meth:`salesman.orders.status.BaseOrderStatus.get_transitions` method which limits status transitions
 for an order.
 
+Order Status enum can be access using :attr:`salesman.orders.models.BaseOrder.Status` class property.
+
 Validate status transitions
 ---------------------------
 
@@ -33,7 +35,6 @@ You might want to validate certain status transitions for your orders. This is p
 overriding the :meth:`salesman.orders.status.BaseOrderStatus.validate_transition` method.
 
 .. tip::
-
     Eg. you could enforce a check that the order has been fully paid for before it can be marked
     as *Completed*, or even return and force a different status entirely.
 
@@ -44,7 +45,6 @@ class which checks that transition is available for the current order status:
     :pyobject: BaseOrderStatus.validate_transition
 
 .. note::
-
     To include base validation be sure to call ``super()`` when overriding validation.
 
 Custom reference generator
