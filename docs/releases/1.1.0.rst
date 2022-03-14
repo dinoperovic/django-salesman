@@ -24,3 +24,4 @@ Removed
 - Removed support for ``Django 3.1``.
 - Removed ``format_customer`` admin formatter.
 - Removed ``get_statuses`` class method and ``statuses`` property on Order model in favor of new ``Status`` class property.
+- Removed ``salesman.core.models.JSONField`` in favor of Django's ``models.JSONField`` available in ``Django 3.1``.

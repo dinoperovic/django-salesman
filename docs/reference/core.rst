@@ -11,10 +11,6 @@ Utils
 
 .. autofunction:: salesman.core.utils.format_price
 
-Models
-======
-
-.. autoclass:: salesman.core.models.JSONField
 
 Serializers
 ===========

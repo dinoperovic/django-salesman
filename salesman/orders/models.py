@@ -16,7 +16,6 @@ from django.utils.translation import gettext_lazy as _
 
 from salesman.basket.models import Basket, BasketItem
 from salesman.conf import app_settings
-from salesman.core.models import JSONField
 from salesman.core.utils import get_salesman_model
 from salesman.orders.status import BaseOrderStatus
 
@@ -115,7 +114,7 @@ class BaseOrder(ClusterableModel):
     total = models.DecimalField(
         _("Total"), max_digits=18, decimal_places=2, default=Decimal(0)
     )
-    _extra = JSONField(_("Extra"), blank=True)
+    _extra = models.JSONField(_("Extra"), blank=True, default=dict)
 
     date_created = models.DateTimeField(_("Date created"), auto_now_add=True)
     date_updated = models.DateTimeField(_("Date updated"), auto_now=True)
@@ -324,13 +323,13 @@ class BaseOrderItem(models.Model):
     product = GenericForeignKey('product_content_type', 'product_id')
 
     # Stored product serializer data at the moment of purchase.
-    product_data = JSONField(_("Product data"), blank=True)
+    product_data = models.JSONField(_("Product data"), blank=True, default=dict)
 
     unit_price = models.DecimalField(_("Unit price"), max_digits=18, decimal_places=2)
     subtotal = models.DecimalField(_("Subtotal"), max_digits=18, decimal_places=2)
     total = models.DecimalField(_("Total"), max_digits=18, decimal_places=2)
     quantity = models.PositiveIntegerField(_("Quantity"))
-    _extra = JSONField(_("Extra"), blank=True)
+    _extra = models.JSONField(_("Extra"), blank=True, default=dict)
 
     # Separate rows from `_extra` to `extra_rows`.
     extra: Optional[dict] = None

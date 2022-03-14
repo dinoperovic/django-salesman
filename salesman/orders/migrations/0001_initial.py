@@ -7,7 +7,6 @@ import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
-import salesman.core.models
 import salesman.orders.models
 from salesman.conf import app_settings
 
@@ -35,7 +34,7 @@ class Migration(migrations.Migration):
                 ('billing_address', models.TextField(blank=True, verbose_name='Billing address')),
                 ('subtotal', models.DecimalField(decimal_places=2, default=Decimal('0'), max_digits=18, verbose_name='Subtotal')),
                 ('total', models.DecimalField(decimal_places=2, default=Decimal('0'), max_digits=18, verbose_name='Total')),
-                ('_extra', salesman.core.models.JSONField(blank=True, default={}, verbose_name='Extra')),
+                ('_extra', models.JSONField(blank=True, default={}, verbose_name='Extra')),
                 ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date created')),
                 ('date_updated', models.DateTimeField(auto_now=True, verbose_name='Date updated')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User')),
@@ -68,12 +67,12 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('product_type', models.CharField(max_length=128, verbose_name='Product type')),
                 ('product_id', models.PositiveIntegerField(null=True, verbose_name='Product id')),
-                ('product_data', salesman.core.models.JSONField(blank=True, default={}, verbose_name='Product data')),
+                ('product_data', models.JSONField(blank=True, default={}, verbose_name='Product data')),
                 ('unit_price', models.DecimalField(decimal_places=2, max_digits=18, verbose_name='Unit price')),
                 ('subtotal', models.DecimalField(decimal_places=2, max_digits=18, verbose_name='Subtotal')),
                 ('total', models.DecimalField(decimal_places=2, max_digits=18, verbose_name='Total')),
                 ('quantity', models.PositiveIntegerField(verbose_name='Quantity')),
-                ('_extra', salesman.core.models.JSONField(blank=True, default={}, verbose_name='Extra')),
+                ('_extra', models.JSONField(blank=True, default={}, verbose_name='Extra')),
                 ('order', salesman.orders.models.ParentalForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to=app_settings.SALESMAN_ORDER_MODEL, verbose_name='Order')),
                 ('product_content_type', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='contenttypes.ContentType')),
             ],

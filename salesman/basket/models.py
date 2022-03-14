@@ -13,7 +13,6 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
-from salesman.core.models import JSONField
 from salesman.core.utils import get_salesman_model
 
 BASKET_ID_SESSION_KEY = 'BASKET_ID'
@@ -72,7 +71,7 @@ class BaseBasket(models.Model):
         verbose_name=_("Owner"),
     )
 
-    extra = JSONField(_("Extra"), blank=True)
+    extra = models.JSONField(_("Extra"), blank=True, default=dict)
 
     date_created = models.DateTimeField(_("Date created"), auto_now_add=True)
     date_updated = models.DateTimeField(_("Date updated"), auto_now=True)
@@ -243,7 +242,7 @@ class BaseBasketItem(models.Model):
     product = GenericForeignKey('product_content_type', 'product_id')
 
     quantity = models.PositiveIntegerField(_("Quantity"), default=1)
-    extra = JSONField(_("Extra"), blank=True)
+    extra = models.JSONField(_("Extra"), blank=True, default=dict)
 
     date_created = models.DateTimeField(_("Date created"), auto_now_add=True)
     date_updated = models.DateTimeField(_("Date updated"), auto_now=True)
