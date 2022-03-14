@@ -103,7 +103,9 @@ class BasketItemSerializer(serializers.ModelSerializer):
         return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=context)
 
     def to_representation(self, item):
-        item.update(self.context['request'])
+        basket, request = self.context['basket'], self.context['request']
+        basket.update(request)
+        item = basket.find(item.ref)
         return super().to_representation(item)
 
 

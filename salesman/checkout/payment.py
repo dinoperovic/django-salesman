@@ -31,8 +31,8 @@ class PaymentMethod:
     in ``SALESMAN_PAYMENT_METHODS`` must extend this class.
     """
 
-    identifier: Optional[str] = None
-    label: Optional[str] = None
+    identifier: str
+    label: str
 
     def get_urls(self) -> list:
         """
@@ -130,7 +130,8 @@ class PaymentMethodsPool:
     Pool for storing payment method instances.
     """
 
-    _payments: Optional[list] = None
+    def __init__(self) -> None:
+        self._payments: Optional[list[PaymentMethod]] = None
 
     def get_payments(self, kind: Optional[str] = None) -> List[PaymentMethod]:
         """

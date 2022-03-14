@@ -106,14 +106,34 @@ class BaseBasket(models.Model):
         from .modifiers import basket_modifiers_pool
 
         items = self.get_items()
+
+        # Initialize modifiers and setup basket and items.
+        for modifier in basket_modifiers_pool.get_modifiers():
+            modifier.init(request)
+            modifier.setup_basket(self)
+            for item in items:
+                modifier.setup_item(item)
+
         self.extra_rows: dict = OrderedDict()
         self.subtotal = Decimal(0)
+        self.total = Decimal(0)
+
+        # Process basket items.
         for item in items:
             item.update(request)
             self.subtotal += item.total
         self.total = self.subtotal
+
+        # Finalize items and process basket.
         for modifier in basket_modifiers_pool.get_modifiers():
-            modifier.process_basket(self, request)
+            for item in items:
+                modifier.finalize_item(item)
+            modifier.process_basket(self)
+
+        # Finalize basket.
+        for modifier in basket_modifiers_pool.get_modifiers():
+            modifier.finalize_basket(self)
+
         self._cached_items = items
 
     def add(
@@ -153,14 +173,29 @@ class BaseBasket(models.Model):
         Remove item with given ``ref`` from the basket.
 
         Args:
-            ref (str): Item ref to remove.
+            ref (str): Item ref to remove
         """
-        BasketItem = get_salesman_model('BasketItem')
-        try:
-            self.items.get(ref=ref).delete()
+        item = self.find(ref)
+        if item:
+            item.delete()
             self._cached_items = None
-        except BasketItem.DoesNotExist:
-            pass
+
+    def find(self, ref: str) -> Optional[BaseBasketItem]:
+        """
+        Find item with given ``ref`` in the basket.
+
+        Args:
+            ref (str): Item ref
+
+        Returns:
+            Optional[BaseBasketItem]: Basket item if found.
+        """
+        if self._cached_items is not None:
+            try:
+                return [item for item in self._cached_items if item.ref == ref][0]
+            except IndexError:
+                return None
+        return self.items.filter(ref=ref).first()
 
     def clear(self) -> None:
         """
@@ -279,8 +314,9 @@ class BaseBasketItem(models.Model):
         self.unit_price = Decimal(self.product.get_price(request))
         self.subtotal = self.unit_price * self.quantity
         self.total = self.subtotal
+
         for modifier in basket_modifiers_pool.get_modifiers():
-            modifier.process_item(self, request)
+            modifier.process_item(self)
 
     @property
     def name(self):

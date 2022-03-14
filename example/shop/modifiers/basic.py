@@ -9,7 +9,7 @@ class DiscountModifier(BasketModifier):
 
     identifier = 'discount'
 
-    def process_basket(self, basket, request):
+    def process_basket(self, basket):
         if basket.count:
             amount = basket.subtotal / -10
             self.add_extra_row(basket, label="10% discount", amount=amount)
@@ -22,7 +22,7 @@ class SpecialTaxModifier(BasketModifier):
 
     identifier = 'special-tax'
 
-    def process_item(self, item, request):
+    def process_item(self, item):
         if item.total > 99:
             label = "Special tax"
             amount = item.total / 10
@@ -37,6 +37,6 @@ class ShippingCostModifier(BasketModifier):
 
     identifier = 'shipping-cost'
 
-    def process_basket(self, basket, request):
+    def process_basket(self, basket):
         if basket.count:
             self.add_extra_row(basket, label="Shipping", amount=30)

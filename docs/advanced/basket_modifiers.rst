@@ -20,7 +20,15 @@ Create modifiers
 A unique ``identifier`` property is required to be set on modifiers. To add extra rows to
 basket or items individually use :meth:`salesman.basket.modifiers.BasketModifier.add_extra_row` method. Eg:
 
-.. literalinclude:: /../example/shop/modifiers.py
+.. literalinclude:: /../example/shop/modifiers/basic.py
+
+A more complex modifier
+=======================
+
+Basket modifiers support additional hooks that allow for more control.
+
+.. literalinclude:: /../example/shop/modifiers/complex.py
+
 
 Register modifiers
 ==================
@@ -33,6 +41,7 @@ Register modifiers in your ``settings.py``, ordering is preserved when processin
         'shop.modifiers.DiscountModifier',
         'shop.modifiers.SpecialTaxModifier',
         'shop.modifiers.ShippingCostModifier',
+        'shop.modifiers.ComplexModifier',
     ]
 
 Your basket will now contain extra rows when needed. They will appear as ``extra_rows`` list field

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 
@@ -6,6 +8,7 @@ from salesman.core.utils import get_salesman_model
 from shop.models import Product
 
 Basket = get_salesman_model('Basket')
+BasketItem = get_salesman_model('BasketItem')
 
 
 class DummyModifier(BasketModifier):
