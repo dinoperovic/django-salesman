@@ -11,7 +11,7 @@ OrderPayment = get_salesman_model('OrderPayment')
 
 
 @pytest.mark.django_db
-def test_order_api(django_user_model):
+def test_order_views(django_user_model):
     url = reverse('salesman-order-list')
     client = APIClient()
     # create dummy data

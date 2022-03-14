@@ -153,7 +153,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     # Show status transitions with error on GET.
     status_transitions = StatusTransitionSerializer(
-        source='statuses',
+        source='Status',
         many=True,
         read_only=True,
     )
@@ -168,7 +168,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if self.context['request'].method == 'PUT':
+        if self.context['request'].method == 'PUT' and 'status_transitions' in data:
             del data['status_transitions']
         return data
 

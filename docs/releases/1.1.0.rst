@@ -16,6 +16,7 @@ Changed
 
 - Refactored Admin module.
 - Renamed ``prefetched_fields`` to ``prefetch_related_fields`` in Order serializer Meta.
+- Renamed ``api.py`` modules to ``views.py``.
 
 Removed
 -------
