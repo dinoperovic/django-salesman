@@ -72,5 +72,5 @@ Optionally you can configure a separate order "summary" serializer with ``SALESM
 setting, otherwise the same order serializer is used. Default serializer for is set
 to :class:`salesman.orders.serializers.OrderSerializer`.
 
-You can also override the ``OrderSerializer.Meta.prefetched_fields`` property to optimize for any added
-relations to your custom serializer.
+You can also override the ``prefetch_related_fields`` and ``select_related_fields`` in ``OrderSerializer.Meta``
+properties to optimize for any added relations to your custom serializer.

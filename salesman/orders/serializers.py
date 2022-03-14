@@ -111,7 +111,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'notes',
         ]
         read_only_fields = fields
-        prefetched_fields = ['items', 'payments', 'notes']
+        prefetch_related_fields = ['items', 'payments', 'notes']
+        select_related_fields = ['user']
 
     def get_url(self, obj):
         request = self.context.get('request', None)

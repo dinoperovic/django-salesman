@@ -9,11 +9,13 @@ Added
 
 - Added Django swappable models feature for all Salesman models.
 - Added ``Status`` class property on Order model.
+- Added ``select_related_fields`` to Order serializer Meta allowing for more control over the queryset in views.
 
 Changed
 -------
 
 - Refactored Admin module.
+- Renamed ``prefetched_fields`` to ``prefetch_related_fields`` in Order serializer Meta.
 
 Removed
 -------

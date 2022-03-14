@@ -28,12 +28,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'ref'
 
     def get_queryset(self):
-        queryset = Order.objects.all()
-
-        # Optimize views by pre-fetching data.
-        prefetched_fields = self.get_prefetched_fields()
-        if prefetched_fields:
-            queryset = queryset.prefetch_related(*prefetched_fields)
+        queryset = self.optimize_queryset(Order.objects.all())
 
         if self.request.user.is_authenticated:
             if self.request.user.is_staff and self.action != 'list':
@@ -46,6 +41,20 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             return queryset.filter(token=self.request.GET['token'])
 
         return Order.objects.none()
+
+    def optimize_queryset(self, queryset):
+        """
+        Extract fields for pre-fetching from order serializer and apply to queryset.
+        """
+        serializer_class = self.get_serializer_class()
+        if hasattr(serializer_class, "Meta"):
+            fields = getattr(serializer_class.Meta, "select_related_fields", None)
+            if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
+                queryset = queryset.select_related(*fields)
+            fields = getattr(serializer_class.Meta, "prefetch_related_fields", None)
+            if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
+                queryset = queryset.prefetch_related(*fields)
+        return queryset
 
     def get_object(self):
         if not hasattr(self, '_object'):
@@ -62,12 +71,6 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         if self.detail and self.lookup_field in self.kwargs:
             context['order'] = self.get_object()
         return context
-
-    def get_prefetched_fields(self):
-        serializer_class = self.get_serializer_class()
-        if hasattr(serializer_class, "Meta"):
-            return getattr(serializer_class.Meta, "prefetched_fields", None)
-        return None
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
