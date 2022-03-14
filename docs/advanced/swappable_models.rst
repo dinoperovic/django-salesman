@@ -6,6 +6,8 @@ Swappable models
 
 All Salesman models are swappable using Django's private swappable API used in
 `Auth package <https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#substituting-a-custom-user-model>`_.
+This allows for full control of Salesman models and makes adding new fields or features easier.
+Swapped models must extend their "Base" versions to maintain original functionality.
 
 .. warning::
     This feature must enabled at the start of the project and before initial app migration due to a limitation in Django's swappable API --
