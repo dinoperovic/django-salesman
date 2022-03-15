@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from salesman.admin.mixins import WagtailOrderAdminMixin
+from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 from shop.models import Product

@@ -9,10 +9,14 @@ from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 
 from .filters import OrderIsPaidFilter, OrderStatusFilter
-from .forms import WagtailOrderModelForm
-from .helpers import OrderAdminURLHelper, OrderButtonHelper, OrderPermissionHelper
-from .mixins import WagtailOrderAdminMixin, WagtailOrderAdminRefundMixin
-from .views import OrderEditView, OrderIndexView
+from .wagtail.forms import WagtailOrderModelForm
+from .wagtail.helpers import (
+    OrderAdminURLHelper,
+    OrderButtonHelper,
+    OrderPermissionHelper,
+)
+from .wagtail.mixins import WagtailOrderAdminMixin, WagtailOrderAdminRefundMixin
+from .wagtail.views import OrderEditView, OrderIndexView
 
 Order = get_salesman_model('Order')
 

@@ -271,8 +271,12 @@ class BaseOrder(ClusterableModel):
         Returns:
             Optional[Any]: Attribute value
         """
-        if 'salesman.admin' in settings.INSTALLED_APPS:
-            from salesman.admin.mixins import WagtailOrderAdminMixin
+        if (
+            'salesman.admin' in settings.INSTALLED_APPS
+            and 'wagtail.admin' in settings.INSTALLED_APPS
+            and 'wagtail.contrib.modeladmin' in settings.INSTALLED_APPS
+        ):
+            from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 
             return getattr(WagtailOrderAdminMixin, name, None)
         return None

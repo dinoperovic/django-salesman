@@ -7,7 +7,7 @@ from wagtail.admin.edit_handlers import EditHandler
 
 from salesman.conf import app_settings
 
-from .utils import format_price
+from ..utils import format_price
 
 
 class ReadOnlyPanel(EditHandler):

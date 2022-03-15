@@ -1,5 +1,4 @@
 from django import forms
-from wagtail.admin.forms import WagtailAdminModelForm
 
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
@@ -27,10 +26,6 @@ class OrderModelForm(forms.ModelForm):
     def clean_status(self):
         status, order = self.cleaned_data['status'], self.instance
         return app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
-
-
-class WagtailOrderModelForm(OrderModelForm, WagtailAdminModelForm):
-    pass
 
 
 class OrderPaymentModelForm(forms.ModelForm):

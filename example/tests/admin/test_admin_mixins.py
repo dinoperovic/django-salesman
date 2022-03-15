@@ -6,12 +6,8 @@ from django.urls import reverse
 from django.utils.formats import date_format
 
 from salesman.admin import admin
-from salesman.admin.mixins import (
-    BaseAdminMixin,
-    OrderAdminMixin,
-    OrderItemAdminMixin,
-    WagtailOrderAdminMixin,
-)
+from salesman.admin.mixins import BaseAdminMixin, OrderAdminMixin, OrderItemAdminMixin
+from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 
