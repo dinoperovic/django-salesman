@@ -35,7 +35,7 @@ class BasketModifier:
 
     def setup_basket(self, basket: BaseBasket) -> None:
         """
-        Initial modifier Basket setup.
+        Initial modifier Basket setup before any processing.
 
         Args:
             basket (BaseBasket): Basket instance
@@ -43,7 +43,7 @@ class BasketModifier:
 
     def setup_item(self, item: BaseBasketItem) -> None:
         """
-        Initial modifier Basket item setup.
+        Initial modifier Basket item setup before any processing.
 
         Args:
             basket (BaseBasket): Basket instance
