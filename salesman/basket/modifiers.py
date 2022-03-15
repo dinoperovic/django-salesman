@@ -88,6 +88,7 @@ class BasketModifier:
 
         Args:
             obj (BasketOrItem): Basket or BasketItem instance
+            request (HttpRequest): Django request
             label (str): Row label
             amount (Decimal): Row amount
             extra (dict, optional): Row extra data. Defaults to {}.
