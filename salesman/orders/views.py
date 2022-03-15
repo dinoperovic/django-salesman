@@ -47,11 +47,11 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         Extract fields for pre-fetching from order serializer and apply to queryset.
         """
         serializer_class = self.get_serializer_class()
-        if hasattr(serializer_class, "Meta"):
-            fields = getattr(serializer_class.Meta, "select_related_fields", None)
+        if hasattr(serializer_class, 'Meta'):
+            fields = getattr(serializer_class.Meta, 'select_related_fields', None)
             if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
                 queryset = queryset.select_related(*fields)
-            fields = getattr(serializer_class.Meta, "prefetch_related_fields", None)
+            fields = getattr(serializer_class.Meta, 'prefetch_related_fields', None)
             if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
                 queryset = queryset.prefetch_related(*fields)
         return queryset
@@ -62,7 +62,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return self._object
 
     def get_serializer_class(self):
-        if self.action in ["list", "all"]:
+        if self.action in ['list', 'all']:
             return app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
         return super().get_serializer_class()
 

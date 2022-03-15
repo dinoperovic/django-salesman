@@ -17,8 +17,7 @@ Changed
 - Refactored Admin module.
 - Renamed ``prefetched_fields`` to ``prefetch_related_fields`` in Order serializer Meta.
 - Renamed ``api.py`` modules to ``views.py``.
-- Refactored Basket modifiers where request is bound to self and not passed to methods. Requires existant modifiers to be updated to use ``self.request``.
-- Modifier ``add_extra_row`` method now accepts additional optional ``identifier`` argument.
+- Modifier ``add_extra_row`` method now requires ``request`` as argument and accepts additional optional ``identifier`` argument.
 - Removed ``get_statuses`` class method and ``statuses`` property on Order model in favor of new ``Status`` class property.
 
 Removed

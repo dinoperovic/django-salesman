@@ -31,9 +31,9 @@ def test_modifier_add_extra_row(rf):
     basket.update(request)
     item = basket.get_items()[0]
     assert basket.total == 27  # 10% discount modifier is already active
-    modifier.add_extra_row(item, label="Item label", amount=10.5, charge=False)
+    modifier.add_extra_row(item, request, label="Item label", amount=10.5, charge=False)
     assert item.total == 30
-    modifier.add_extra_row(basket, label="Label", amount=10, extra={'test': 1})
+    modifier.add_extra_row(basket, request, label="Label", amount=10, extra={'test': 1})
     data = basket.extra_rows['dummy'].data
     assert data['label'] == "Label"
     assert data['amount'] == "10.00"

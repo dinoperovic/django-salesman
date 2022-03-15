@@ -107,12 +107,11 @@ class BaseBasket(models.Model):
 
         items = self.get_items()
 
-        # Initialize modifiers and setup basket and items.
+        # Setup basket and items.
         for modifier in basket_modifiers_pool.get_modifiers():
-            modifier.init(request)
-            modifier.setup_basket(self)
+            modifier.setup_basket(self, request)
             for item in items:
-                modifier.setup_item(item)
+                modifier.setup_item(item, request)
 
         self.extra_rows: dict = OrderedDict()
         self.subtotal = Decimal(0)
@@ -127,12 +126,12 @@ class BaseBasket(models.Model):
         # Finalize items and process basket.
         for modifier in basket_modifiers_pool.get_modifiers():
             for item in items:
-                modifier.finalize_item(item)
-            modifier.process_basket(self)
+                modifier.finalize_item(item, request)
+            modifier.process_basket(self, request)
 
         # Finalize basket.
         for modifier in basket_modifiers_pool.get_modifiers():
-            modifier.finalize_basket(self)
+            modifier.finalize_basket(self, request)
 
         self._cached_items = items
 
@@ -228,7 +227,7 @@ class BaseBasket(models.Model):
         Returns items from cache or stores new ones.
         """
         if self._cached_items is None:
-            self._cached_items = list(self.items.all().prefetch_related("product"))
+            self._cached_items = list(self.items.all().prefetch_related('product'))
         return self._cached_items
 
     @property
@@ -316,7 +315,7 @@ class BaseBasketItem(models.Model):
         self.total = self.subtotal
 
         for modifier in basket_modifiers_pool.get_modifiers():
-            modifier.process_item(self)
+            modifier.process_item(self, request)
 
     @property
     def name(self):
