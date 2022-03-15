@@ -7,8 +7,7 @@
 Added
 -----
 
-- Added Django swappable models feature for all Salesman models.
-- Added ``Status`` class property on Order model.
+- Added :ref:`swappable_models` feature allowing to cusomize all Salesman models.
 - Added ``select_related_fields`` to Order serializer Meta allowing for more control over the queryset in views.
 - Added additional Basket modifier hooks for "setup" and "finalize", updated docs for modifiers.
 
@@ -20,11 +19,11 @@ Changed
 - Renamed ``api.py`` modules to ``views.py``.
 - Refactored Basket modifiers where request is bound to self and not passed to methods. Requires existant modifiers to be updated to use ``self.request``.
 - Modifier ``add_extra_row`` method now accepts additional optional ``identifier`` argument.
+- Removed ``get_statuses`` class method and ``statuses`` property on Order model in favor of new ``Status`` class property.
 
 Removed
 -------
 
 - Removed support for ``Django 3.1``.
 - Removed ``format_customer`` admin formatter.
-- Removed ``get_statuses`` class method and ``statuses`` property on Order model in favor of new ``Status`` class property.
 - Removed ``salesman.core.models.JSONField`` in favor of Django's ``models.JSONField``.
