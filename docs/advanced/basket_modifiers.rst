@@ -22,6 +22,9 @@ basket or items individually use :meth:`salesman.basket.modifiers.BasketModifier
 
 .. literalinclude:: /../example/shop/modifiers/basic.py
 
+.. tip::
+    You can access the current request on modifiers using ``self.request`` at any stage.
+
 A more complex modifier
 =======================
 

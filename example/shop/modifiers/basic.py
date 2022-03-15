@@ -12,7 +12,7 @@ class DiscountModifier(BasketModifier):
     def process_basket(self, basket):
         if basket.count:
             amount = basket.subtotal / -10
-            self.add_extra_row(basket, label="10% discount", amount=amount)
+            self.add_extra_row(basket, label="Discount 10%", amount=amount)
 
 
 class SpecialTaxModifier(BasketModifier):
