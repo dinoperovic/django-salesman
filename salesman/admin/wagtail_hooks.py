@@ -70,7 +70,7 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
         elif hasattr(self.model, 'panels'):
             panels = self.model.panels
             edit_handler = ObjectList(panels)
-        elif hasattr(self, 'default_edit_handler'):
+        elif hasattr(self, 'default_edit_handler') and self.default_edit_handler:
             edit_handler = self.default_edit_handler
         else:
             edit_handler = super().get_edit_handler(instance, request)

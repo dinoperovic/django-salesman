@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 import pytest
 from django.core.exceptions import ImproperlyConfigured
 

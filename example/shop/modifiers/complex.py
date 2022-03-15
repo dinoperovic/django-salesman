@@ -14,18 +14,23 @@ class ComplexModifier(BasketModifier):
 
     def setup_basket(self, basket):
         self.basket = basket
+
+        # Set discount limit through the request.
         try:
             self.max_discounts = int(self.request.GET['max_discounts'])
         except (KeyError, ValueError):
             self.max_discounts = 0
         self.num_discounts = 0
-        self.highest_discounted_item = (0, None)  # amount, item
+
+        # Keep track of item with highest discount (amount, item).
+        self.highest_discounted_item = (0, None)
 
     def setup_item(self, item):
         # Set a random tax on each item.
         item.tax_percent = random.choice([10, 20, 30])
 
     def process_item(self, item):
+        # Apply a discount to item if max not reached.
         if self.num_discounts < self.max_discounts:
             amount = item.subtotal / -10
             self.add_extra_row(

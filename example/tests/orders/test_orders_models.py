@@ -2,6 +2,7 @@ from decimal import Decimal
 
 import pytest
 
+from salesman.admin.mixins import WagtailOrderAdminMixin
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 from shop.models import Product
@@ -48,7 +49,7 @@ def test_create_and_populate_from_basket(rf):
 
 
 @pytest.mark.django_db
-def test_order_properties(rf):
+def test_order_properties(rf, settings):
     order = Order.objects.create(
         ref="1",
         email="user@example.com",
@@ -79,6 +80,16 @@ def test_order_properties(rf):
     order.status = order.Status.COMPLETED
     order.save(update_fields=['status'])
     assert order.status_display == 'Completed'
+    # wagtail attributes
+    assert order.default_panels == WagtailOrderAdminMixin.default_panels
+    assert order.default_items_panels == WagtailOrderAdminMixin.default_items_panels
+    assert (
+        order.default_payments_panels == WagtailOrderAdminMixin.default_payments_panels
+    )
+    assert order.default_notes_panels == WagtailOrderAdminMixin.default_notes_panels
+    assert order.default_edit_handler == WagtailOrderAdminMixin.default_edit_handler
+    settings.INSTALLED_APPS.remove('salesman.admin')
+    assert order.get_wagtail_admin_attribute('default_edit_hanlder') is None
 
 
 @pytest.mark.django_db

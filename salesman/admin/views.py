@@ -37,7 +37,7 @@ class OrderEditView(EditView):
     def refund_url(self):
         try:
             return self.url_helper.get_action_url('refund', self.pk_quoted)
-        except NoReverseMatch:
+        except NoReverseMatch:  # pragma: no cover
             return None
 
 
