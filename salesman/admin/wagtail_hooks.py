@@ -1,3 +1,5 @@
+from typing import Type
+
 from django.db.models import Model
 from django.http import HttpRequest
 from wagtail.admin.edit_handlers import EditHandler, ObjectList
@@ -36,7 +38,7 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
     url_helper_class = OrderAdminURLHelper
     form_view_extra_css = ['salesman/admin/wagtail_form.css']
 
-    def get_base_form_class(self) -> type[WagtailOrderModelForm]:
+    def get_base_form_class(self) -> Type[WagtailOrderModelForm]:
         """
         Returns Model form class with model_admin instance attached.
 
