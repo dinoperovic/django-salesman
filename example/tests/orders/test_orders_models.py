@@ -2,10 +2,16 @@ from decimal import Decimal
 
 import pytest
 
-from salesman.basket.models import Basket
+from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 from salesman.conf import app_settings
-from salesman.orders.models import Order, OrderItem, OrderNote, OrderPayment
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+Basket = get_salesman_model('Basket')
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
+OrderNote = get_salesman_model('OrderNote')
 
 
 @pytest.mark.django_db
@@ -38,12 +44,12 @@ def test_create_and_populate_from_basket(rf):
     assert len(order.extra_rows) == len(extra_rows)
     # Test populate with kwargs
     order2 = Order.objects.create_from_request(request)
-    order2.populate_from_basket(basket, request, status=order2.statuses.COMPLETED)
-    assert order2.status == order2.statuses.COMPLETED
+    order2.populate_from_basket(basket, request, status=order2.Status.COMPLETED)
+    assert order2.status == order2.Status.COMPLETED
 
 
 @pytest.mark.django_db
-def test_order_properties(rf):
+def test_order_properties(rf, settings):
     order = Order.objects.create(
         ref="1",
         email="user@example.com",
@@ -71,9 +77,19 @@ def test_order_properties(rf):
     assert order.amount_outstanding == 0
     assert order.is_paid
     # status
-    order.status = order.statuses.COMPLETED
+    order.status = order.Status.COMPLETED
     order.save(update_fields=['status'])
     assert order.status_display == 'Completed'
+    # wagtail attributes
+    assert order.default_panels == WagtailOrderAdminMixin.default_panels
+    assert order.default_items_panels == WagtailOrderAdminMixin.default_items_panels
+    assert (
+        order.default_payments_panels == WagtailOrderAdminMixin.default_payments_panels
+    )
+    assert order.default_notes_panels == WagtailOrderAdminMixin.default_notes_panels
+    assert order.default_edit_handler == WagtailOrderAdminMixin.default_edit_handler
+    settings.INSTALLED_APPS.remove('salesman.admin')
+    assert order.get_wagtail_admin_attribute('default_edit_hanlder') is None
 
 
 @pytest.mark.django_db

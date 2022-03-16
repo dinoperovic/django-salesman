@@ -3,10 +3,12 @@ from django.views.decorators.cache import never_cache
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
-from salesman.basket.models import Basket
+from salesman.core.utils import get_salesman_model
 
 from .payment import PaymentError, payment_methods_pool
 from .serializers import CheckoutSerializer
+
+Basket = get_salesman_model('Basket')
 
 
 class CheckoutViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

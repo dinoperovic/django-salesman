@@ -1,13 +1,22 @@
-from typing import List, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, List, Optional
 
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
-from salesman.basket.models import Basket
 from salesman.conf import app_settings
-from salesman.orders.models import Order, OrderPayment
+from salesman.core.utils import get_salesman_model
+
+if TYPE_CHECKING:  # pragma: no cover
+    from salesman.basket.models import BaseBasket
+    from salesman.orders.models import BaseOrder, BaseOrderPayment
+
+Basket = get_salesman_model('Basket')
+Order = get_salesman_model('Order')
+OrderPayment = get_salesman_model('OrderPayment')
 
 
 class PaymentError(Exception):
@@ -16,14 +25,14 @@ class PaymentError(Exception):
     """
 
 
-class PaymentMethod(object):
+class PaymentMethod:
     """
     Base payment method, all payment methods defined
     in ``SALESMAN_PAYMENT_METHODS`` must extend this class.
     """
 
-    identifier = None
-    label = None
+    identifier: str
+    label: str
 
     def get_urls(self) -> list:
         """
@@ -33,7 +42,7 @@ class PaymentMethod(object):
         """
         return []
 
-    def validate_basket(self, basket: Basket, request: HttpRequest) -> None:
+    def validate_basket(self, basket: BaseBasket, request: HttpRequest) -> None:
         """
         Method used to validate that payment method is valid for the given basket.
 
@@ -47,7 +56,7 @@ class PaymentMethod(object):
         if not basket.count:
             raise ValidationError(_("Your basket is empty."))
 
-    def validate_order(self, order: Order, request: HttpRequest) -> None:
+    def validate_order(self, order: BaseOrder, request: HttpRequest) -> None:
         """
         Method used to validate that payment method is valid for the given order.
 
@@ -61,11 +70,11 @@ class PaymentMethod(object):
         if order.is_paid:
             raise ValidationError(_("This order has already been paid for."))
 
-        if order.status not in order.statuses.get_payable():
+        if order.status not in order.Status.get_payable():
             msg = _("Payment for order with status '{status}' is not allowed.")
             raise ValidationError(msg.format(status=order.status_display))
 
-    def basket_payment(self, basket: Basket, request: HttpRequest) -> str:
+    def basket_payment(self, basket: BaseBasket, request: HttpRequest) -> str:
         """
         This method gets called when new checkout is submitted and
         is responsible for creating a new order from given basket.
@@ -84,7 +93,7 @@ class PaymentMethod(object):
         """
         raise NotImplementedError("Method `basket_payment()` is not implemented.")
 
-    def order_payment(self, order: Order, request: HttpRequest) -> str:
+    def order_payment(self, order: BaseOrder, request: HttpRequest) -> str:
         """
         This method gets called when payment for an existing order is requested.
         Should return the redirect url to either the next payment step or the
@@ -102,7 +111,7 @@ class PaymentMethod(object):
         """
         raise NotImplementedError("Method `order_payment()` is not implemented.")
 
-    def refund_payment(self, payment: OrderPayment) -> bool:
+    def refund_payment(self, payment: BaseOrderPayment) -> bool:
         """
         This method gets called when orders payment refund is requested.
         Should return True if refund was completed.
@@ -116,12 +125,13 @@ class PaymentMethod(object):
         return False
 
 
-class PaymentMethodsPool(object):
+class PaymentMethodsPool:
     """
     Pool for storing payment method instances.
     """
 
-    _payments = None
+    def __init__(self) -> None:
+        self._payments: Optional[list[PaymentMethod]] = None
 
     def get_payments(self, kind: Optional[str] = None) -> List[PaymentMethod]:
         """
@@ -164,7 +174,11 @@ class PaymentMethodsPool(object):
         """
         return [(p.identifier, p.label) for p in self.get_payments(kind=kind)]
 
-    def get_payment(self, identifier: str, kind: Optional[str] = None) -> PaymentMethod:
+    def get_payment(
+        self,
+        identifier: str,
+        kind: Optional[str] = None,
+    ) -> Optional[PaymentMethod]:
         """
         Returns payment with given identifier.
 
@@ -178,6 +192,7 @@ class PaymentMethodsPool(object):
         for payment in self.get_payments(kind=kind):
             if payment.identifier == identifier:
                 return payment
+        return None
 
 
 payment_methods_pool = PaymentMethodsPool()

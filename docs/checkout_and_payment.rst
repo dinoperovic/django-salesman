@@ -19,8 +19,7 @@ First create your custom payment method. Payment methods are required to specify
 a unique ``identifier`` property on class. To enable payment for the basket you should also
 override the :meth:`salesman.checkout.payment.PaymentMethod.basket_payment` method. Eg:
 
-.. literalinclude:: /../example/shop/payment.py
-    :lines: 1,10-32
+.. literalinclude:: /../example/shop/payment/advance.py
 
 .. raw:: html
 

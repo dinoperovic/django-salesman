@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .models import Order
+if TYPE_CHECKING:  # pragma: no cover
+    from salesman.orders.models import BaseOrder
 
 
 class BaseOrderStatus(models.TextChoices):
@@ -11,14 +16,14 @@ class BaseOrderStatus(models.TextChoices):
     """
 
     @classmethod
-    def get_payable(cls) -> list:
+    def get_payable(cls) -> list[str]:
         """
         Returns list of statuses from which an order is eligible for payment.
         """
         return []
 
     @classmethod
-    def get_transitions(cls) -> dict:
+    def get_transitions(cls) -> dict[str, list[str]]:
         """
         Returns a dict of statuses with their transitions.
         If not specified for status, any transition is valid.
@@ -26,7 +31,7 @@ class BaseOrderStatus(models.TextChoices):
         return {}
 
     @classmethod
-    def validate_transition(cls, status: str, order: Order) -> str:
+    def validate_transition(cls, status: str, order: BaseOrder) -> str:
         """
         Validate a given status transition for the order.
         By default check status is defined in transitions.
@@ -44,7 +49,7 @@ class BaseOrderStatus(models.TextChoices):
         transitions = cls.get_transitions().get(order.status, [status])
         transitions.append(order.status)
         if status not in transitions:
-            current, new = cls[order.status].label, cls[status].label
+            current, new = cls[order.status].label, cls[status].label  # type: ignore
             msg = _(f"Can't change order with status '{current}' to '{new}'.")
             raise ValidationError(msg)
         return status

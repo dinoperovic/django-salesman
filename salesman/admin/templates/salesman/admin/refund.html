@@ -17,6 +17,5 @@
 {% endblock %}
 
 {% block content %}
-  {% url 'admin:salesman_order_change' object.pk as object_url %}
   {% include "salesman/admin/includes/refund_content.html" with object_url=object_url %}
 {% endblock %}

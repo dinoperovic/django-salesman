@@ -12,7 +12,7 @@ class DiscountModifier(BasketModifier):
     def process_basket(self, basket, request):
         if basket.count:
             amount = basket.subtotal / -10
-            self.add_extra_row(basket, label="10% discount", amount=amount)
+            self.add_extra_row(basket, request, label="Discount 10%", amount=amount)
 
 
 class SpecialTaxModifier(BasketModifier):
@@ -27,7 +27,7 @@ class SpecialTaxModifier(BasketModifier):
             label = "Special tax"
             amount = item.total / 10
             extra = {'message': f"Price threshold is exceeded by {item.total - 99}"}
-            self.add_extra_row(item, label, amount, extra)
+            self.add_extra_row(item, request, label, amount, extra)
 
 
 class ShippingCostModifier(BasketModifier):
@@ -39,4 +39,4 @@ class ShippingCostModifier(BasketModifier):
 
     def process_basket(self, basket, request):
         if basket.count:
-            self.add_extra_row(basket, label="Shipping", amount=30)
+            self.add_extra_row(basket, request, label="Shipping", amount=30)

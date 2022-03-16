@@ -4,6 +4,7 @@ from django.db.models.signals import pre_delete
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
+from salesman.core.utils import get_salesman_model
 
 
 def protect_basket_items(sender, instance, **kwargs):
@@ -12,8 +13,7 @@ def protect_basket_items(sender, instance, **kwargs):
     """
     from django.contrib.contenttypes.models import ContentType
 
-    from salesman.basket.models import BasketItem
-
+    BasketItem = get_salesman_model('BasketItem')
     content_type = ContentType.objects.get_for_model(sender)
     items = BasketItem.objects.filter(
         product_content_type=content_type, product_id=instance.id
@@ -26,7 +26,7 @@ def protect_basket_items(sender, instance, **kwargs):
 class SalesmanBasketApp(AppConfig):
     name = 'salesman.basket'
     label = 'salesmanbasket'
-    verbose_name = _("Basket")
+    verbose_name = _("Salesman Basket")
 
     def ready(self):
         # Connect `pre_delete` signal for each product model.

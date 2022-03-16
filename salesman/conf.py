@@ -1,30 +1,13 @@
-"""
-Settings module.
-"""
+from __future__ import annotations
+
+from typing import Any, Callable
+
+from django.db.models import Model
+
+from salesman.orders.status import BaseOrderStatus
 
 
 class DefaultSettings:
-    def _setting(self, name, default=None):
-        from django.conf import settings
-
-        return getattr(settings, name, default)
-
-    def _error(self, message):
-        from django.core.exceptions import ImproperlyConfigured
-
-        raise ImproperlyConfigured(message)
-
-    def _callable(self, path):
-        from django.utils.module_loading import import_string
-
-        try:
-            value = import_string(path)
-        except ImportError as e:
-            self._error(e)
-        if not callable(value):
-            self._error(f"Specified `{value}` is not a callable.")
-        return value
-
     @property
     def SALESMAN_PRODUCT_TYPES(self) -> dict:
         """
@@ -32,22 +15,11 @@ class DefaultSettings:
         that are availible for purchase as product. Should be
         formated as ``'app_label.Model': 'path.to.Serializer'``.
         """
-        from django.apps import apps
-
         product_types = self._setting('SALESMAN_PRODUCT_TYPES', {})
         ret = {}
 
         for key, value in product_types.items():
-            try:
-                app_label, model_name = key.split('.')
-            except ValueError:
-                self._error(f"Invalid Key `{key}`, format as `app_label.Model`.")
-
-            try:
-                model = apps.get_model(app_label, model_name)
-            except LookupError as e:
-                self._error(e)
-
+            model = self._model(key)
             ret[key] = self._callable(value)
 
             for attr in ['name', 'code']:
@@ -88,13 +60,31 @@ class DefaultSettings:
         return ret
 
     @property
-    def SALESMAN_BASKET_ITEM_VALIDATOR(self) -> callable:
+    def SALESMAN_BASKET_ITEM_VALIDATOR(self) -> Callable:
         """
         A dotted path to basket item validator function.
         """
         default = "salesman.basket.utils.validate_basket_item"
         value = self._setting('SALESMAN_BASKET_ITEM_VALIDATOR', default)
         return self._callable(value)
+
+    @property
+    def SALESMAN_BASKET_MODEL(self) -> str:
+        """
+        A dotted path to the Basket model. Must be set before migrations.
+        """
+        value = self._setting('SALESMAN_BASKET_MODEL', 'salesmanbasket.Basket')
+        self._model_label(value)
+        return value
+
+    @property
+    def SALESMAN_BASKET_ITEM_MODEL(self) -> str:
+        """
+        A dotted path to the Basket Item model. Must be set before migrations.
+        """
+        value = self._setting('SALESMAN_BASKET_ITEM_MODEL', 'salesmanbasket.BasketItem')
+        self._model_label(value)
+        return value
 
     @property
     def SALESMAN_PAYMENT_METHODS(self) -> list:
@@ -129,7 +119,7 @@ class DefaultSettings:
         return ret
 
     @property
-    def SALESMAN_ORDER_STATUS(self) -> type:
+    def SALESMAN_ORDER_STATUS(self) -> BaseOrderStatus:
         """
         A dotted path to enum class that contains available order statuses.
         Overriden class must extend ``salesman.orders.status.BaseOrderStatus`` class.
@@ -138,8 +128,6 @@ class DefaultSettings:
         returns a dict of statuses with their transitions and ``validate_transition``
         method to validate status transitions.
         """
-        from salesman.orders.status import BaseOrderStatus
-
         default = 'salesman.orders.status.OrderStatus'
         value = self._setting('SALESMAN_ORDER_STATUS', default)
         status = self._callable(value)
@@ -157,7 +145,7 @@ class DefaultSettings:
         return status
 
     @property
-    def SALESMAN_ORDER_REFERENCE_GENERATOR(self) -> callable:
+    def SALESMAN_ORDER_REFERENCE_GENERATOR(self) -> Callable:
         """
         A dotted path to reference generator function for new orders.
         Function should accept a django request object as param: ``request``.
@@ -186,7 +174,45 @@ class DefaultSettings:
         return self._callable(value)
 
     @property
-    def SALESMAN_PRICE_FORMATTER(self) -> callable:
+    def SALESMAN_ORDER_MODEL(self) -> str:
+        """
+        A dotted path to the Order model. Must be set before migrations.
+        """
+        value = self._setting('SALESMAN_ORDER_MODEL', 'salesmanorders.Order')
+        self._model_label(value)
+        return value
+
+    @property
+    def SALESMAN_ORDER_ITEM_MODEL(self) -> str:
+        """
+        A dotted path to the Order Item model. Must be set before migrations.
+        """
+        value = self._setting('SALESMAN_ORDER_ITEM_MODEL', 'salesmanorders.OrderItem')
+        self._model_label(value)
+        return value
+
+    @property
+    def SALESMAN_ORDER_PAYMENT_MODEL(self) -> str:
+        """
+        A dotted path to the Order Payment model. Must be set before migrations.
+        """
+        value = self._setting(
+            'SALESMAN_ORDER_PAYMENT_MODEL', 'salesmanorders.OrderPayment'
+        )
+        self._model_label(value)
+        return value
+
+    @property
+    def SALESMAN_ORDER_NOTE_MODEL(self) -> str:
+        """
+        A dotted path to the Order Note model. Must be set before migrations.
+        """
+        value = self._setting('SALESMAN_ORDER_NOTE_MODEL', 'salesmanorders.OrderNote')
+        self._model_label(value)
+        return value
+
+    @property
+    def SALESMAN_PRICE_FORMATTER(self) -> Callable:
         """
         A dotted path to price formatter function. Function should accept a value
         of type: ``Decimal`` and return a price formatted string. Also recieves
@@ -198,7 +224,7 @@ class DefaultSettings:
         return self._callable(value)
 
     @property
-    def SALESMAN_ADDRESS_VALIDATOR(self) -> callable:
+    def SALESMAN_ADDRESS_VALIDATOR(self) -> Callable:
         """
         A dotted path to address validator function. Function should accept a string
         value and return a validated version. Also recieves a ``context`` dictionary
@@ -210,7 +236,7 @@ class DefaultSettings:
         return self._callable(value)
 
     @property
-    def SALESMAN_EXTRA_VALIDATOR(self) -> callable:
+    def SALESMAN_EXTRA_VALIDATOR(self) -> Callable:
         """
         A dotted path to extra validator function. Function should accept a dict
         value and return a validated version. Also recieves a ``context`` dictionary
@@ -230,18 +256,7 @@ class DefaultSettings:
         return self._setting('SALESMAN_ADMIN_REGISTER', True)
 
     @property
-    def SALESMAN_ADMIN_CUSTOMER_FORMATTER(self) -> callable:
-        """
-        A dotted path to Customer formatter function. Function should accept
-        user as argument and return a string for customer display. Also recieves
-        a ``context`` dictionary with additional render data.
-        """
-        default = 'salesman.admin.utils.format_customer'
-        value = self._setting('SALESMAN_ADMIN_CUSTOMER_FORMATTER', default)
-        return self._callable(value)
-
-    @property
-    def SALESMAN_ADMIN_JSON_FORMATTER(self) -> callable:
+    def SALESMAN_ADMIN_JSON_FORMATTER(self) -> Callable:
         """
         A dotted path to JSON formatter function. Function should accept a dict
         value and return an HTML formatted string. Also recieves a ``context``
@@ -250,6 +265,43 @@ class DefaultSettings:
         default = 'salesman.admin.utils.format_json'
         value = self._setting('SALESMAN_ADMIN_JSON_FORMATTER', default)
         return self._callable(value)
+
+    def _setting(self, name: str, default: Any = None) -> Any:
+        from django.conf import settings
+
+        return getattr(settings, name, default)
+
+    def _error(self, message: str | Exception) -> None:
+        from django.core.exceptions import ImproperlyConfigured
+
+        raise ImproperlyConfigured(message)
+
+    def _model_label(self, value: str) -> tuple[str, str]:
+        try:
+            app_label, model_name = value.split('.')
+        except ValueError:
+            self._error(f"Invalid model `{value}`, format as `app_label.model_name`.")
+        return app_label, model_name
+
+    def _model(self, label: str) -> Model:
+        from django.apps import apps
+
+        app_label, model_name = self._model_label(label)
+        try:
+            return apps.get_model(app_label, model_name)
+        except (LookupError, ValueError) as e:
+            self._error(e)
+
+    def _callable(self, path: str) -> Any:
+        from django.utils.module_loading import import_string
+
+        try:
+            value = import_string(path)
+        except ImportError as e:
+            self._error(e)
+        if not callable(value):
+            self._error(f"Specified `{value}` is not a callable.")
+        return value
 
 
 app_settings = DefaultSettings()

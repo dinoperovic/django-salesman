@@ -1,7 +1,9 @@
 from django.urls import path
 
 from salesman.checkout.payment import PaymentError, PaymentMethod
-from salesman.orders.models import Order
+from salesman.core.utils import get_salesman_model
+
+Order = get_salesman_model('Order')
 
 
 class DummyPaymentMethod(PaymentMethod):

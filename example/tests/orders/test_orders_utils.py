@@ -1,8 +1,10 @@
 import pytest
 from django.utils.timezone import now
 
-from salesman.orders.models import Order
+from salesman.core.utils import get_salesman_model
 from salesman.orders.utils import generate_ref
+
+Order = get_salesman_model('Order')
 
 
 @pytest.mark.django_db

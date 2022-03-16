@@ -8,7 +8,6 @@ To add products to the basket they need to be registered in ``SALESMAN_PRODUCT_T
 dictionary setting with values formatted as ``'app_name.Model': 'path.to.ModelSerializer'``.
 
 .. note::
-
     For this example, we assume your custom app is named ``shop``.
 
 .. raw:: html
@@ -18,7 +17,7 @@ dictionary setting with values formatted as ``'app_name.Model': 'path.to.ModelSe
 First, create a product model. Requirements are that it implements ``get_price(self, request)``
 method and has properties ``name`` and ``code``. Eg:
 
-.. literalinclude:: /../example/shop/models.py
+.. literalinclude:: /../example/shop/models/product.py
     :lines: 1-21
 
 .. raw:: html

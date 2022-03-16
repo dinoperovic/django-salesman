@@ -9,8 +9,12 @@ from salesman.checkout.payment import payment_methods_pool
 from salesman.checkout.serializers import PaymentMethodSerializer
 from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
+from salesman.core.utils import get_salesman_model
 
-from .models import Order, OrderItem, OrderNote, OrderPayment
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
+OrderNote = get_salesman_model('OrderNote')
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -107,7 +111,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'notes',
         ]
         read_only_fields = fields
-        prefetched_fields = ['items', 'payments', 'notes']
+        prefetch_related_fields = ['items', 'payments', 'notes']
+        select_related_fields = ['user']
 
     def get_url(self, obj):
         request = self.context.get('request', None)
@@ -148,7 +153,9 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     # Show status transitions with error on GET.
     status_transitions = StatusTransitionSerializer(
-        source='statuses', many=True, read_only=True
+        source='Status',
+        many=True,
+        read_only=True,
     )
 
     class Meta:
@@ -161,7 +168,7 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if self.context['request'].method == 'PUT':
+        if self.context['request'].method == 'PUT' and 'status_transitions' in data:
             del data['status_transitions']
         return data
 
@@ -191,7 +198,7 @@ class OrderPaySerializer(serializers.Serializer):
         order, request = self.context['order'], self.context['request']
         payment = self.validated_data['payment_method']
         url = payment.order_payment(order, request)
-        self.validated_data['url'] = url
+        self.validated_data['url'] = url  # type: ignore
 
 
 class OrderRefundSerializer(serializers.Serializer):
@@ -204,7 +211,7 @@ class OrderRefundSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         order = self.context['order']
-        if order.status == order.statuses.REFUNDED:
+        if order.status == order.Status.REFUNDED:
             raise serializers.ValidationError(_("Order is already marked as Refunded."))
         return attrs
 
@@ -222,5 +229,5 @@ class OrderRefundSerializer(serializers.Serializer):
         # Set data and change order status.
         self.validated_data.update({'refunded': refunded, 'failed': failed})
         if not failed:
-            order.status = order.statuses.REFUNDED
+            order.status = order.Status.REFUNDED
             order.save(update_fields=['status'])

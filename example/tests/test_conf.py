@@ -36,7 +36,7 @@ def test_product_types(settings):
         assert app_settings.SALESMAN_PRODUCT_TYPES
 
 
-class InvalidModifier(object):
+class InvalidModifier:
     pass
 
 
@@ -90,7 +90,7 @@ def test_basket_extra_validator(settings):
         assert app_settings.SALESMAN_EXTRA_VALIDATOR
 
 
-class InvalidPayment(object):
+class InvalidPayment:
     pass
 
 
@@ -154,7 +154,7 @@ def test_address_validator(settings):
         assert app_settings.SALESMAN_ADDRESS_VALIDATOR
 
 
-class InvalidOrderStatusClass(object):
+class InvalidOrderStatusClass:
     pass
 
 
@@ -217,21 +217,6 @@ def test_price_formatter(settings):
             'tests.test_conf.not_callable_price_formatter_function'
         )
         assert app_settings.SALESMAN_PRICE_FORMATTER
-
-
-not_callable_admin_customer_formatter_function = 1
-
-
-def test_admin_customer_formatter(settings):
-    assert app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER
-    with pytest.raises(ImproperlyConfigured):
-        settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER = 'invalid.path.to.function'
-        assert app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER
-    with pytest.raises(ImproperlyConfigured):
-        settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER = (
-            'tests.test_conf.not_callable_admin_customer_formatter_function'
-        )
-        assert app_settings.SALESMAN_ADMIN_CUSTOMER_FORMATTER
 
 
 not_callable_admin_json_formatter_function = 1

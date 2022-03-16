@@ -11,7 +11,7 @@ def send_notification(sender, order, new_status, old_status, **kwargs):
     """
     Send notification to customer when order is completed.
     """
-    if new_status == order.statuses.COMPLETED:
+    if new_status == order.Status.COMPLETED:
         subject = f"Order '{order}' is completed"
         message = "Thank you for shopping with Salesman!"
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [order.email])

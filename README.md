@@ -3,7 +3,7 @@
         <img src="https://cdn.jsdelivr.net/gh/dinoperovic/django-salesman@master/docs/_static/logo.svg" width="250" alt="Salesman logo">
     </a>
 </p>
-<h3 align="center">Headless e-commerce framework for Django.</h3>
+<h3 align="center">Headless e-commerce framework for Django and Wagtail.</h3>
 <p align="center">
     <a href="https://pypi.org/project/django-salesman/">
         <img alt="PyPI" src="https://img.shields.io/pypi/v/django-salesman">
@@ -35,7 +35,8 @@ processing the checkout and payment operations as well as managing customer orde
 - Support for as many **Product** types needed using generic relations
 - Pluggable **Modifier** system for basket processing
 - **Payment** methods interface to support any gateway necessary
-- Customizable **Order** model
+- Customizable **Order** implementation
+- Fully swappable **Order** and **Basket** models
 - [Wagtail](https://wagtail.io/) and **Django** admin implementation
 
 ## Documentation

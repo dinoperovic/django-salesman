@@ -2,12 +2,16 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from salesman.orders.models import Order, OrderItem, OrderPayment
+from salesman.core.utils import get_salesman_model
 from shop.models import Product
+
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
+OrderPayment = get_salesman_model('OrderPayment')
 
 
 @pytest.mark.django_db
-def test_order_api(django_user_model):
+def test_order_views(django_user_model):
     url = reverse('salesman-order-list')
     client = APIClient()
     # create dummy data
@@ -82,7 +86,7 @@ def test_order_api(django_user_model):
     client.force_authenticate(admin)
     response = client.get(url)
     assert response.status_code == 200
-    assert len(response.json()['status_transitions']) == len(Order.get_statuses())
+    assert len(response.json()['status_transitions']) == len(Order.Status)
     response = client.put(url, {'status': 'CREATED'})
     assert response.status_code == 200
     assert response.json()['status'] == 'CREATED'
@@ -99,12 +103,12 @@ def test_order_api(django_user_model):
     assert response.status_code == 200
     assert len(response.json()['payment_methods']) == 2
     # test pay order - invalid order status
-    order1.status = order1.statuses.NEW
+    order1.status = order1.Status.NEW
     order1.save(update_fields=['status'])
     url = reverse('salesman-order-pay', args=[order1.ref])
     response = client.post(url, {'payment_method': 'dummy'})
     assert response.status_code == 400
-    order1.status = order1.statuses.CREATED
+    order1.status = order1.Status.CREATED
     order1.save(update_fields=['status'])
     # test pay order - success
     response = client.post(url, {'payment_method': 'dummy'})
@@ -117,7 +121,7 @@ def test_order_api(django_user_model):
     OrderPayment.objects.create(
         order=order1, amount=order1.total, transaction_id=1, payment_method='dummy'
     )
-    order1.status = order1.statuses.CREATED
+    order1.status = order1.Status.CREATED
     order1.save(update_fields=['status'])
     response = client.post(url, {'payment_method': 'dummy'})
     assert response.status_code == 400

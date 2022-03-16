@@ -1,11 +1,15 @@
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.messages.storage.fallback import FallbackStorage
-from django.utils.formats import date_format
+from wagtail.admin.edit_handlers import EditHandler, FieldPanel, ObjectList
 
-from salesman.admin import models, utils, wagtail_hooks
+from salesman.admin import wagtail_hooks
+from salesman.core.utils import get_salesman_model
 
 site = AdminSite()
+
+Order = get_salesman_model('Order')
+OrderItem = get_salesman_model('OrderItem')
 
 
 @pytest.mark.django_db
@@ -16,39 +20,21 @@ def test_order_admin(rf, client, django_user_model):
     )
     request.session = {}
     request._messages = FallbackStorage(request)
-    order = models.Order.objects.create(ref="2020-00001", subtotal=100, total=120)
-    models.OrderItem.objects.create(
+    order = Order.objects.create(ref="2020-00001", subtotal=100, total=120)
+    OrderItem.objects.create(
         order=order, unit_price=10, subtotal=20, total=20, quantity=2
     )
-    models.OrderItem.objects.create(
-        order=order, unit_price=1, subtotal=2, total=2, quantity=1
-    )
+    OrderItem.objects.create(order=order, unit_price=1, subtotal=2, total=2, quantity=1)
     modeladmin = wagtail_hooks.OrderAdmin()
+    modeladmin.model = Order
     modeladmin.model.request = request
     edit_url = modeladmin.url_helper.get_action_url('edit', order.id)
-    result = f'<span class="status-tag primary">{order.statuses.NEW.label}</span>'
-    assert modeladmin.admin_status(order) == result
-    order.status = order.statuses.REFUNDED
+    result = f'<span class="status-tag primary">{order.Status.NEW.label}</span>'
+    assert modeladmin.status_display(order) == result
+    order.status = order.Status.REFUNDED
     order.save()
-    result = (
-        f'<span class="status-tag secondary">{order.statuses.REFUNDED.label}</span>'
-    )
-    assert modeladmin.admin_status(order) == result
-    result = wagtail_hooks._format_is_paid(None, order, None)
-    assert modeladmin.admin_is_paid(order) == result
-
-    # test _formatters.
-    result = utils.format_json({'test': 1})
-    assert wagtail_hooks._format_json({'test': 1}, None, None) == result
-    result = '<span class="icon icon-cross" style="color: #cd3238;"></span>'
-    assert wagtail_hooks._format_is_paid(None, order, None) == result
-    result = date_format(order.date_created, format='DATETIME_FORMAT')
-    assert wagtail_hooks._format_date(order.date_created, order, request) == result
-
-    # test _renderers.
-    result = wagtail_hooks._render_items(None, order, request)
-    assert result.startswith('<table class="listing full-width">')
-    assert result.count('<tr>') == 3
+    result = f'<span class="status-tag secondary">{order.Status.REFUNDED.label}</span>'
+    assert modeladmin.status_display(order) == result
 
     # test index/edit view
     edit_view = modeladmin.edit_view_class(modeladmin, str(order.id))
@@ -86,3 +72,22 @@ def test_order_admin(rf, client, django_user_model):
     assert response.status_code == 302
     assert response.url == edit_url
     assert view.get_meta_title() == 'Confirm Order refund'
+
+    # test get_edit_handler
+    edit_handler = modeladmin.get_edit_handler(order, request)
+    assert edit_handler == modeladmin.default_edit_handler
+    modeladmin.default_edit_handler = None
+    edit_handler = modeladmin.get_edit_handler(order, request)
+    assert isinstance(edit_handler, ObjectList)
+    modeladmin.model.panels = [FieldPanel('model_panel')]
+    edit_handler = modeladmin.get_edit_handler(order, request)
+    assert edit_handler.children == modeladmin.model.panels
+    modeladmin.model.edit_handler = EditHandler(heading='model_edit_handler')
+    edit_handler = modeladmin.get_edit_handler(order, request)
+    assert edit_handler == modeladmin.model.edit_handler
+    modeladmin.panels = [FieldPanel('admin_panel')]
+    edit_handler = modeladmin.get_edit_handler(order, request)
+    assert edit_handler.children == modeladmin.panels
+    modeladmin.edit_handler = EditHandler(heading='admin_edit_handler')
+    edit_handler = modeladmin.get_edit_handler(order, request)
+    assert edit_handler == modeladmin.edit_handler
