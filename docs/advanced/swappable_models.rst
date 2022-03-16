@@ -54,4 +54,16 @@ After that make sure to generate and run the migrations.
     python manage.py migrate
 
 
+Referencing models
+==================
+
+Instead of referring to Salemsman models directly, you should use the helper function:
+
+.. code:: python
+
+    from salesman.core.utils import get_salesman_model
+
+    BasketItem = get_salesman_model('BasketItem')
+
+
 **That's it!** You are now the owner of all Salesman models and are free to modify as seen fit.
