@@ -2,7 +2,7 @@
 1.1.0
 #####
 
-*TBA*
+**Swappable models** - *2022-03-16*
 
 Added
 -----

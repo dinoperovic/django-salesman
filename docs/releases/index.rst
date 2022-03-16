@@ -15,10 +15,15 @@ Release notes and upgrade information. This project adheres to
 - ``Security`` in case of vulnerabilities.
 
 .. toctree::
-    :caption: Versions
+    :caption: v1.1
     :maxdepth: 1
 
     1.1.0
+
+.. toctree::
+    :caption: v1.0
+    :maxdepth: 1
+
     1.0.6
     1.0.5
     1.0.4
@@ -26,6 +31,11 @@ Release notes and upgrade information. This project adheres to
     1.0.2
     1.0.1
     1.0.0
+
+.. toctree::
+    :caption: v0.1
+    :maxdepth: 1
+
     0.1.7
     0.1.6
     0.1.5
