@@ -42,16 +42,22 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
     url_helper_class = OrderAdminURLHelper
     form_view_extra_css = ['salesman/admin/wagtail_form.css']
 
-    def get_base_form_class(self) -> Type[WagtailOrderModelForm]:
+    def get_base_form_class(
+        self,
+        form_class: Type[WagtailOrderModelForm] = None,
+    ) -> Type[WagtailOrderModelForm]:
         """
         Returns Model form class with model_admin instance attached.
+
+        Args:
+            form_class (Type[WagtailOrderModelForm], optional): Class. Defaults to None.
 
         Returns:
             type[WagtailOrderModelForm]: A model form class
         """
         return type(
             'WagtailOrderModelForm',
-            (WagtailOrderModelForm,),
+            (form_class or WagtailOrderModelForm,),
             {'model_admin': self},
         )
 
@@ -81,7 +87,9 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
         else:
             edit_handler = super().get_edit_handler(instance, request)
 
-        edit_handler.base_form_class = self.get_base_form_class()
+        edit_handler.base_form_class = self.get_base_form_class(
+            form_class=getattr(edit_handler, 'base_form_class', None)
+        )
         return edit_handler
 
 

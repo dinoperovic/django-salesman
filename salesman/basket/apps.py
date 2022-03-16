@@ -26,7 +26,7 @@ def protect_basket_items(sender, instance, **kwargs):
 class SalesmanBasketApp(AppConfig):
     name = 'salesman.basket'
     label = 'salesmanbasket'
-    verbose_name = _("Basket")
+    verbose_name = _("Salesman Basket")
 
     def ready(self):
         # Connect `pre_delete` signal for each product model.
