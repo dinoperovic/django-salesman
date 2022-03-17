@@ -14,8 +14,8 @@ dictionary setting with values formatted as ``'app_name.Model': 'path.to.ModelSe
 
     <h3>1. Create product models</h3>
 
-First, create a product model. Requirements are that it implements ``get_price(self, request)``
-method and has properties ``name`` and ``code``. Eg:
+First, create a product model. It must implement the :class:`salesman.core.typing.Product` protocol.
+Required methods and attributes are: ``id``, ``name``, ``code``, ``get_price(self, request)``.
 
 .. literalinclude:: /../example/shop/models/product.py
     :lines: 1-21

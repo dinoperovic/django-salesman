@@ -4,6 +4,7 @@ from typing import Any, Callable
 
 from django.db.models import Model
 
+from salesman.core.typing import Product
 from salesman.orders.status import BaseOrderStatus
 
 
@@ -22,12 +23,13 @@ class DefaultSettings:
             model = self._model(key)
             ret[key] = self._callable(value)
 
-            for attr in ['name', 'code']:
-                if not hasattr(model, attr):
-                    self._error(f"Product type `{key}` must define `{attr}` attribute.")
-
-            if not hasattr(model, 'get_price'):
-                self._error(f"Product type `{key}` must implement `get_price` method.")
+            if not isinstance(model, Product):
+                self._error(
+                    f"Product type `{key}` must subclass `django.db.models.Model` and "
+                    f"implement the `salesman.core.typing.Product` protocol. "
+                    f"Required fields: `id`, `name`, `code`. "
+                    f"Required methods: `get_price(self, request)`. "
+                )
         return ret
 
     @property

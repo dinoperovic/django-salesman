@@ -6,50 +6,77 @@ Admin
 
 Admin reference.
 
-Utils
-=====
-
-.. autofunction:: salesman.admin.utils.format_json
-.. autofunction:: salesman.admin.utils.format_price
-
-Widgets
-=======
-
-.. autoclass:: salesman.admin.widgets.OrderStatusSelect
-.. autoclass:: salesman.admin.widgets.PaymentSelect
-
 Admin
 =====
 
-.. autoclass:: salesman.admin.admin.OrderItemInline
-.. autoclass:: salesman.admin.admin.OrderPaymentModelForm
-.. autoclass:: salesman.admin.admin.OrderPaymentInline
-.. autoclass:: salesman.admin.admin.OrderModelForm
-.. autoclass:: salesman.admin.admin.OrderStatusFilter
-.. autoclass:: salesman.admin.admin.BaseOrderAdmin
-.. autoclass:: salesman.admin.admin.OrderRefundMixin
-.. autoclass:: salesman.admin.admin.OrderAdmin
-    :show-inheritance:
+.. automodule:: salesman.admin.admin
+    :members:
 
+Filters
+=======
 
-Edit handlers
-=============
+.. automodule:: salesman.admin.filters
+    :members:
 
-.. autoclass:: salesman.admin.edit_handlers.ReadOnlyPanel
+Forms
+=====
+
+.. automodule:: salesman.admin.forms
+    :members:
+
+Mixins
+======
+
+.. automodule:: salesman.admin.mixins
+    :members:
+
+Utils
+=====
+
+.. automodule:: salesman.admin.utils
+    :members:
 
 Wagtail hooks
 =============
 
-.. autofunction:: salesman.admin.wagtail_hooks._format_json
-.. autofunction:: salesman.admin.wagtail_hooks._format_date
-.. autofunction:: salesman.admin.wagtail_hooks._format_is_paid
-.. autofunction:: salesman.admin.wagtail_hooks._render_items
-.. autoclass:: salesman.admin.wagtail_hooks.OrderIndexView
-.. autoclass:: salesman.admin.wagtail_hooks.OrderEditView
-.. autoclass:: salesman.admin.wagtail_hooks.OrderPermissionHelper
-.. autoclass:: salesman.admin.wagtail_hooks.OrderButtonHelper
-.. autoclass:: salesman.admin.wagtail_hooks.BaseOrderAdmin
-.. autoclass:: salesman.admin.wagtail_hooks.OrderRefundView
-.. autoclass:: salesman.admin.wagtail_hooks.OrderRefundMixin
-.. autoclass:: salesman.admin.wagtail_hooks.OrderAdmin
-    :show-inheritance:
+.. automodule:: salesman.admin.wagtail_hooks
+    :members:
+
+Widgets
+=======
+
+.. automodule:: salesman.admin.widgets
+    :members:
+
+Wagtail
+=======
+
+Edit handlers
+-------------
+
+.. automodule:: salesman.admin.wagtail.edit_handlers
+    :members:
+
+Forms
+-----
+
+.. automodule:: salesman.admin.wagtail.forms
+    :members:
+
+Helpers
+-------
+
+.. automodule:: salesman.admin.wagtail.helpers
+    :members:
+
+Mixins
+------
+
+.. automodule:: salesman.admin.wagtail.mixins
+    :members:
+
+Views
+-----
+
+.. automodule:: salesman.admin.wagtail.views
+    :members:

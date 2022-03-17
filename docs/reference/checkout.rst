@@ -20,21 +20,23 @@ To use the payment methods:
 
     payment = payment_methods_pool.get_payment('pay-in-advance')
 
-
-.. autoclass:: salesman.checkout.payment.PaymentError
-.. autoclass:: salesman.checkout.payment.PaymentMethod
+.. automodule:: salesman.checkout.payment
     :members:
-.. autoclass:: salesman.checkout.payment.PaymentMethodsPool
-    :members:
-.. autoattribute:: salesman.checkout.payment.payment_methods_pool
-
-Utils
-=====
-
-.. autofunction:: salesman.checkout.utils.validate_address
 
 Serializers
 ===========
 
-.. autoclass:: salesman.checkout.serializers.PaymentMethodSerializer
-.. autoclass:: salesman.checkout.serializers.CheckoutSerializer
+.. automodule:: salesman.checkout.serializers
+    :members:
+
+Utils
+=====
+
+.. automodule:: salesman.checkout.utils
+    :members:
+
+Views
+=====
+
+.. automodule:: salesman.checkout.views
+    :members:

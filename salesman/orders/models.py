@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 
 from salesman.basket.models import Basket, BasketItem
 from salesman.conf import app_settings
+from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 from salesman.orders.status import BaseOrderStatus
 
@@ -324,7 +325,7 @@ class BaseOrderItem(models.Model):
     # Generic relation to product (optional).
     product_content_type = models.ForeignKey(ContentType, models.SET_NULL, null=True)
     product_id = models.PositiveIntegerField(_("Product id"), null=True)
-    product = GenericForeignKey('product_content_type', 'product_id')
+    product: Product = GenericForeignKey('product_content_type', 'product_id')
 
     # Stored product serializer data at the moment of purchase.
     product_data = models.JSONField(_("Product data"), blank=True, default=dict)

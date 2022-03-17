@@ -13,6 +13,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
+from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 
 BASKET_ID_SESSION_KEY = 'BASKET_ID'
@@ -137,7 +138,7 @@ class BaseBasket(models.Model):
 
     def add(
         self,
-        product: object,
+        product: Product,
         quantity: int = 1,
         ref: Optional[str] = None,
         extra: Optional[dict] = None,
@@ -273,7 +274,7 @@ class BaseBasketItem(models.Model):
     # Generic relation to product.
     product_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     product_id = models.PositiveIntegerField(_("Product id"))
-    product = GenericForeignKey('product_content_type', 'product_id')
+    product: Product = GenericForeignKey('product_content_type', 'product_id')
 
     quantity = models.PositiveIntegerField(_("Quantity"), default=1)
     extra = models.JSONField(_("Extra"), blank=True, default=dict)
@@ -332,12 +333,12 @@ class BaseBasketItem(models.Model):
         return self.product.code
 
     @classmethod
-    def get_product_ref(cls, product: models.Model) -> str:
+    def get_product_ref(cls, product: Product) -> str:
         """
         Returns default item ``ref`` for given product.
 
         Args:
-            product (models.Model): Product instance
+            product (Product): Product instance
 
         Returns:
             str: Item ref

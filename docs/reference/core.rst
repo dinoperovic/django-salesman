@@ -9,11 +9,25 @@ Core app reference.
 Utils
 =====
 
-.. autofunction:: salesman.core.utils.format_price
-.. autofunction:: salesman.core.utils.get_salesman_model
+.. automodule:: salesman.core.utils
+    :members:
 
 
 Serializers
 ===========
 
-.. autoclass:: salesman.core.serializers.PriceField
+.. automodule:: salesman.core.serializers
+    :members:
+
+
+Typing
+======
+
+.. automodule:: salesman.core.typing
+    :members:
+
+Utils
+=====
+
+.. automodule:: salesman.core.utils
+    :members:
