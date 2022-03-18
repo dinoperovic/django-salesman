@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
-from django.db.models import Model
+if TYPE_CHECKING:
+    from django.db.models import Model
 
-from salesman.core.typing import Product
-from salesman.orders.status import BaseOrderStatus
+    from salesman.orders.status import BaseOrderStatus
 
 
 class DefaultSettings:
@@ -16,6 +16,8 @@ class DefaultSettings:
         that are availible for purchase as product. Should be
         formated as ``'app_label.Model': 'path.to.Serializer'``.
         """
+        from salesman.core.typing import Product
+
         product_types = self._setting('SALESMAN_PRODUCT_TYPES', {})
         ret = {}
 
@@ -130,6 +132,8 @@ class DefaultSettings:
         returns a dict of statuses with their transitions and ``validate_transition``
         method to validate status transitions.
         """
+        from salesman.orders.status import BaseOrderStatus
+
         default = 'salesman.orders.status.OrderStatus'
         value = self._setting('SALESMAN_ORDER_STATUS', default)
         status = self._callable(value)
