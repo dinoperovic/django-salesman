@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable
 
-if TYPE_CHECKING:
+from django.utils.functional import cached_property
+
+if TYPE_CHECKING:  # pragma: no cover
     from django.db.models import Model
 
     from salesman.orders.status import BaseOrderStatus
 
 
-class DefaultSettings:
-    @property
+class AppSettings:
+    @cached_property
     def SALESMAN_PRODUCT_TYPES(self) -> dict:
         """
         A dictionary of product types and their respected serializers
@@ -34,7 +36,7 @@ class DefaultSettings:
                 )
         return ret
 
-    @property
+    @cached_property
     def SALESMAN_BASKET_MODIFIERS(self) -> list:
         """
         A list of strings formated as ``path.to.CustomModifier``.
@@ -63,7 +65,7 @@ class DefaultSettings:
             ret.append(modifier)
         return ret
 
-    @property
+    @cached_property
     def SALESMAN_BASKET_ITEM_VALIDATOR(self) -> Callable:
         """
         A dotted path to basket item validator function.
@@ -90,7 +92,7 @@ class DefaultSettings:
         self._model_label(value)
         return value
 
-    @property
+    @cached_property
     def SALESMAN_PAYMENT_METHODS(self) -> list:
         """
         A list of strings formated as ``path.to.CustomPayment``.
@@ -122,7 +124,7 @@ class DefaultSettings:
             ret.append(payment)
         return ret
 
-    @property
+    @cached_property
     def SALESMAN_ORDER_STATUS(self) -> BaseOrderStatus:
         """
         A dotted path to enum class that contains available order statuses.
@@ -150,7 +152,7 @@ class DefaultSettings:
                 )
         return status
 
-    @property
+    @cached_property
     def SALESMAN_ORDER_REFERENCE_GENERATOR(self) -> Callable:
         """
         A dotted path to reference generator function for new orders.
@@ -160,7 +162,7 @@ class DefaultSettings:
         value = self._setting('SALESMAN_ORDER_REFERENCE_GENERATOR', default)
         return self._callable(value)
 
-    @property
+    @cached_property
     def SALESMAN_ORDER_SERIALIZER(self) -> type:
         """
         A dotted path to a serializer class for Order.
@@ -169,7 +171,7 @@ class DefaultSettings:
         value = self._setting("SALESMAN_ORDER_SERIALIZER", default)
         return self._callable(value)
 
-    @property
+    @cached_property
     def SALESMAN_ORDER_SUMMARY_SERIALIZER(self) -> type:
         """
         A dotted path to a summary serializer class for Order.
@@ -217,7 +219,7 @@ class DefaultSettings:
         self._model_label(value)
         return value
 
-    @property
+    @cached_property
     def SALESMAN_PRICE_FORMATTER(self) -> Callable:
         """
         A dotted path to price formatter function. Function should accept a value
@@ -229,7 +231,7 @@ class DefaultSettings:
         value = self._setting('SALESMAN_PRICE_FORMATTER', default)
         return self._callable(value)
 
-    @property
+    @cached_property
     def SALESMAN_ADDRESS_VALIDATOR(self) -> Callable:
         """
         A dotted path to address validator function. Function should accept a string
@@ -241,7 +243,7 @@ class DefaultSettings:
         value = self._setting('SALESMAN_ADDRESS_VALIDATOR', default)
         return self._callable(value)
 
-    @property
+    @cached_property
     def SALESMAN_EXTRA_VALIDATOR(self) -> Callable:
         """
         A dotted path to extra validator function. Function should accept a dict
@@ -261,7 +263,7 @@ class DefaultSettings:
         """
         return self._setting('SALESMAN_ADMIN_REGISTER', True)
 
-    @property
+    @cached_property
     def SALESMAN_ADMIN_JSON_FORMATTER(self) -> Callable:
         """
         A dotted path to JSON formatter function. Function should accept a dict
@@ -310,4 +312,4 @@ class DefaultSettings:
         return value
 
 
-app_settings = DefaultSettings()
+app_settings = AppSettings()

@@ -35,16 +35,16 @@ class BasketManager(models.Manager):
             request.session = {}
         try:
             session_basket_id = request.session[BASKET_ID_SESSION_KEY]
-            session_basket = self.get(id=session_basket_id, owner=None)
+            session_basket = self.get(id=session_basket_id, user=None)
         except (KeyError, self.model.DoesNotExist):
             session_basket = None
 
         if hasattr(request, 'user') and request.user.is_authenticated:
             try:
-                basket, created = self.get_or_create(owner_id=request.user.id)
+                basket, created = self.get_or_create(user_id=request.user.id)
             except self.model.MultipleObjectsReturned:
                 # User has multiple baskets, merge them.
-                baskets = list(self.filter(owner=request.user.id))
+                baskets = list(self.filter(user=request.user.id))
                 basket, created = baskets[0], False
                 for other in baskets[1:]:
                     basket.merge(other)
@@ -65,7 +65,7 @@ class BasketManager(models.Manager):
 
 
 class BaseBasket(models.Model):
-    owner = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,

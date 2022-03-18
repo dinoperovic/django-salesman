@@ -28,13 +28,13 @@ def test_get_or_create_basket_from_request(rf, django_user_model):
     basket, created = Basket.objects.get_or_create_from_request(request)
     assert created
     assert Basket.objects.count() == 1  # session basket is merged and deleted
-    assert basket.owner == request.user
+    assert basket.user == request.user
     assert BASKET_ID_SESSION_KEY not in request.session
     _, created = Basket.objects.get_or_create_from_request(request)
     assert not created
 
     # test multiple baskets merge, 1 should be left
-    Basket.objects.create(owner=request.user)
+    Basket.objects.create(user=request.user)
     basket, _ = Basket.objects.get_or_create_from_request(request)
     assert request.user.basket_set.count() == 1
 

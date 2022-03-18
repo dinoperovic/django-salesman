@@ -127,6 +127,7 @@ class BaseOrder(ClusterableModel):
     extra_rows: Optional[list] = None
 
     _current_status = None
+    _cached_items: Optional[list[BaseOrderItem]] = None
 
     class Meta:
         abstract = True
@@ -203,7 +204,7 @@ class BaseOrder(ClusterableModel):
         if not hasattr(basket, 'total'):
             basket.update(request)
 
-        self.user = basket.owner
+        self.user = basket.user
         self.email = basket.extra.pop('email', '')
         self.shipping_address = basket.extra.pop('shipping_address', '')
         self.billing_address = basket.extra.pop('billing_address', '')
@@ -222,6 +223,14 @@ class BaseOrder(ClusterableModel):
             obj = OrderItem(order=self)
             obj.populate_from_basket_item(item, request)
             obj.save()
+
+    def get_items(self) -> list[BaseOrderItem]:
+        """
+        Returns items from cache or stores new ones.
+        """
+        if self._cached_items is None:
+            self._cached_items = list(self.items.all())
+        return self._cached_items
 
     @classproperty
     def Status(cls) -> Type[BaseOrderStatus]:

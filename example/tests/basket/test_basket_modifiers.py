@@ -2,6 +2,7 @@ import pytest
 from django.core.exceptions import ImproperlyConfigured
 
 from salesman.basket.modifiers import BasketModifier, BasketModifiersPool
+from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 from shop.models import Product
 
@@ -46,13 +47,16 @@ def test_basket_modifiers_pool(settings):
     settings.SALESMAN_BASKET_MODIFIERS = base_modifiers
     modifiers = BasketModifiersPool().get_modifiers()
     assert len(modifiers) == 1
+    del app_settings.SALESMAN_BASKET_MODIFIERS
     with pytest.raises(ImproperlyConfigured):
         settings.SALESMAN_BASKET_MODIFIERS = base_modifiers + [
             'tests.basket.test_basket_modifiers.ModifierWithoutIdentifier'
         ]
         BasketModifiersPool().get_modifiers()
+        del app_settings.SALESMAN_BASKET_MODIFIERS
     with pytest.raises(ImproperlyConfigured):
         settings.SALESMAN_BASKET_MODIFIERS = base_modifiers + [
             'tests.basket.test_basket_modifiers.DuplicateIdentifierModifier'
         ]
         BasketModifiersPool().get_modifiers()
+        del app_settings.SALESMAN_BASKET_MODIFIERS

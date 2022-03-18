@@ -57,6 +57,18 @@ def test_order_properties(rf, settings):
         total=80,
         _extra={'test': 1, 'rows': [1, 2]},
     )  # noqa
+    product = Product.objects.create(name="Test", price=100)
+    item = OrderItem.objects.create(
+        order=order,
+        product=product,
+        unit_price=100,
+        subtotal=100,
+        total=100,
+        quantity=1,
+        product_data={'name': "Test data", 'code': '1'},
+    )
+    assert order.get_items() == [item]
+    assert order._cached_items == [item]
     order.pay(amount=50, transaction_id=1, payment_method='dummy')
     assert order.payments.count() == 1
     # extra, extra_rows
