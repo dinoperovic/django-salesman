@@ -16,3 +16,6 @@ Changed
 - Renamed ``DefaultSettings`` to ``AppSettings`` in config module.
 - Use cached properties for settings that load objects.
 - Renamed ``owner`` field on ``BaseBasket`` to ``user`` for consistency with ``BaseOrder``.
+
+.. warning::
+    This update requires migrations to created (if swapped models are used) and run.

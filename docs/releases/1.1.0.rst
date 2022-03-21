@@ -26,3 +26,6 @@ Removed
 - Removed support for ``Django 3.0``.
 - Removed ``format_customer`` admin formatter.
 - Removed ``salesman.core.models.JSONField`` in favor of Django's ``models.JSONField``.
+
+.. warning::
+    This update requires migrations to be run.
