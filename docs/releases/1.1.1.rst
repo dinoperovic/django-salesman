@@ -18,4 +18,4 @@ Changed
 - Renamed ``owner`` field on ``BaseBasket`` to ``user`` for consistency with ``BaseOrder``.
 
 .. warning::
-    This update requires migrations to created (if swapped models are used) and run.
+    This update requires migrations to be created (if swapped models are used) and run.
