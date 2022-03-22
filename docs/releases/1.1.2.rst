@@ -1,0 +1,15 @@
+#####
+1.1.2
+#####
+
+*2022-03-22*
+
+Changed
+-------
+
+- Creating an Order using ``create_from_basket`` no longer saves the order twice.
+
+Fixed
+-----
+
+- Fixed wrong sender model being sent for status changed signal.

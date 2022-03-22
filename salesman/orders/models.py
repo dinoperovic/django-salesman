@@ -14,7 +14,7 @@ from django.utils.functional import cached_property, classproperty
 from django.utils.text import Truncator
 from django.utils.translation import gettext_lazy as _
 
-from salesman.basket.models import Basket, BasketItem
+from salesman.basket.models import BaseBasket, BaseBasketItem
 from salesman.conf import app_settings
 from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
@@ -47,13 +47,12 @@ class OrderManager(models.Manager):
         Returns:
             Order: Order instance
         """
-        generate_ref = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR
-        kwargs['ref'] = generate_ref(request)
+        kwargs['ref'] = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR(request)
         return super().create(**kwargs)
 
     def create_from_basket(
         self,
-        basket: Basket,
+        basket: BaseBasket,
         request: HttpRequest,
         **kwargs,
     ) -> BaseOrder:
@@ -63,7 +62,8 @@ class OrderManager(models.Manager):
         Returns:
             Order: Order instance
         """
-        order = self.create_from_request(request, **kwargs)
+        kwargs['ref'] = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR(request)
+        order = self.model(**kwargs)
         order.populate_from_basket(basket, request)
         return order
 
@@ -154,7 +154,7 @@ class BaseOrder(ClusterableModel):
         # Send signal if status changed.
         if new_status != old_status:
             status_changed.send(
-                get_salesman_model('Basket'),
+                get_salesman_model('Order'),
                 order=self,
                 new_status=new_status,
                 old_status=old_status,
@@ -188,7 +188,7 @@ class BaseOrder(ClusterableModel):
     @transaction.atomic
     def populate_from_basket(
         self,
-        basket: Basket,
+        basket: BaseBasket,
         request: HttpRequest,
         **kwargs,
     ) -> None:
@@ -369,7 +369,11 @@ class BaseOrderItem(models.Model):
             kwargs['update_fields'].append('_extra')
         super().save(*args, **kwargs)
 
-    def populate_from_basket_item(self, item: BasketItem, request: HttpRequest) -> None:
+    def populate_from_basket_item(
+        self,
+        item: BaseBasketItem,
+        request: HttpRequest,
+    ) -> None:
         """
         Populate order with items from basket.
 
