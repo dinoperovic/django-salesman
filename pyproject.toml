@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-salesman"
-version = "1.1.1"
+version = "1.1.2"
 description = "Headless e-commerce framework for Django and Wagtail."
 authors = ["Dino Perovic <dino.perovic@gmail.com>"]
 license = "BSD-3-Clause"
