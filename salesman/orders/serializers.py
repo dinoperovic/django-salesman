@@ -178,7 +178,6 @@ class OrderPaySerializer(serializers.Serializer):
     Serializer used to pay for existing order via payment method.
     """
 
-    url = serializers.CharField(read_only=True)
     payment_method = serializers.ChoiceField(
         choices=payment_methods_pool.get_choices('order'),
         write_only=True,
@@ -197,8 +196,12 @@ class OrderPaySerializer(serializers.Serializer):
         # Process the payment.
         order, request = self.context['order'], self.context['request']
         payment = self.validated_data['payment_method']
-        url = payment.order_payment(order, request)
-        self.validated_data['url'] = url  # type: ignore
+        data = payment.order_payment(order, request)
+        # Returning string in payments converts to a URL data value.
+        if isinstance(data, str):
+            data = {'url': data}
+        # Override the serializer data with the payment data.
+        self._data = data
 
 
 class OrderRefundSerializer(serializers.Serializer):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
@@ -74,12 +74,14 @@ class PaymentMethod:
             msg = _("Payment for order with status '{status}' is not allowed.")
             raise ValidationError(msg.format(status=order.status_display))
 
-    def basket_payment(self, basket: BaseBasket, request: HttpRequest) -> str:
+    def basket_payment(
+        self,
+        basket: BaseBasket,
+        request: HttpRequest,
+    ) -> Union[str, dict]:
         """
         This method gets called when new checkout is submitted and
         is responsible for creating a new order from given basket.
-        Should return the redirect url to either the next payment step or
-        the order success page. Raise ``PaymentError`` in case an issue appears.
 
         Args:
             basket (Basket): Basket instance
@@ -89,15 +91,17 @@ class PaymentMethod:
             PaymentError: If error with payment occurs
 
         Returns:
-            str: Redirect url to the next step
+            Union[str, dict]: Redirect URL string or JSON serializable data dictionary
         """
         raise NotImplementedError("Method `basket_payment()` is not implemented.")
 
-    def order_payment(self, order: BaseOrder, request: HttpRequest) -> str:
+    def order_payment(
+        self,
+        order: BaseOrder,
+        request: HttpRequest,
+    ) -> Union[str, dict]:
         """
         This method gets called when payment for an existing order is requested.
-        Should return the redirect url to either the next payment step or the
-        order success page. Raise ``PaymentError`` in case an issue appears.
 
         Args:
             order (Order): Order instance
@@ -107,7 +111,7 @@ class PaymentMethod:
             PaymentError: If error with payment occurs
 
         Returns:
-            str: Redirect url to the next step
+            Union[str, dict]: Redirect URL string or JSON serializable data dictionary
         """
         raise NotImplementedError("Method `order_payment()` is not implemented.")
 

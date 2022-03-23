@@ -38,7 +38,6 @@ class CheckoutSerializer(serializers.Serializer):
     Serializer for processing a basket payment.
     """
 
-    url = serializers.CharField(read_only=True)
     email = serializers.EmailField(write_only=True)
     shipping_address = serializers.CharField(
         allow_blank=True,
@@ -98,5 +97,9 @@ class CheckoutSerializer(serializers.Serializer):
         basket.save(update_fields=['extra'])
         # Process the payment.
         payment = self.validated_data['payment_method']
-        url = payment.basket_payment(basket, request)
-        self.validated_data['url'] = url  # type: ignore
+        data = payment.basket_payment(basket, request)
+        # Returning string in payments converts to a URL data value.
+        if isinstance(data, str):
+            data = {'url': data}
+        # Override the serializer data with the payment data.
+        self._data = data
