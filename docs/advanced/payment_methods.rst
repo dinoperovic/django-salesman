@@ -66,3 +66,12 @@ Enable payment methods by adding in ``settings.py``:
     ]
 
 You can now select those payment methods in checkout and order payment operations.
+
+External packages
+=================
+
+Official payment methods are provided as external packages that can be used
+for simple implementations or as examples on how to implement your own.
+
+- `Stripe <https://stripe.com>`_ - https://github.com/dinoperovic/django-salesman-stripe
+- `PayPal <https://paypal.com>`_ - https://github.com/dinoperovic/django-salesman-paypal
