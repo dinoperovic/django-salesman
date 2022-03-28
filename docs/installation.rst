@@ -17,6 +17,7 @@ A guide on how to install Salesman.
 .. note::
 
     Optionally install the `Pygments <https://pygments.org/>`_ library for a nicer code display in admin.
+    You can use the command ``pip install django-salesman[pygments]``
 
 .. raw:: html
 
