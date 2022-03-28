@@ -10,7 +10,7 @@ This allows for full control of Salesman models and makes adding new fields or f
 Swapped models must extend their "Base" versions to maintain original functionality.
 
 .. warning::
-    This feature must enabled at the start of the project and before initial app migration due to a limitation in Django's swappable API --
+    This feature must be enabled at the start of the project and before initial app migration due to a limitation in Django's swappable API --
     `Read more <https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#changing-to-a-custom-user-model-mid-project>`_
 
 .. tip::
