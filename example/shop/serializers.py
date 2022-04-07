@@ -7,10 +7,10 @@ from . import models
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Product
-        fields = ['name', 'code']
+        fields = ["name", "code"]
 
 
 class PhoneVariantSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PhoneVariant
-        fields = ['name', 'code', 'color', 'capacity']
+        fields = ["name", "code", "color", "capacity"]

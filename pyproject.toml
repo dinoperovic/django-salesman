@@ -43,10 +43,10 @@ sphinx-autobuild = {version = "~2021.3.0", optional = true}
 sphinxcontrib-httpdomain = {version = "~1.8.0", optional = true}
 
 [tool.poetry.dev-dependencies]
-isort = "~5.10.1"
-black = "~22.1.0"
-flake8 = "~3.9.0"
-mypy = "~0.931"
+isort = "^5.10.1"
+black = "^22.1.0"
+flake8 = "^3.9.0"
+mypy = "^0.931"
 
 [tool.poetry.extras]
 pygments = ["Pygments"]
@@ -54,13 +54,8 @@ example = ["Pygments", "wagtail"]
 tests = ["Pygments", "wagtail", "pytest", "pytest-django", "pytest-cov"]
 docs = ["wagtail", "sphinx", "sphinx-rtd-theme", "sphinx-autobuild", "sphinxcontrib-httpdomain"]
 
-[tool.black]
-skip-string-normalization = true
-exclude = '/(\.git|\.venv|dist|migrations)/'
-
 [tool.isort]
 profile = "black"
-skip = ".git,.venv,dist,migrations"
 known_first_party = ["salesman", "shop"]
 known_third_party = ["rest_framework", "wagtail", "pytest"]
 

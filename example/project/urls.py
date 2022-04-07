@@ -22,10 +22,10 @@ from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('salesman.urls')),
+    path("admin/", admin.site.urls),
+    path("api/", include("salesman.urls")),
     # wagtail
-    re_path(r'^cms/', include(wagtailadmin_urls)),
-    re_path(r'^documents/', include(wagtaildocs_urls)),
-    re_path(r'^pages/', include(wagtail_urls)),
+    re_path(r"^cms/", include(wagtailadmin_urls)),
+    re_path(r"^documents/", include(wagtaildocs_urls)),
+    re_path(r"^pages/", include(wagtail_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

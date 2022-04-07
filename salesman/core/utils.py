@@ -18,7 +18,7 @@ def format_price(value: Decimal, context: dict = {}) -> str:
     Returns:
         str: Formatted price as a string
     """
-    return f'{value:.2f}'
+    return f"{value:.2f}"
 
 
 def get_salesman_model(name: str) -> Model:

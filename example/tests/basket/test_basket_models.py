@@ -6,13 +6,13 @@ from salesman.basket.models import BASKET_ID_SESSION_KEY
 from salesman.core.utils import get_salesman_model
 from shop.models import Phone, PhoneVariant, Product
 
-Basket = get_salesman_model('Basket')
-BasketItem = get_salesman_model('BasketItem')
+Basket = get_salesman_model("Basket")
+BasketItem = get_salesman_model("BasketItem")
 
 
 @pytest.mark.django_db
 def test_get_or_create_basket_from_request(rf, django_user_model):
-    request = rf.get('/')
+    request = rf.get("/")
 
     # test session basket created
     basket, created = Basket.objects.get_or_create_from_request(request)
@@ -23,7 +23,7 @@ def test_get_or_create_basket_from_request(rf, django_user_model):
 
     # test user basket created
     request.user = django_user_model.objects.create_user(
-        username='user', password='password'
+        username="user", password="password"
     )
     basket, created = Basket.objects.get_or_create_from_request(request)
     assert created
@@ -49,13 +49,13 @@ def test_basket_str():
 
 @pytest.mark.django_db
 def test_basket_update(rf):
-    request = rf.get('/')
+    request = rf.get("/")
     basket, _ = Basket.objects.get_or_create_from_request(request)
     product = Product.objects.create(name="Test", price=30)
     basket.add(product, quantity=2)
-    assert not hasattr(basket, 'extra_rows')
-    assert not hasattr(basket, 'subtotal')
-    assert not hasattr(basket, 'total')
+    assert not hasattr(basket, "extra_rows")
+    assert not hasattr(basket, "subtotal")
+    assert not hasattr(basket, "total")
     basket.update(request)
     total = 60
     total_with_modifiers = total - (
@@ -68,7 +68,7 @@ def test_basket_update(rf):
 
 @pytest.mark.django_db
 def test_basket_item_manipulation(rf):
-    request = rf.get('/')
+    request = rf.get("/")
     basket, _ = Basket.objects.get_or_create_from_request(request)
     product = Product.objects.create(name="Test")
 
@@ -87,7 +87,7 @@ def test_basket_item_manipulation(rf):
     basket.get_items()  # trigger storing `_cached_items`.
     assert basket.count == 1
     assert basket.quantity == 1
-    basket.remove('non-existant-ref')  # fail silently no item remove
+    basket.remove("non-existant-ref")  # fail silently no item remove
 
     # test basket clear
     basket.clear()
@@ -96,7 +96,7 @@ def test_basket_item_manipulation(rf):
 
 @pytest.mark.django_db
 def test_basket_merge(rf):
-    request = rf.get('/')
+    request = rf.get("/")
     basket, _ = Basket.objects.get_or_create_from_request(request)
     product = Product.objects.create(name="Test")
     product_2 = Product.objects.create(name="Test #2")
@@ -113,15 +113,15 @@ def test_basket_merge(rf):
 
 @pytest.mark.django_db
 def test_basket_item(rf):
-    request = rf.get('/')
+    request = rf.get("/")
     basket, _ = Basket.objects.get_or_create_from_request(request)
     product = Product.objects.create(name="Test")
     item = basket.add(product)
 
     # test save
     item.ref = None
-    item.save(update_fields=['ref'])
-    assert item.ref == BasketItem.get_product_ref(product) == 'shopproduct-1'
+    item.save(update_fields=["ref"])
+    assert item.ref == BasketItem.get_product_ref(product) == "shopproduct-1"
     assert str(item) == f"1x {product}"
 
     assert item.name == product.name
@@ -130,16 +130,16 @@ def test_basket_item(rf):
 
 @pytest.mark.django_db
 def test_basket_item_update(rf):
-    request = rf.get('/')
+    request = rf.get("/")
     basket, _ = Basket.objects.get_or_create_from_request(request)
     price = 30
     product = Product.objects.create(name="Test", price=price)
     basket.add(product)
     item = basket.get_items()[0]
-    assert not hasattr(item, 'unit_price')
-    assert not hasattr(item, 'subtotal')
-    assert not hasattr(item, 'total')
-    assert not hasattr(item, 'extra_rows')
+    assert not hasattr(item, "unit_price")
+    assert not hasattr(item, "subtotal")
+    assert not hasattr(item, "total")
+    assert not hasattr(item, "extra_rows")
     item.update(request)
     assert item.unit_price == price
     assert item.subtotal == price
@@ -149,7 +149,7 @@ def test_basket_item_update(rf):
 
 @pytest.mark.django_db
 def test_basket_item_protect(rf):
-    request = rf.get('/')
+    request = rf.get("/")
     basket, _ = Basket.objects.get_or_create_from_request(request)
     price = 30
     product = Product.objects.create(name="Test", price=price)

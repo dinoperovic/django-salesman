@@ -62,15 +62,15 @@ class OrderStatus(BaseOrderStatus):
     Required choices are NEW, CREATED, COMPLETED and REFUNDED.
     """
 
-    NEW = 'NEW', _("New")  # Order with reference created, items are in the basket.
-    CREATED = 'CREATED', _("Created")  # Created with items and pending payment.
-    HOLD = 'HOLD', _("Hold")  # Stock reduced but still awaiting payment.
-    FAILED = 'FAILED', _("Failed")  # Payment failed, retry is available.
-    CANCELLED = 'CANCELLED', _("Cancelled")  # Cancelled by seller, stock increased.
-    PROCESSING = 'PROCESSING', _("Processing")  # Payment confirmed, processing order.
-    SHIPPED = 'SHIPPED', _("Shipped")  # Shipped to customer.
-    COMPLETED = 'COMPLETED', _("Completed")  # Completed and received by customer.
-    REFUNDED = 'REFUNDED', _("Refunded")  # Fully refunded by seller.
+    NEW = "NEW", _("New")  # Order with reference created, items are in the basket.
+    CREATED = "CREATED", _("Created")  # Created with items and pending payment.
+    HOLD = "HOLD", _("Hold")  # Stock reduced but still awaiting payment.
+    FAILED = "FAILED", _("Failed")  # Payment failed, retry is available.
+    CANCELLED = "CANCELLED", _("Cancelled")  # Cancelled by seller, stock increased.
+    PROCESSING = "PROCESSING", _("Processing")  # Payment confirmed, processing order.
+    SHIPPED = "SHIPPED", _("Shipped")  # Shipped to customer.
+    COMPLETED = "COMPLETED", _("Completed")  # Completed and received by customer.
+    REFUNDED = "REFUNDED", _("Refunded")  # Fully refunded by seller.
 
     @classmethod
     def get_payable(cls) -> list:
@@ -85,13 +85,13 @@ class OrderStatus(BaseOrderStatus):
         Returns default status transitions.
         """
         return {
-            'NEW': [cls.CREATED],
-            'CREATED': [cls.HOLD, cls.FAILED, cls.CANCELLED, cls.PROCESSING],
-            'HOLD': [cls.FAILED, cls.CANCELLED, cls.PROCESSING],
-            'FAILED': [cls.CANCELLED, cls.PROCESSING],
-            'CANCELLED': [],
-            'PROCESSING': [cls.SHIPPED, cls.COMPLETED, cls.REFUNDED],
-            'SHIPPED': [cls.COMPLETED, cls.REFUNDED],
-            'COMPLETED': [cls.REFUNDED],
-            'REFUNDED': [],
+            "NEW": [cls.CREATED],
+            "CREATED": [cls.HOLD, cls.FAILED, cls.CANCELLED, cls.PROCESSING],
+            "HOLD": [cls.FAILED, cls.CANCELLED, cls.PROCESSING],
+            "FAILED": [cls.CANCELLED, cls.PROCESSING],
+            "CANCELLED": [],
+            "PROCESSING": [cls.SHIPPED, cls.COMPLETED, cls.REFUNDED],
+            "SHIPPED": [cls.COMPLETED, cls.REFUNDED],
+            "COMPLETED": [cls.REFUNDED],
+            "REFUNDED": [],
         }

@@ -16,7 +16,7 @@ from salesman.conf import app_settings
 from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 
-BASKET_ID_SESSION_KEY = 'BASKET_ID'
+BASKET_ID_SESSION_KEY = "BASKET_ID"
 
 
 class BasketManager(models.Manager):
@@ -31,7 +31,7 @@ class BasketManager(models.Manager):
         Returns:
             tuple: (basket, created)
         """
-        if not hasattr(request, 'session'):
+        if not hasattr(request, "session"):
             request.session = {}
         try:
             session_basket_id = request.session[BASKET_ID_SESSION_KEY]
@@ -39,7 +39,7 @@ class BasketManager(models.Manager):
         except (KeyError, self.model.DoesNotExist):
             session_basket = None
 
-        if hasattr(request, 'user') and request.user.is_authenticated:
+        if hasattr(request, "user") and request.user.is_authenticated:
             try:
                 basket, created = self.get_or_create(user_id=request.user.id)
             except self.model.MultipleObjectsReturned:
@@ -85,7 +85,7 @@ class BaseBasket(models.Model):
         abstract = True
         verbose_name = _("Basket")
         verbose_name_plural = _("Baskets")
-        ordering = ['-date_created']
+        ordering = ["-date_created"]
 
     def __str__(self):
         return str(self.pk) if self.pk else "(unsaved)"
@@ -149,14 +149,14 @@ class BaseBasket(models.Model):
         Returns:
             BasketItem: BasketItem instance
         """
-        BasketItem = get_salesman_model('BasketItem')
+        BasketItem = get_salesman_model("BasketItem")
         if not ref:
             ref = BasketItem.get_product_ref(product)
         try:
             item = self.items.get(ref=ref)
             item.quantity += quantity
             item.extra = extra or item.extra
-            item.save(update_fields=['quantity', 'extra', 'date_updated'])
+            item.save(update_fields=["quantity", "extra", "date_updated"])
         except BasketItem.DoesNotExist:
             item = BasketItem.objects.create(
                 basket=self,
@@ -216,10 +216,10 @@ class BaseBasket(models.Model):
             try:
                 existing = self.items.get(ref=item.ref)
                 existing.quantity += item.quantity
-                existing.save(update_fields=['quantity'])
+                existing.save(update_fields=["quantity"])
             except item.DoesNotExist:
                 item.basket = self
-                item.save(update_fields=['basket'])
+                item.save(update_fields=["basket"])
         other.delete()
         self._cached_items = None
 
@@ -228,7 +228,7 @@ class BaseBasket(models.Model):
         Returns items from cache or stores new ones.
         """
         if self._cached_items is None:
-            self._cached_items = list(self.items.all().prefetch_related('product'))
+            self._cached_items = list(self.items.all().prefetch_related("product"))
         return self._cached_items
 
     @property
@@ -247,8 +247,8 @@ class BaseBasket(models.Model):
         """
         if self._cached_items is not None:
             return sum([item.quantity for item in self._cached_items])
-        aggr = self.items.aggregate(quantity=models.Sum('quantity'))
-        return aggr['quantity'] or 0
+        aggr = self.items.aggregate(quantity=models.Sum("quantity"))
+        return aggr["quantity"] or 0
 
 
 class Basket(BaseBasket):
@@ -257,14 +257,14 @@ class Basket(BaseBasket):
     """
 
     class Meta(BaseBasket.Meta):
-        swappable = 'SALESMAN_BASKET_MODEL'
+        swappable = "SALESMAN_BASKET_MODEL"
 
 
 class BaseBasketItem(models.Model):
     basket = models.ForeignKey(
         app_settings.SALESMAN_BASKET_MODEL,
         on_delete=models.CASCADE,
-        related_name='items',
+        related_name="items",
         verbose_name=_("Basket"),
     )
 
@@ -274,7 +274,7 @@ class BaseBasketItem(models.Model):
     # Generic relation to product.
     product_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     product_id = models.PositiveIntegerField(_("Product id"))
-    product: Product = GenericForeignKey('product_content_type', 'product_id')
+    product: Product = GenericForeignKey("product_content_type", "product_id")
 
     quantity = models.PositiveIntegerField(_("Quantity"), default=1)
     extra = models.JSONField(_("Extra"), blank=True, default=dict)
@@ -286,11 +286,11 @@ class BaseBasketItem(models.Model):
         abstract = True
         verbose_name = _("Item")
         verbose_name_plural = _("Items")
-        unique_together = ('basket', 'ref')
-        ordering = ['date_created']
+        unique_together = ("basket", "ref")
+        ordering = ["date_created"]
 
     def __str__(self):
-        return f'{self.quantity}x {self.product}'
+        return f"{self.quantity}x {self.product}"
 
     def save(self, *args, **kwargs):
         # Set default ref.
@@ -343,7 +343,7 @@ class BaseBasketItem(models.Model):
         Returns:
             str: Item ref
         """
-        return slugify(f'{product._meta.label}-{product.id}')
+        return slugify(f"{product._meta.label}-{product.id}")
 
 
 class BasketItem(BaseBasketItem):
@@ -352,4 +352,4 @@ class BasketItem(BaseBasketItem):
     """
 
     class Meta(BaseBasketItem.Meta):
-        swappable = 'SALESMAN_BASKET_ITEM_MODEL'
+        swappable = "SALESMAN_BASKET_ITEM_MODEL"

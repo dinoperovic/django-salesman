@@ -17,7 +17,7 @@ class OrderPermissionHelper(PermissionHelper):
 class OrderButtonHelper(ButtonHelper):
     def edit_button(self, *args, **kwargs):
         button = super().edit_button(*args, **kwargs)
-        button.update({'label': _("View"), 'title': _("View this Order")})
+        button.update({"label": _("View"), "title": _("View this Order")})
         return button
 
 

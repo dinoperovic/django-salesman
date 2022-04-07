@@ -10,8 +10,8 @@ from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
 from salesman.core.utils import get_salesman_model
 
-Basket = get_salesman_model('Basket')
-BasketItem = get_salesman_model('BasketItem')
+Basket = get_salesman_model("Basket")
+BasketItem = get_salesman_model("BasketItem")
 
 
 class ProductField(serializers.DictField):
@@ -52,7 +52,7 @@ class BasketItemSerializer(serializers.ModelSerializer):
     """
 
     url = serializers.SerializerMethodField()
-    product_type = serializers.CharField(source='product._meta.label', read_only=True)
+    product_type = serializers.CharField(source="product._meta.label", read_only=True)
     product = ProductField(read_only=True)
     quantity = serializers.IntegerField(min_value=1)
     unit_price = PriceField(read_only=True)
@@ -66,28 +66,28 @@ class BasketItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasketItem
         fields = [
-            'url',
-            'ref',
-            'product_type',
-            'product_id',
-            'product',
-            'unit_price',
-            'quantity',
-            'subtotal',
-            'extra_rows',
-            'total',
-            'extra',
+            "url",
+            "ref",
+            "product_type",
+            "product_id",
+            "product",
+            "unit_price",
+            "quantity",
+            "subtotal",
+            "extra_rows",
+            "total",
+            "extra",
         ]
         read_only_fields = fields
 
     def get_url(self, obj):
-        request = self.context.get('request', None)
-        url = reverse('salesman-basket-detail', args=[obj.ref])
+        request = self.context.get("request", None)
+        url = reverse("salesman-basket-detail", args=[obj.ref])
         return request.build_absolute_uri(url) if request else url
 
     def validate(self, attrs):
         context = self.context.copy()
-        context['basket_item'] = self.instance
+        context["basket_item"] = self.instance
         return app_settings.SALESMAN_BASKET_ITEM_VALIDATOR(attrs, context=context)
 
     def validate_extra(self, value):
@@ -99,11 +99,11 @@ class BasketItemSerializer(serializers.ModelSerializer):
 
         # Validate using extra validator.
         context = self.context.copy()
-        context['basket_item'] = self.instance
+        context["basket_item"] = self.instance
         return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=context)
 
     def to_representation(self, item):
-        basket, request = self.context['basket'], self.context['request']
+        basket, request = self.context["basket"], self.context["request"]
         basket.update(request)
         item = basket.find(item.ref)
         return super().to_representation(item)
@@ -126,37 +126,37 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BasketItem
-        fields = ['ref', 'product_type', 'product_id', 'quantity', 'extra']
+        fields = ["ref", "product_type", "product_id", "quantity", "extra"]
 
     def validate(self, attrs):
         # Validate and set product from generic relation.
-        app_label, model_name = attrs['product_type'].split('.')
+        app_label, model_name = attrs["product_type"].split(".")
         model = apps.get_model(app_label, model_name)
         content_type = ContentType.objects.get_for_model(model)
         try:
-            pid = attrs['product_id']
-            attrs['product'] = content_type.get_object_for_this_type(id=pid)
+            pid = attrs["product_id"]
+            attrs["product"] = content_type.get_object_for_this_type(id=pid)
         except ObjectDoesNotExist:
             msg = _("Product '{product_type}' with id '{product_id}' doesn't exist.")
             raise serializers.ValidationError(msg.format(**attrs))
 
         # Validate using basket item validator.
         context = self.context.copy()
-        context['basket_item'] = self.instance
+        context["basket_item"] = self.instance
         return app_settings.SALESMAN_BASKET_ITEM_VALIDATOR(attrs, context=context)
 
     def validate_extra(self, value):
         context = self.context.copy()
-        context['basket_item'] = self.instance
+        context["basket_item"] = self.instance
         return app_settings.SALESMAN_EXTRA_VALIDATOR(value, context=context)
 
     def create(self, validated_data) -> BaseBasketItem:
-        basket = self.context['basket']
+        basket = self.context["basket"]
         return basket.add(
-            product=validated_data['product'],
-            quantity=validated_data['quantity'],
-            ref=validated_data.get('ref', None),
-            extra=validated_data.get('extra', None),
+            product=validated_data["product"],
+            quantity=validated_data["quantity"],
+            ref=validated_data.get("ref", None),
+            extra=validated_data.get("extra", None),
         )
 
     def to_representation(self, item):
@@ -168,7 +168,7 @@ class BasketSerializer(serializers.ModelSerializer):
     Serializer for basket.
     """
 
-    items = BasketItemSerializer(source='get_items', many=True, read_only=True)
+    items = BasketItemSerializer(source="get_items", many=True, read_only=True)
     subtotal = PriceField(read_only=True)
     extra_rows = ExtraRowsField(read_only=True)
     total = PriceField(read_only=True)
@@ -176,10 +176,10 @@ class BasketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Basket
-        fields = ['id', 'items', 'subtotal', 'extra_rows', 'total', 'extra']
+        fields = ["id", "items", "subtotal", "extra_rows", "total", "extra"]
 
     def to_representation(self, basket):
-        basket.update(self.context['request'])
+        basket.update(self.context["request"])
         return super().to_representation(basket)
 
 
@@ -194,7 +194,7 @@ class BasketExtraSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Basket
-        fields = ['extra']
+        fields = ["extra"]
 
     def validate_extra(self, value):
         # Update basket extra instead of replacing it, remove null values.

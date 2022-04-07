@@ -21,15 +21,15 @@ class PaymentMethodSerializer(serializers.Serializer):
     def to_representation(self, payment_method):
         data = super().to_representation(payment_method)
         payment = payment_methods_pool.get_payment(payment_method.identifier)
-        request = self.context['request']
+        request = self.context["request"]
         try:
-            if 'basket' in self.context:
-                payment.validate_basket(basket=self.context['basket'], request=request)
-            if 'order' in self.context:
-                payment.validate_order(order=self.context['order'], request=request)
+            if "basket" in self.context:
+                payment.validate_basket(basket=self.context["basket"], request=request)
+            if "order" in self.context:
+                payment.validate_order(order=self.context["order"], request=request)
         except (ValidationError, DjangoValidationError) as e:
             error = serializers.as_serializer_error(e)
-            data['error'] = error[api_settings.NON_FIELD_ERRORS_KEY][0]
+            data["error"] = error[api_settings.NON_FIELD_ERRORS_KEY][0]
         return data
 
 
@@ -42,15 +42,15 @@ class CheckoutSerializer(serializers.Serializer):
     shipping_address = serializers.CharField(
         allow_blank=True,
         write_only=True,
-        style={'base_template': 'textarea.html'},
+        style={"base_template": "textarea.html"},
     )
     billing_address = serializers.CharField(
         allow_blank=True,
         write_only=True,
-        style={'base_template': 'textarea.html'},
+        style={"base_template": "textarea.html"},
     )
     payment_method = serializers.ChoiceField(
-        choices=payment_methods_pool.get_choices('basket'),
+        choices=payment_methods_pool.get_choices("basket"),
         write_only=True,
     )
     extra = serializers.JSONField(
@@ -64,23 +64,23 @@ class CheckoutSerializer(serializers.Serializer):
 
     def validate_shipping_address(self, value):
         context = self.context.copy()
-        context['address'] = 'shipping'
+        context["address"] = "shipping"
         return app_settings.SALESMAN_ADDRESS_VALIDATOR(value, context=context)
 
     def validate_billing_address(self, value):
         context = self.context.copy()
-        context['address'] = 'billing'
+        context["address"] = "billing"
         return app_settings.SALESMAN_ADDRESS_VALIDATOR(value, context=context)
 
     def validate_payment_method(self, value):
-        basket, request = self.context['basket'], self.context['request']
+        basket, request = self.context["basket"], self.context["request"]
         payment = payment_methods_pool.get_payment(value)
         payment.validate_basket(basket, request)
         return payment
 
     def validate_extra(self, value):
         # Update basket `extra` instead of replacing it, remove null values.
-        extra = self.context['basket'].extra
+        extra = self.context["basket"].extra
         if value:
             extra.update(value)
             extra = {k: v for k, v in extra.items() if v is not None}
@@ -88,18 +88,18 @@ class CheckoutSerializer(serializers.Serializer):
         return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=self.context)
 
     def save(self):
-        basket, request = self.context['basket'], self.context['request']
+        basket, request = self.context["basket"], self.context["request"]
         # Save extra data on basket.
-        basket.extra = self.validated_data.get('extra', basket.extra)
-        basket.extra['email'] = self.validated_data['email']
-        basket.extra['shipping_address'] = self.validated_data['shipping_address']
-        basket.extra['billing_address'] = self.validated_data['billing_address']
-        basket.save(update_fields=['extra'])
+        basket.extra = self.validated_data.get("extra", basket.extra)
+        basket.extra["email"] = self.validated_data["email"]
+        basket.extra["shipping_address"] = self.validated_data["shipping_address"]
+        basket.extra["billing_address"] = self.validated_data["billing_address"]
+        basket.save(update_fields=["extra"])
         # Process the payment.
-        payment = self.validated_data['payment_method']
+        payment = self.validated_data["payment_method"]
         data = payment.basket_payment(basket, request)
         # Returning string in payments converts to a URL data value.
         if isinstance(data, str):
-            data = {'url': data}
+            data = {"url": data}
         # Override the serializer data with the payment data.
         self._data = data

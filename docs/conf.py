@@ -14,11 +14,11 @@ import django  # noqa
 
 import salesman  # noqa
 
-sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../example'))
+sys.path.insert(0, os.path.abspath("../"))
+sys.path.insert(0, os.path.abspath("../example"))
 
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'example.project.settings'
+os.environ["DJANGO_SETTINGS_MODULE"] = "example.project.settings"
 django.setup()
 
 # -- Project information -----------------------------------------------------
@@ -32,24 +32,24 @@ release = salesman.__version__
 # -- General configuration ---------------------------------------------------
 
 extensions = [
-    'sphinx.ext.napoleon',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx_rtd_theme',
-    'sphinxcontrib.httpdomain',
+    "sphinx.ext.napoleon",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
+    "sphinx_rtd_theme",
+    "sphinxcontrib.httpdomain",
 ]
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # autodoc
-autodoc_member_order = 'bysource'
+autodoc_member_order = "bysource"
 
 
 # -- Options for HTML output -------------------------------------------------
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
 html_theme_options = {
-    'logo_only': True,
+    "logo_only": True,
 }
 html_logo = "_static/logo.svg"

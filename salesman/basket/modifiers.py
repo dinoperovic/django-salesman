@@ -98,8 +98,8 @@ class BasketModifier:
         if not identifier:
             identifier = self.identifier
 
-        instance = {'label': label, 'amount': amount, 'extra': extra}
-        context = {'request': request}
+        instance = {"label": label, "amount": amount, "extra": extra}
+        context = {"request": request}
         obj.extra_rows[identifier] = ExtraRowSerializer(instance, context=context)
         if charge:
             obj.total += Decimal(amount)

@@ -14,9 +14,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from salesman.basket.models import BaseBasket
     from salesman.orders.models import BaseOrder, BaseOrderPayment
 
-Basket = get_salesman_model('Basket')
-Order = get_salesman_model('Order')
-OrderPayment = get_salesman_model('OrderPayment')
+Basket = get_salesman_model("Basket")
+Order = get_salesman_model("Order")
+OrderPayment = get_salesman_model("OrderPayment")
 
 
 class PaymentError(Exception):
@@ -149,8 +149,8 @@ class PaymentMethodsPool:
         """
         if not self._payments:
             self._payments = [P() for P in app_settings.SALESMAN_PAYMENT_METHODS]
-        if kind in ['basket', 'order']:
-            method = f'{kind}_payment'
+        if kind in ["basket", "order"]:
+            method = f"{kind}_payment"
             return [p for p in self._payments if method in p.__class__.__dict__]
         return self._payments
 
@@ -162,7 +162,7 @@ class PaymentMethodsPool:
         for payment in self.get_payments():
             urls = payment.get_urls()
             if urls:
-                base_url = f'payment/{payment.identifier}/'
+                base_url = f"payment/{payment.identifier}/"
                 urlpatterns.append(path(base_url, include(urls)))
         return urlpatterns
 

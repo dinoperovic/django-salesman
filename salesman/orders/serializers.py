@@ -11,10 +11,10 @@ from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
 from salesman.core.utils import get_salesman_model
 
-Order = get_salesman_model('Order')
-OrderItem = get_salesman_model('OrderItem')
-OrderPayment = get_salesman_model('OrderPayment')
-OrderNote = get_salesman_model('OrderNote')
+Order = get_salesman_model("Order")
+OrderItem = get_salesman_model("OrderItem")
+OrderPayment = get_salesman_model("OrderPayment")
+OrderNote = get_salesman_model("OrderNote")
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
     Serializer for order item.
     """
 
-    product = serializers.JSONField(source='product_data', read_only=True)
+    product = serializers.JSONField(source="product_data", read_only=True)
     unit_price = PriceField(read_only=True)
     subtotal = PriceField(read_only=True)
     total = PriceField(read_only=True)
@@ -31,16 +31,16 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = [
-            'id',
-            'product_type',
-            'product_id',
-            'product',
-            'unit_price',
-            'quantity',
-            'subtotal',
-            'extra_rows',
-            'total',
-            'extra',
+            "id",
+            "product_type",
+            "product_id",
+            "product",
+            "unit_price",
+            "quantity",
+            "subtotal",
+            "extra_rows",
+            "total",
+            "extra",
         ]
         read_only_fields = fields
 
@@ -54,7 +54,7 @@ class OrderPaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderPayment
-        fields = ['amount', 'transaction_id', 'payment_method', 'date_created']
+        fields = ["amount", "transaction_id", "payment_method", "date_created"]
         read_only_fields = fields
 
 
@@ -65,8 +65,8 @@ class OrderNoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderNote
-        fields = ['message', 'date_created']
-        read_only_fields = ['date_created']
+        fields = ["message", "date_created"]
+        read_only_fields = ["date_created"]
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -87,36 +87,36 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id',
-            'url',
-            'ref',
-            'token',
-            'status',
-            'status_display',
-            'date_created',
-            'date_updated',
-            'is_paid',
-            'user',
-            'email',
-            'billing_address',
-            'shipping_address',
-            'subtotal',
-            'extra_rows',
-            'total',
-            'amount_paid',
-            'amount_outstanding',
-            'extra',
-            'items',
-            'payments',
-            'notes',
+            "id",
+            "url",
+            "ref",
+            "token",
+            "status",
+            "status_display",
+            "date_created",
+            "date_updated",
+            "is_paid",
+            "user",
+            "email",
+            "billing_address",
+            "shipping_address",
+            "subtotal",
+            "extra_rows",
+            "total",
+            "amount_paid",
+            "amount_outstanding",
+            "extra",
+            "items",
+            "payments",
+            "notes",
         ]
         read_only_fields = fields
-        prefetch_related_fields = ['items', 'payments', 'notes']
-        select_related_fields = ['user']
+        prefetch_related_fields = ["items", "payments", "notes"]
+        select_related_fields = ["user"]
 
     def get_url(self, obj):
-        request = self.context.get('request', None)
-        url = reverse('salesman-order-detail', args=[obj.ref])
+        request = self.context.get("request", None)
+        url = reverse("salesman-order-detail", args=[obj.ref])
         return request.build_absolute_uri(url) if request else url
 
     def get_notes(self, obj):
@@ -135,12 +135,12 @@ class StatusTransitionSerializer(serializers.Serializer):
 
     def to_representation(self, status):
         data = super().to_representation(status)
-        order = self.context['order']
+        order = self.context["order"]
         try:
             app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
         except (ValidationError, DjangoValidationError) as e:
             error = serializers.as_serializer_error(e)
-            data['error'] = error[api_settings.NON_FIELD_ERRORS_KEY][0]
+            data["error"] = error[api_settings.NON_FIELD_ERRORS_KEY][0]
         return data
 
 
@@ -153,23 +153,23 @@ class OrderStatusSerializer(serializers.ModelSerializer):
 
     # Show status transitions with error on GET.
     status_transitions = StatusTransitionSerializer(
-        source='Status',
+        source="Status",
         many=True,
         read_only=True,
     )
 
     class Meta:
         model = Order
-        fields = ['status', 'status_display', 'status_transitions']
+        fields = ["status", "status_display", "status_transitions"]
 
     def validate_status(self, status):
-        order = self.context['order']
+        order = self.context["order"]
         return app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        if self.context['request'].method == 'PUT' and 'status_transitions' in data:
-            del data['status_transitions']
+        if self.context["request"].method == "PUT" and "status_transitions" in data:
+            del data["status_transitions"]
         return data
 
 
@@ -179,7 +179,7 @@ class OrderPaySerializer(serializers.Serializer):
     """
 
     payment_method = serializers.ChoiceField(
-        choices=payment_methods_pool.get_choices('order'),
+        choices=payment_methods_pool.get_choices("order"),
         write_only=True,
     )
 
@@ -187,19 +187,19 @@ class OrderPaySerializer(serializers.Serializer):
     payment_methods = PaymentMethodSerializer(many=True, read_only=True)
 
     def validate_payment_method(self, value):
-        order, request = self.context['order'], self.context['request']
+        order, request = self.context["order"], self.context["request"]
         payment = payment_methods_pool.get_payment(value)
         payment.validate_order(order, request)
         return payment
 
     def save(self):
         # Process the payment.
-        order, request = self.context['order'], self.context['request']
-        payment = self.validated_data['payment_method']
+        order, request = self.context["order"], self.context["request"]
+        payment = self.validated_data["payment_method"]
         data = payment.order_payment(order, request)
         # Returning string in payments converts to a URL data value.
         if isinstance(data, str):
-            data = {'url': data}
+            data = {"url": data}
         # Override the serializer data with the payment data.
         self._data = data
 
@@ -213,14 +213,14 @@ class OrderRefundSerializer(serializers.Serializer):
     failed = serializers.ListField(read_only=True)
 
     def validate(self, attrs):
-        order = self.context['order']
+        order = self.context["order"]
         if order.status == order.Status.REFUNDED:
             raise serializers.ValidationError(_("Order is already marked as Refunded."))
         return attrs
 
     def save(self):
         # Process the refund.
-        order = self.context['order']
+        order = self.context["order"]
         refunded, failed = [], []
         for item in order.payments.all():
             payment = payment_methods_pool.get_payment(item.payment_method)
@@ -230,7 +230,7 @@ class OrderRefundSerializer(serializers.Serializer):
             else:
                 failed.append(serializer.data)
         # Set data and change order status.
-        self.validated_data.update({'refunded': refunded, 'failed': failed})
+        self.validated_data.update({"refunded": refunded, "failed": failed})
         if not failed:
             order.status = order.Status.REFUNDED
-            order.save(update_fields=['status'])
+            order.save(update_fields=["status"])

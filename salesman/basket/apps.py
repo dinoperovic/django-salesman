@@ -13,7 +13,7 @@ def protect_basket_items(sender, instance, **kwargs):
     """
     from django.contrib.contenttypes.models import ContentType
 
-    BasketItem = get_salesman_model('BasketItem')
+    BasketItem = get_salesman_model("BasketItem")
     content_type = ContentType.objects.get_for_model(sender)
     items = BasketItem.objects.filter(
         product_content_type=content_type, product_id=instance.id
@@ -24,13 +24,13 @@ def protect_basket_items(sender, instance, **kwargs):
 
 
 class SalesmanBasketApp(AppConfig):
-    name = 'salesman.basket'
-    label = 'salesmanbasket'
+    name = "salesman.basket"
+    label = "salesmanbasket"
     verbose_name = _("Salesman Basket")
 
     def ready(self):
         # Connect `pre_delete` signal for each product model.
         for key in app_settings.SALESMAN_PRODUCT_TYPES.keys():
-            app_label, model_name = key.split('.')
+            app_label, model_name = key.split(".")
             model = apps.get_model(app_label, model_name)
             pre_delete.connect(protect_basket_items, sender=model, dispatch_uid=key)

@@ -5,9 +5,9 @@ from salesman.core.utils import get_salesman_model
 
 from .widgets import OrderStatusSelect, PaymentSelect
 
-Order = get_salesman_model('Order')
-OrderPayment = get_salesman_model('OrderPayment')
-OrderNote = get_salesman_model('OrderNote')
+Order = get_salesman_model("Order")
+OrderPayment = get_salesman_model("OrderPayment")
+OrderNote = get_salesman_model("OrderNote")
 
 
 class OrderModelForm(forms.ModelForm):
@@ -15,16 +15,16 @@ class OrderModelForm(forms.ModelForm):
         model = Order
         exclude: list = []
         widgets = {
-            'status': OrderStatusSelect,
+            "status": OrderStatusSelect,
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'status' in self.fields:
-            self.fields['status'].widget.order = self.instance
+        if "status" in self.fields:
+            self.fields["status"].widget.order = self.instance
 
     def clean_status(self):
-        status, order = self.cleaned_data['status'], self.instance
+        status, order = self.cleaned_data["status"], self.instance
         return app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
 
 
@@ -33,7 +33,7 @@ class OrderPaymentModelForm(forms.ModelForm):
         model = OrderPayment
         exclude: list = []
         widgets = {
-            'payment_method': PaymentSelect,
+            "payment_method": PaymentSelect,
         }
 
 
@@ -42,5 +42,5 @@ class OrderNoteModelForm(forms.ModelForm):
         model = OrderNote
         exclude: list = []
         widgets = {
-            'message': forms.Textarea(attrs={'rows': 4, 'cols': 60}),
+            "message": forms.Textarea(attrs={"rows": 4, "cols": 60}),
         }

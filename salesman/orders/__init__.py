@@ -1,1 +1,1 @@
-default_app_config = 'salesman.orders.apps.SalesmanOrdersApp'
+default_app_config = "salesman.orders.apps.SalesmanOrdersApp"

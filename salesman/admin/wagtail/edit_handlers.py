@@ -19,35 +19,35 @@ class ReadOnlyPanel(EditHandler):
 
     def __init__(self, attr, *args, **kwargs):
         self.attr = attr
-        self.formatter = kwargs.pop('formatter', None)
-        self.renderer = kwargs.pop('renderer', None)
+        self.formatter = kwargs.pop("formatter", None)
+        self.renderer = kwargs.pop("renderer", None)
         super().__init__(*args, **kwargs)
 
     def clone_kwargs(self):
         kwargs = super().clone_kwargs()
-        kwargs['attr'] = self.attr
-        kwargs['formatter'] = self.formatter
-        kwargs['renderer'] = self.renderer
+        kwargs["attr"] = self.attr
+        kwargs["formatter"] = self.formatter
+        kwargs["renderer"] = self.renderer
         return kwargs
 
     def on_model_bound(self):
         """
         Set field data from model.
         """
-        field, heading = None, ''
+        field, heading = None, ""
         try:
             field = self.model._meta.get_field(self.attr)
-            heading = getattr(field, 'verbose_name', '')
+            heading = getattr(field, "verbose_name", "")
         except (FieldDoesNotExist, AttributeError):
             try:
                 field = getattr(self.model, self.attr)
-                heading = getattr(field, 'short_description', '')
+                heading = getattr(field, "short_description", "")
             except AttributeError:
                 pass
         if heading and not self.heading:
             self.heading = heading
         if field and not self.help_text:
-            self.help_text = getattr(field, 'help_text', '')
+            self.help_text = getattr(field, "help_text", "")
 
     def get_value(self):
         value = getattr(self.instance, self.attr)
@@ -68,11 +68,11 @@ class ReadOnlyPanel(EditHandler):
         if self.renderer:
             return self.renderer(self.get_value(), self.instance, self.request)
         return format_html(
-            '<fieldset><legend>{}</legend>'
+            "<fieldset><legend>{}</legend>"
             '<ul class="fields"><li><div class="field">'
             '<div style="padding-top: 1.2em;">{}</div>'
-            '</div></li></ul>'
-            '</fieldset>',
+            "</div></li></ul>"
+            "</fieldset>",
             self.heading,
             self.render(),
         )
@@ -87,11 +87,11 @@ class ReadOnlyPanel(EditHandler):
         )
         return format_html(
             '<div class="field">'
-            '<label>{}{}</label>'
+            "<label>{}{}</label>"
             '<div class="field-content">'
             '<div style="padding-top: 1.2em;">{}</div>{}'
-            '</div>'
-            '</div>',
+            "</div>"
+            "</div>",
             self.heading,
             _(":"),
             self.render(),
@@ -102,20 +102,20 @@ class ReadOnlyPanel(EditHandler):
 class OrderDatePanel(ReadOnlyPanel):
     def format_value(self, value):
         if value:
-            value = date_format(value, format='DATETIME_FORMAT')
+            value = date_format(value, format="DATETIME_FORMAT")
         return value
 
 
 class OrderCheckboxPanel(ReadOnlyPanel):
     def format_value(self, value):
-        icon, color = ('tick', '#157b57') if value else ('cross', '#cd3238')
+        icon, color = ("tick", "#157b57") if value else ("cross", "#cd3238")
         template = '<span class="icon icon-{}" style="color: {};"></span>'
         return format_html(template, icon, color)
 
 
 class OrderItemsPanel(ReadOnlyPanel):
     def classes(self):
-        return ['salesman-order-items']
+        return ["salesman-order-items"]
 
     def render_as_field(self):
         return self.render()
@@ -125,11 +125,11 @@ class OrderItemsPanel(ReadOnlyPanel):
 
     def format_json(self, value, obj, request):
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-            value, context={'order_item': True}
+            value, context={"order_item": True}
         )
 
     def render(self):
-        head = f'''<tr>
+        head = f"""<tr>
             <td>{_('Name')}</td>
             <td>{_('Code')}</td>
             <td>{_('Unit price')}</td>
@@ -138,11 +138,11 @@ class OrderItemsPanel(ReadOnlyPanel):
             <td>{_('Extra rows')}</td>
             <td>{_('Total')}</td>
             <td>{_('Extra')}</td>
-            </tr>'''
+            </tr>"""
 
-        body = ''
+        body = ""
         for item in self.instance.items.all():
-            body += f'''<tr>
+            body += f"""<tr>
             <td class="title"><h2>{item.name}</h2></td>
             <td>{item.code}</td>
             <td>{format_price(item.unit_price, self.instance, self.request)}</td>
@@ -151,13 +151,13 @@ class OrderItemsPanel(ReadOnlyPanel):
             <td>{self.format_json(item.extra_rows, self.instance, self.request)}</td>
             <td>{format_price(item.total, self.instance, self.request)}</td>
             <td>{self.format_json(item.extra, self.instance, self.request)}</td>
-            </tr>'''
+            </tr>"""
 
         return format_html(
             '<table class="listing full-width">'
-            '<thead>{}</thead>'
-            '<tbody>{}</tbody>'
-            '</table>',
+            "<thead>{}</thead>"
+            "<tbody>{}</tbody>"
+            "</table>",
             mark_safe(head),
             mark_safe(body),
         )
@@ -172,11 +172,11 @@ class OrderAdminPanel(ReadOnlyPanel):
         pass
 
     def on_form_bound(self):
-        if not hasattr(self.form, 'model_admin'):
+        if not hasattr(self.form, "model_admin"):
             raise AssertionError("OrderAdminPanel can only be used in OrderModelAdmin.")
 
         field = getattr(self.form.model_admin, self.attr)
-        heading = getattr(field, 'short_description', '')
+        heading = getattr(field, "short_description", "")
         if heading and not self.heading:
             self.heading = heading
 

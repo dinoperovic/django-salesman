@@ -3,7 +3,7 @@ import pytest
 from salesman.core.utils import get_salesman_model
 from salesman.orders.signals import status_changed
 
-Order = get_salesman_model('Order')
+Order = get_salesman_model("Order")
 
 _signal_called = False
 

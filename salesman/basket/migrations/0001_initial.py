@@ -12,47 +12,110 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '__first__'),
+        ("contenttypes", "__first__"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         migrations.swappable_dependency(app_settings.SALESMAN_BASKET_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Basket',
+            name="Basket",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('extra', models.JSONField(blank=True, default={}, verbose_name='Extra')),
-                ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date created')),
-                ('date_updated', models.DateTimeField(auto_now=True, verbose_name='Date updated')),
-                ('owner', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Owner')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "extra",
+                    models.JSONField(blank=True, default={}, verbose_name="Extra"),
+                ),
+                (
+                    "date_created",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Date created"
+                    ),
+                ),
+                (
+                    "date_updated",
+                    models.DateTimeField(auto_now=True, verbose_name="Date updated"),
+                ),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Owner",
+                    ),
+                ),
             ],
             options={
-                'swappable': 'SALESMAN_BASKET_MODEL',
-                'verbose_name': 'Basket',
-                'verbose_name_plural': 'Baskets',
-                'ordering': ['-date_created'],
+                "swappable": "SALESMAN_BASKET_MODEL",
+                "verbose_name": "Basket",
+                "verbose_name_plural": "Baskets",
+                "ordering": ["-date_created"],
             },
         ),
         migrations.CreateModel(
-            name='BasketItem',
+            name="BasketItem",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ref', models.SlugField(max_length=128, verbose_name='Reference')),
-                ('product_id', models.PositiveIntegerField(verbose_name='Product id')),
-                ('quantity', models.PositiveIntegerField(default=1, verbose_name='Quantity')),
-                ('extra', models.JSONField(blank=True, default={}, verbose_name='Extra')),
-                ('date_created', models.DateTimeField(auto_now_add=True, verbose_name='Date created')),
-                ('date_updated', models.DateTimeField(auto_now=True, verbose_name='Date updated')),
-                ('basket', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='items', to=app_settings.SALESMAN_BASKET_MODEL, verbose_name='Basket')),
-                ('product_content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ref", models.SlugField(max_length=128, verbose_name="Reference")),
+                ("product_id", models.PositiveIntegerField(verbose_name="Product id")),
+                (
+                    "quantity",
+                    models.PositiveIntegerField(default=1, verbose_name="Quantity"),
+                ),
+                (
+                    "extra",
+                    models.JSONField(blank=True, default={}, verbose_name="Extra"),
+                ),
+                (
+                    "date_created",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Date created"
+                    ),
+                ),
+                (
+                    "date_updated",
+                    models.DateTimeField(auto_now=True, verbose_name="Date updated"),
+                ),
+                (
+                    "basket",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="items",
+                        to=app_settings.SALESMAN_BASKET_MODEL,
+                        verbose_name="Basket",
+                    ),
+                ),
+                (
+                    "product_content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
             options={
-                'swappable': 'SALESMAN_BASKET_ITEM_MODEL',
-                'verbose_name': 'Item',
-                'verbose_name_plural': 'Items',
-                'ordering': ['date_created'],
-                'unique_together': {('basket', 'ref')},
+                "swappable": "SALESMAN_BASKET_ITEM_MODEL",
+                "verbose_name": "Item",
+                "verbose_name_plural": "Items",
+                "ordering": ["date_created"],
+                "unique_together": {("basket", "ref")},
             },
         ),
     ]

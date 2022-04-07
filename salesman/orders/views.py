@@ -16,7 +16,7 @@ from .serializers import (
     OrderStatusSerializer,
 )
 
-Order = get_salesman_model('Order')
+Order = get_salesman_model("Order")
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
@@ -25,20 +25,20 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     serializer_class = app_settings.SALESMAN_ORDER_SERIALIZER
-    lookup_field = 'ref'
+    lookup_field = "ref"
 
     def get_queryset(self):
         queryset = self.optimize_queryset(Order.objects.all())
 
         if self.request.user.is_authenticated:
-            if self.request.user.is_staff and self.action != 'list':
+            if self.request.user.is_staff and self.action != "list":
                 # Allow access for admin user to all orders except on `list`.
                 return queryset
             return queryset.filter(user=self.request.user.id)
 
-        if 'token' in self.request.GET:
+        if "token" in self.request.GET:
             # Allow non-authenticated users access to order with token.
-            return queryset.filter(token=self.request.GET['token'])
+            return queryset.filter(token=self.request.GET["token"])
 
         return Order.objects.none()
 
@@ -47,47 +47,47 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         Extract fields for pre-fetching from order serializer and apply to queryset.
         """
         serializer_class = self.get_serializer_class()
-        if hasattr(serializer_class, 'Meta'):
-            fields = getattr(serializer_class.Meta, 'select_related_fields', None)
+        if hasattr(serializer_class, "Meta"):
+            fields = getattr(serializer_class.Meta, "select_related_fields", None)
             if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
                 queryset = queryset.select_related(*fields)
-            fields = getattr(serializer_class.Meta, 'prefetch_related_fields', None)
+            fields = getattr(serializer_class.Meta, "prefetch_related_fields", None)
             if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
                 queryset = queryset.prefetch_related(*fields)
         return queryset
 
     def get_object(self):
-        if not hasattr(self, '_object'):
+        if not hasattr(self, "_object"):
             self._object = super().get_object()
         return self._object
 
     def get_serializer_class(self):
-        if self.action in ['list', 'all']:
+        if self.action in ["list", "all"]:
             return app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
         return super().get_serializer_class()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         if self.detail and self.lookup_field in self.kwargs:
-            context['order'] = self.get_object()
+            context["order"] = self.get_object()
         return context
 
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def last(self, request):
         """
         Show last customer order.
         """
-        order = self.get_queryset().order_by('date_created').last()
+        order = self.get_queryset().order_by("date_created").last()
         if not order:
             raise Http404
         serializer = self.get_serializer(order)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAdminUser])
+    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser])
     def all(self, request):
         """
         Show all orders to the admin user.
@@ -96,7 +96,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(
         detail=True,
-        methods=['get', 'put'],
+        methods=["get", "put"],
         serializer_class=OrderStatusSerializer,
         permission_classes=[IsAdminUser],
     )
@@ -106,7 +106,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         """
         order = self.get_object()
 
-        if request.method == 'GET':
+        if request.method == "GET":
             serializer = self.get_serializer(order)
             return Response(serializer.data)
 
@@ -115,13 +115,13 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serializer.save()
         return Response(serializer.data)
 
-    @action(detail=True, methods=['get', 'post'], serializer_class=OrderPaySerializer)
+    @action(detail=True, methods=["get", "post"], serializer_class=OrderPaySerializer)
     def pay(self, request, ref):
         """
         Pay for order.
         """
-        if request.method == 'GET':
-            instance = {'payment_methods': payment_methods_pool.get_payments('order')}
+        if request.method == "GET":
+            instance = {"payment_methods": payment_methods_pool.get_payments("order")}
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
 
@@ -129,14 +129,14 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
         try:
             serializer.save()
-            headers = {'Location': serializer.data['url']}
+            headers = {"Location": serializer.data["url"]}
             return Response(serializer.data, headers=headers)
         except PaymentError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_402_PAYMENT_REQUIRED)
+            return Response({"detail": str(e)}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
     @action(
         detail=True,
-        methods=['post'],
+        methods=["post"],
         serializer_class=OrderRefundSerializer,
         permission_classes=[IsAdminUser],
     )
@@ -147,6 +147,6 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        if serializer.data['failed']:
+        if serializer.data["failed"]:
             return Response(serializer.data, status=status.HTTP_206_PARTIAL_CONTENT)
         return Response(serializer.data)

@@ -47,7 +47,7 @@ class OrderManager(models.Manager):
         Returns:
             Order: Order instance
         """
-        kwargs['ref'] = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR(request)
+        kwargs["ref"] = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR(request)
         return super().create(**kwargs)
 
     def create_from_basket(
@@ -62,7 +62,7 @@ class OrderManager(models.Manager):
         Returns:
             Order: Order instance
         """
-        kwargs['ref'] = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR(request)
+        kwargs["ref"] = app_settings.SALESMAN_ORDER_REFERENCE_GENERATOR(request)
         order = self.model(**kwargs)
         order.populate_from_basket(basket, request)
         return order
@@ -88,7 +88,7 @@ class BaseOrder(ClusterableModel):
     status = models.CharField(
         _("Status"),
         max_length=128,
-        default='NEW',
+        default="NEW",
         help_text=_("Changing order status might trigger a notification to customer."),
     )
 
@@ -133,12 +133,12 @@ class BaseOrder(ClusterableModel):
         abstract = True
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
-        ordering = ['-date_created']
+        ordering = ["-date_created"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.extra = copy.deepcopy(self._extra)
-        self.extra_rows = self.extra.pop('rows', [])
+        self.extra_rows = self.extra.pop("rows", [])
         self._current_status = self.status
 
     def __str__(self):
@@ -146,15 +146,15 @@ class BaseOrder(ClusterableModel):
 
     def save(self, *args, **kwargs):
         self._extra = dict(self.extra, rows=self.extra_rows)
-        if 'extra' in kwargs.get('update_fields', []):
-            kwargs['update_fields'].remove('extra')
-            kwargs['update_fields'].append('_extra')
+        if "extra" in kwargs.get("update_fields", []):
+            kwargs["update_fields"].remove("extra")
+            kwargs["update_fields"].append("_extra")
         new_status, old_status = self.status, self._current_status
         super().save(*args, **kwargs)
         # Send signal if status changed.
         if new_status != old_status:
             status_changed.send(
-                get_salesman_model('Order'),
+                get_salesman_model("Order"),
                 order=self,
                 new_status=new_status,
                 old_status=old_status,
@@ -164,7 +164,7 @@ class BaseOrder(ClusterableModel):
         self,
         amount: Decimal,
         transaction_id: str,
-        payment_method: str = '',
+        payment_method: str = "",
     ) -> BaseOrderPayment:
         """
         Create a new payment for order.
@@ -177,7 +177,7 @@ class BaseOrder(ClusterableModel):
         Returns:
             OrderPayment: New order payment instance
         """
-        OrderPayment = get_salesman_model('OrderPayment')
+        OrderPayment = get_salesman_model("OrderPayment")
         return OrderPayment.objects.create(
             order=self,
             amount=amount,
@@ -201,13 +201,13 @@ class BaseOrder(ClusterableModel):
         """
         from salesman.basket.serializers import ExtraRowsField
 
-        if not hasattr(basket, 'total'):
+        if not hasattr(basket, "total"):
             basket.update(request)
 
         self.user = basket.user
-        self.email = basket.extra.pop('email', '')
-        self.shipping_address = basket.extra.pop('shipping_address', '')
-        self.billing_address = basket.extra.pop('billing_address', '')
+        self.email = basket.extra.pop("email", "")
+        self.shipping_address = basket.extra.pop("shipping_address", "")
+        self.billing_address = basket.extra.pop("billing_address", "")
         self.subtotal = basket.subtotal
         self.total = basket.total
         self.extra = basket.extra
@@ -218,7 +218,7 @@ class BaseOrder(ClusterableModel):
             setattr(self, attr, value)
         self.save()
 
-        OrderItem = get_salesman_model('OrderItem')
+        OrderItem = get_salesman_model("OrderItem")
         for item in basket.get_items():
             obj = OrderItem(order=self)
             obj.populate_from_basket_item(item, request)
@@ -247,7 +247,7 @@ class BaseOrder(ClusterableModel):
         return str(dict(self.Status.choices).get(self.status, self.status))
 
     status_display.fget.short_description = _("Status")  # type: ignore
-    status_display.fget.admin_order_field = 'status'  # type: ignore
+    status_display.fget.admin_order_field = "status"  # type: ignore
 
     @cached_property
     def amount_paid(self) -> Decimal:
@@ -282,9 +282,9 @@ class BaseOrder(ClusterableModel):
             Optional[Any]: Attribute value
         """
         if (
-            'salesman.admin' in settings.INSTALLED_APPS
-            and 'wagtail.admin' in settings.INSTALLED_APPS
-            and 'wagtail.contrib.modeladmin' in settings.INSTALLED_APPS
+            "salesman.admin" in settings.INSTALLED_APPS
+            and "wagtail.admin" in settings.INSTALLED_APPS
+            and "wagtail.contrib.modeladmin" in settings.INSTALLED_APPS
         ):
             from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 
@@ -318,14 +318,14 @@ class Order(BaseOrder):
     """
 
     class Meta(BaseOrder.Meta):
-        swappable = 'SALESMAN_ORDER_MODEL'
+        swappable = "SALESMAN_ORDER_MODEL"
 
 
 class BaseOrderItem(models.Model):
     order = ParentalForeignKey(
         app_settings.SALESMAN_ORDER_MODEL,
         on_delete=models.CASCADE,
-        related_name='items',
+        related_name="items",
         verbose_name=_("Order"),
     )
 
@@ -334,7 +334,7 @@ class BaseOrderItem(models.Model):
     # Generic relation to product (optional).
     product_content_type = models.ForeignKey(ContentType, models.SET_NULL, null=True)
     product_id = models.PositiveIntegerField(_("Product id"), null=True)
-    product: Product = GenericForeignKey('product_content_type', 'product_id')
+    product: Product = GenericForeignKey("product_content_type", "product_id")
 
     # Stored product serializer data at the moment of purchase.
     product_data = models.JSONField(_("Product data"), blank=True, default=dict)
@@ -357,16 +357,16 @@ class BaseOrderItem(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.extra = copy.deepcopy(self._extra)
-        self.extra_rows = self.extra.pop('rows', [])
+        self.extra_rows = self.extra.pop("rows", [])
 
     def __str__(self):
-        return f'{self.quantity}x {self.name} ({self.code})'
+        return f"{self.quantity}x {self.name} ({self.code})"
 
     def save(self, *args, **kwargs):
         self._extra = dict(self.extra, rows=self.extra_rows)
-        if 'extra' in kwargs.get('update_fields', []):
-            kwargs['update_fields'].remove('extra')
-            kwargs['update_fields'].append('_extra')
+        if "extra" in kwargs.get("update_fields", []):
+            kwargs["update_fields"].remove("extra")
+            kwargs["update_fields"].append("_extra")
         super().save(*args, **kwargs)
 
     def populate_from_basket_item(
@@ -391,7 +391,7 @@ class BaseOrderItem(models.Model):
         product_field = ProductField()
         product_field._context = {"request": request}
         product_data = product_field.to_representation(item.product)
-        product_data.update({'name': item.product.name, 'code': item.product.code})
+        product_data.update({"name": item.product.name, "code": item.product.code})
         self.product_data = product_data
 
         self.unit_price = item.unit_price
@@ -406,14 +406,14 @@ class BaseOrderItem(models.Model):
         """
         Returns product `name` from stored data.
         """
-        return self.product_data.get('name', "(no name)")
+        return self.product_data.get("name", "(no name)")
 
     @property
     def code(self):
         """
         Returns product `name` from stored data.
         """
-        return self.product_data.get('code', "(no code)")
+        return self.product_data.get("code", "(no code)")
 
 
 class OrderItem(BaseOrderItem):
@@ -422,14 +422,14 @@ class OrderItem(BaseOrderItem):
     """
 
     class Meta(BaseOrderItem.Meta):
-        swappable = 'SALESMAN_ORDER_ITEM_MODEL'
+        swappable = "SALESMAN_ORDER_ITEM_MODEL"
 
 
 class BaseOrderPayment(models.Model):
     order = ParentalForeignKey(
         app_settings.SALESMAN_ORDER_MODEL,
         on_delete=models.CASCADE,
-        related_name='payments',
+        related_name="payments",
         verbose_name=_("Order"),
     )
 
@@ -443,10 +443,10 @@ class BaseOrderPayment(models.Model):
         abstract = True
         verbose_name = _("Payment")
         verbose_name_plural = _("Payments")
-        unique_together = ('order', 'transaction_id')
+        unique_together = ("order", "transaction_id")
 
     def __str__(self):
-        return f'{self.amount} ({self.transaction_id})'
+        return f"{self.amount} ({self.transaction_id})"
 
     def get_payment_method(self):
         """
@@ -473,14 +473,14 @@ class OrderPayment(BaseOrderPayment):
     """
 
     class Meta(BaseOrderPayment.Meta):
-        swappable = 'SALESMAN_ORDER_PAYMENT_MODEL'
+        swappable = "SALESMAN_ORDER_PAYMENT_MODEL"
 
 
 class BaseOrderNote(models.Model):
     order = ParentalForeignKey(
         app_settings.SALESMAN_ORDER_MODEL,
         on_delete=models.CASCADE,
-        related_name='notes',
+        related_name="notes",
         verbose_name=_("Order"),
     )
 
@@ -506,4 +506,4 @@ class OrderNote(BaseOrderNote):
     """
 
     class Meta(BaseOrderNote.Meta):
-        swappable = 'SALESMAN_ORDER_NOTE_MODEL'
+        swappable = "SALESMAN_ORDER_NOTE_MODEL"

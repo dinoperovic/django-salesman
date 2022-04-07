@@ -18,29 +18,29 @@ from .wagtail.helpers import (
 from .wagtail.mixins import WagtailOrderAdminMixin, WagtailOrderAdminRefundMixin
 from .wagtail.views import OrderEditView, OrderIndexView
 
-Order = get_salesman_model('Order')
+Order = get_salesman_model("Order")
 
 
 class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
     model = Order
-    menu_icon = 'form'
+    menu_icon = "form"
     index_view_class = OrderIndexView
     edit_view_class = OrderEditView
     list_display = [
-        '__str__',
-        'email',
-        'status_display',
-        'total_display',
-        'is_paid_display',
-        'date_created',
+        "__str__",
+        "email",
+        "status_display",
+        "total_display",
+        "is_paid_display",
+        "date_created",
     ]
-    list_filter = [OrderStatusFilter, OrderIsPaidFilter, 'date_created', 'date_updated']
-    search_fields = ['ref', 'email', 'token']
-    edit_template_name = 'salesman/admin/wagtail_edit.html'
+    list_filter = [OrderStatusFilter, OrderIsPaidFilter, "date_created", "date_updated"]
+    search_fields = ["ref", "email", "token"]
+    edit_template_name = "salesman/admin/wagtail_edit.html"
     permission_helper_class = OrderPermissionHelper
     button_helper_class = OrderButtonHelper
     url_helper_class = OrderAdminURLHelper
-    form_view_extra_css = ['salesman/admin/wagtail_form.css']
+    form_view_extra_css = ["salesman/admin/wagtail_form.css"]
 
     def get_base_form_class(
         self,
@@ -56,9 +56,9 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
             type[WagtailOrderModelForm]: A model form class
         """
         return type(
-            'WagtailOrderModelForm',
+            "WagtailOrderModelForm",
             (form_class or WagtailOrderModelForm,),
-            {'model_admin': self},
+            {"model_admin": self},
         )
 
     def get_edit_handler(self, instance: Model, request: HttpRequest) -> EditHandler:
@@ -72,23 +72,23 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
         Returns:
             EditHandler: Edit handler
         """
-        if hasattr(self, 'edit_handler'):
+        if hasattr(self, "edit_handler"):
             edit_handler = self.edit_handler
-        elif hasattr(self, 'panels'):
+        elif hasattr(self, "panels"):
             panels = self.panels
             edit_handler = ObjectList(panels)
-        elif hasattr(self.model, 'edit_handler'):
+        elif hasattr(self.model, "edit_handler"):
             edit_handler = self.model.edit_handler
-        elif hasattr(self.model, 'panels'):
+        elif hasattr(self.model, "panels"):
             panels = self.model.panels
             edit_handler = ObjectList(panels)
-        elif hasattr(self, 'default_edit_handler') and self.default_edit_handler:
+        elif hasattr(self, "default_edit_handler") and self.default_edit_handler:
             edit_handler = self.default_edit_handler
         else:
             edit_handler = super().get_edit_handler(instance, request)
 
         edit_handler.base_form_class = self.get_base_form_class(
-            form_class=getattr(edit_handler, 'base_form_class', None)
+            form_class=getattr(edit_handler, "base_form_class", None)
         )
         return edit_handler
 

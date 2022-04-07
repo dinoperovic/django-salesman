@@ -1,1 +1,1 @@
-default_app_config = 'salesman.checkout.apps.SalesmanCheckoutApp'
+default_app_config = "salesman.checkout.apps.SalesmanCheckoutApp"

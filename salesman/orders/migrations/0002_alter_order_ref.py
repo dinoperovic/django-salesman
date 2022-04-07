@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('salesmanorders', '0001_initial'),
+        ("salesmanorders", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='ref',
-            field=models.CharField(help_text='A unique order reference.', max_length=128, unique=True, verbose_name='Reference'),
+            model_name="order",
+            name="ref",
+            field=models.CharField(
+                help_text="A unique order reference.",
+                max_length=128,
+                unique=True,
+                verbose_name="Reference",
+            ),
         ),
     ]

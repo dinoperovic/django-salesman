@@ -40,14 +40,14 @@ class PhoneVariant(models.Model):
     """
 
     COLORS = [
-        ('black', "Black"),
-        ('silver', "Silver"),
-        ('gold', "Gold"),
+        ("black", "Black"),
+        ("silver", "Silver"),
+        ("gold", "Gold"),
     ]
     CAPACITIES = [
-        ('64', "64G"),
-        ('128', "128G"),
-        ('256', "256G"),
+        ("64", "64G"),
+        ("128", "128G"),
+        ("256", "256G"),
     ]
 
     phone = models.ForeignKey(Phone, on_delete=models.CASCADE)
@@ -69,7 +69,7 @@ class PhoneVariant(models.Model):
 
     @property
     def name(self):
-        return f'{self.phone} - {self.color} {self.capacity}'
+        return f"{self.phone} - {self.color} {self.capacity}"
 
     @property
     def code(self):

@@ -22,17 +22,17 @@ def format_json(value: dict, context: dict = {}) -> str:
         str: JSON formated html string
     """
     output = json.dumps(value, indent=2)
-    output = pygments_highlight(output, 'json', 'tango')
-    style = pygments_css('tango')
-    styled = context.get('styled', True)  # Used for testing.
+    output = pygments_highlight(output, "json", "tango")
+    style = pygments_css("tango")
+    styled = context.get("styled", True)  # Used for testing.
     if styled and style:
         html = (
-            f'<style>{style}</style>'
+            f"<style>{style}</style>"
             f'<pre class="highlight" style="margin: 0; padding: 1em;">{output}</pre>'
         )
     else:
         html = f'<pre style="margin: 0;">{output}</pre>'
-    return format_html('<div>{}</div>', mark_safe(html))
+    return format_html("<div>{}</div>", mark_safe(html))
 
 
 def format_price(value: Decimal, order: Order, request: HttpRequest) -> str:
@@ -48,8 +48,8 @@ def format_price(value: Decimal, order: Order, request: HttpRequest) -> str:
         str: Formatted price as a string
     """
     context = {
-        'request': request,
-        'order': order,
-        'admin': True,
+        "request": request,
+        "order": order,
+        "admin": True,
     }
     return app_settings.SALESMAN_PRICE_FORMATTER(value, context=context)

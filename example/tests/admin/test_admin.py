@@ -9,16 +9,16 @@ from salesman.core.utils import get_salesman_model
 
 site = AdminSite()
 
-Order = get_salesman_model('Order')
-OrderItem = get_salesman_model('OrderItem')
-OrderPayment = get_salesman_model('OrderPayment')
+Order = get_salesman_model("Order")
+OrderItem = get_salesman_model("OrderItem")
+OrderPayment = get_salesman_model("OrderPayment")
 
 
 @pytest.mark.django_db
 def test_order_item_inline(rf, django_user_model):
-    request = rf.get('/')
+    request = rf.get("/")
     request.user = django_user_model.objects.create_user(
-        username='user', password='password'
+        username="user", password="password"
     )
     modeladmin = admin.OrderItemInline(OrderItem, site)
     order = Order.objects.create(ref="1")
@@ -33,14 +33,14 @@ def test_order_item_inline(rf, django_user_model):
 
 @pytest.mark.django_db
 def test_order_payment_inline(rf, django_user_model):
-    request = rf.get('/')
+    request = rf.get("/")
     request.user = django_user_model.objects.create_user(
-        username='user', password='password'
+        username="user", password="password"
     )
     modeladmin = admin.OrderPaymentInline(OrderPayment, site)
     order = Order.objects.create(ref="1")
     OrderPayment.objects.create(
-        order=order, amount=100, transaction_id=1, payment_method='dummy'
+        order=order, amount=100, transaction_id=1, payment_method="dummy"
     )
     modeladmin.get_queryset(request)
     assert modeladmin.model.request == request
@@ -50,25 +50,25 @@ def test_order_payment_inline(rf, django_user_model):
 def test_order_model_form():
     order = Order.objects.create(ref="1", subtotal=100, total=120)
     form = admin.OrderModelForm()
-    form.cleaned_data = {'status': 'COMPLETED'}
+    form.cleaned_data = {"status": "COMPLETED"}
     form.instance = order
     with pytest.raises(ValidationError):
         assert form.clean_status()
-    form.cleaned_data = {'status': 'CREATED'}
+    form.cleaned_data = {"status": "CREATED"}
     form.clean_status()
 
 
 @pytest.mark.django_db
 def test_order_admin(rf, django_user_model):
-    request = rf.get('/')
+    request = rf.get("/")
     request.user = django_user_model.objects.create_user(
-        username='user', password='password'
+        username="user", password="password"
     )
     modeladmin = admin.OrderAdmin(Order, site)
     Order.objects.create(ref="0", subtotal=100, total=120)
     order = Order.objects.create(ref="1", subtotal=100, total=120)
     order2 = Order.objects.create(ref="2", subtotal=100, total=120)
-    order2.pay(amount=120, transaction_id='1')
+    order2.pay(amount=120, transaction_id="1")
     assert len(modeladmin.get_queryset(request)) == 3
     assert modeladmin.model.request == request
     assert not modeladmin.has_add_permission(request, order)
@@ -78,22 +78,22 @@ def test_order_admin(rf, django_user_model):
     response = modeladmin.refund_view(request, order.id)
     assert response.status_code == 200
     request.POST = request.POST.dict()
-    request.POST['_refund-error'] = 'Error msg'
+    request.POST["_refund-error"] = "Error msg"
     response = modeladmin.refund_view(request, order.id)
     assert response.status_code == 302
-    assert response.url == reverse('admin:shop_order_change', args=[order.id])
-    del request.POST['_refund-error']
-    request.POST['_refund-success'] = '1'
+    assert response.url == reverse("admin:shop_order_change", args=[order.id])
+    del request.POST["_refund-error"]
+    request.POST["_refund-success"] = "1"
     response = modeladmin.refund_view(request, order.id)
     assert response.status_code == 302
-    request.POST['_refund-success'] = '0'
+    request.POST["_refund-success"] = "0"
     response = modeladmin.refund_view(request, order.id)
     assert response.status_code == 302
-    assert response.url == reverse('admin:shop_order_change', args=[order.id])
+    assert response.url == reverse("admin:shop_order_change", args=[order.id])
 
     # test status filter
     status_filter = admin.OrderStatusFilter(
-        request, {'status': 'NEW'}, order, modeladmin
+        request, {"status": "NEW"}, order, modeladmin
     )
     assert (
         status_filter.lookups(request, modeladmin)
@@ -103,11 +103,11 @@ def test_order_admin(rf, django_user_model):
 
     # test isPaid filter
     is_paid_filter = admin.OrderIsPaidFilter(
-        request, {'is_paid': '1'}, order, modeladmin
+        request, {"is_paid": "1"}, order, modeladmin
     )
-    assert is_paid_filter.lookups(request, modeladmin) == [('1', 'Yes'), ('0', 'No')]
+    assert is_paid_filter.lookups(request, modeladmin) == [("1", "Yes"), ("0", "No")]
     assert is_paid_filter.queryset(request, Order.objects.all()).count() == 1
     is_paid_filter = admin.OrderIsPaidFilter(
-        request, {'is_paid': '0'}, order, modeladmin
+        request, {"is_paid": "0"}, order, modeladmin
     )
     assert is_paid_filter.queryset(request, Order.objects.all()).count() == 2

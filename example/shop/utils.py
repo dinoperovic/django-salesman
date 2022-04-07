@@ -13,4 +13,4 @@ def custom_price_format(value, context):
     """
     Force a fixed dollar currency.
     """
-    return f'${value:.2f}'
+    return f"${value:.2f}"

@@ -20,7 +20,7 @@ class AppSettings:
         """
         from salesman.core.typing import Product
 
-        product_types = self._setting('SALESMAN_PRODUCT_TYPES', {})
+        product_types = self._setting("SALESMAN_PRODUCT_TYPES", {})
         ret = {}
 
         for key, value in product_types.items():
@@ -45,12 +45,12 @@ class AppSettings:
         """
         from salesman.basket.modifiers import BasketModifier
 
-        basket_modifiers = self._setting('SALESMAN_BASKET_MODIFIERS', [])
+        basket_modifiers = self._setting("SALESMAN_BASKET_MODIFIERS", [])
         ret, identifiers = [], []
 
         for value in basket_modifiers:
             modifier = self._callable(value)
-            identifier = getattr(modifier, 'identifier', None)
+            identifier = getattr(modifier, "identifier", None)
 
             if not issubclass(modifier, BasketModifier):
                 self._error(f"Modifer `{modifier}` must subclass `{BasketModifier}`.")
@@ -71,7 +71,7 @@ class AppSettings:
         A dotted path to basket item validator function.
         """
         default = "salesman.basket.utils.validate_basket_item"
-        value = self._setting('SALESMAN_BASKET_ITEM_VALIDATOR', default)
+        value = self._setting("SALESMAN_BASKET_ITEM_VALIDATOR", default)
         return self._callable(value)
 
     @property
@@ -79,7 +79,7 @@ class AppSettings:
         """
         A dotted path to the Basket model. Must be set before migrations.
         """
-        value = self._setting('SALESMAN_BASKET_MODEL', 'salesmanbasket.Basket')
+        value = self._setting("SALESMAN_BASKET_MODEL", "salesmanbasket.Basket")
         self._model_label(value)
         return value
 
@@ -88,7 +88,7 @@ class AppSettings:
         """
         A dotted path to the Basket Item model. Must be set before migrations.
         """
-        value = self._setting('SALESMAN_BASKET_ITEM_MODEL', 'salesmanbasket.BasketItem')
+        value = self._setting("SALESMAN_BASKET_ITEM_MODEL", "salesmanbasket.BasketItem")
         self._model_label(value)
         return value
 
@@ -101,17 +101,17 @@ class AppSettings:
         """
         from salesman.checkout.payment import PaymentMethod
 
-        payment_methods = self._setting('SALESMAN_PAYMENT_METHODS', [])
+        payment_methods = self._setting("SALESMAN_PAYMENT_METHODS", [])
         ret, identifiers = [], []
 
         for value in payment_methods:
             payment = self._callable(value)
-            identifier = getattr(payment, 'identifier', None)
+            identifier = getattr(payment, "identifier", None)
 
             if not issubclass(payment, PaymentMethod):
                 self._error(f"Payment `{payment}` must subclass `{PaymentMethod}`.")
 
-            if not getattr(payment, 'label', None):
+            if not getattr(payment, "label", None):
                 self._error(f"Payment `{payment}` must define a `label`.")
 
             if not identifier:
@@ -136,14 +136,14 @@ class AppSettings:
         """
         from salesman.orders.status import BaseOrderStatus
 
-        default = 'salesman.orders.status.OrderStatus'
-        value = self._setting('SALESMAN_ORDER_STATUS', default)
+        default = "salesman.orders.status.OrderStatus"
+        value = self._setting("SALESMAN_ORDER_STATUS", default)
         status = self._callable(value)
 
         if not issubclass(status, BaseOrderStatus):
             self._error(f"Status `{status}` must subclass `{BaseOrderStatus}`.")
 
-        required = ['NEW', 'CREATED', 'COMPLETED', 'REFUNDED']
+        required = ["NEW", "CREATED", "COMPLETED", "REFUNDED"]
         for item in required:
             if item not in status.names or status[item].value != item:
                 self._error(
@@ -158,8 +158,8 @@ class AppSettings:
         A dotted path to reference generator function for new orders.
         Function should accept a django request object as param: ``request``.
         """
-        default = 'salesman.orders.utils.generate_ref'
-        value = self._setting('SALESMAN_ORDER_REFERENCE_GENERATOR', default)
+        default = "salesman.orders.utils.generate_ref"
+        value = self._setting("SALESMAN_ORDER_REFERENCE_GENERATOR", default)
         return self._callable(value)
 
     @cached_property
@@ -167,7 +167,7 @@ class AppSettings:
         """
         A dotted path to a serializer class for Order.
         """
-        default = 'salesman.orders.serializers.OrderSerializer'
+        default = "salesman.orders.serializers.OrderSerializer"
         value = self._setting("SALESMAN_ORDER_SERIALIZER", default)
         return self._callable(value)
 
@@ -186,7 +186,7 @@ class AppSettings:
         """
         A dotted path to the Order model. Must be set before migrations.
         """
-        value = self._setting('SALESMAN_ORDER_MODEL', 'salesmanorders.Order')
+        value = self._setting("SALESMAN_ORDER_MODEL", "salesmanorders.Order")
         self._model_label(value)
         return value
 
@@ -195,7 +195,7 @@ class AppSettings:
         """
         A dotted path to the Order Item model. Must be set before migrations.
         """
-        value = self._setting('SALESMAN_ORDER_ITEM_MODEL', 'salesmanorders.OrderItem')
+        value = self._setting("SALESMAN_ORDER_ITEM_MODEL", "salesmanorders.OrderItem")
         self._model_label(value)
         return value
 
@@ -205,7 +205,7 @@ class AppSettings:
         A dotted path to the Order Payment model. Must be set before migrations.
         """
         value = self._setting(
-            'SALESMAN_ORDER_PAYMENT_MODEL', 'salesmanorders.OrderPayment'
+            "SALESMAN_ORDER_PAYMENT_MODEL", "salesmanorders.OrderPayment"
         )
         self._model_label(value)
         return value
@@ -215,7 +215,7 @@ class AppSettings:
         """
         A dotted path to the Order Note model. Must be set before migrations.
         """
-        value = self._setting('SALESMAN_ORDER_NOTE_MODEL', 'salesmanorders.OrderNote')
+        value = self._setting("SALESMAN_ORDER_NOTE_MODEL", "salesmanorders.OrderNote")
         self._model_label(value)
         return value
 
@@ -227,8 +227,8 @@ class AppSettings:
         a ``context`` dictionary with additional render data like ``request``
         and either the ``basket`` or ``order`` object.
         """
-        default = 'salesman.core.utils.format_price'
-        value = self._setting('SALESMAN_PRICE_FORMATTER', default)
+        default = "salesman.core.utils.format_price"
+        value = self._setting("SALESMAN_PRICE_FORMATTER", default)
         return self._callable(value)
 
     @cached_property
@@ -239,8 +239,8 @@ class AppSettings:
         with additional validator context data like ``request``, a ``basket`` object
         and ``address`` type (set to either *shipping* or *billing*).
         """
-        default = 'salesman.checkout.utils.validate_address'
-        value = self._setting('SALESMAN_ADDRESS_VALIDATOR', default)
+        default = "salesman.checkout.utils.validate_address"
+        value = self._setting("SALESMAN_ADDRESS_VALIDATOR", default)
         return self._callable(value)
 
     @cached_property
@@ -251,8 +251,8 @@ class AppSettings:
         with additional validator context data like ``request``, a ``basket`` object
         and ``basket_item`` in case validation is for bakset item.
         """
-        default = 'salesman.basket.utils.validate_extra'
-        value = self._setting('SALESMAN_EXTRA_VALIDATOR', default)
+        default = "salesman.basket.utils.validate_extra"
+        value = self._setting("SALESMAN_EXTRA_VALIDATOR", default)
         return self._callable(value)
 
     @property
@@ -261,7 +261,7 @@ class AppSettings:
         Set to ``False`` to skip Salesman admin registration, in case
         you wish to build your own ``ModelAdmin`` for Django or Wagtail.
         """
-        return self._setting('SALESMAN_ADMIN_REGISTER', True)
+        return self._setting("SALESMAN_ADMIN_REGISTER", True)
 
     @cached_property
     def SALESMAN_ADMIN_JSON_FORMATTER(self) -> Callable:
@@ -270,8 +270,8 @@ class AppSettings:
         value and return an HTML formatted string. Also recieves a ``context``
         dictionary with additional render data.
         """
-        default = 'salesman.admin.utils.format_json'
-        value = self._setting('SALESMAN_ADMIN_JSON_FORMATTER', default)
+        default = "salesman.admin.utils.format_json"
+        value = self._setting("SALESMAN_ADMIN_JSON_FORMATTER", default)
         return self._callable(value)
 
     def _setting(self, name: str, default: Any = None) -> Any:
@@ -286,7 +286,7 @@ class AppSettings:
 
     def _model_label(self, value: str) -> tuple[str, str]:
         try:
-            app_label, model_name = value.split('.')
+            app_label, model_name = value.split(".")
         except ValueError:
             self._error(f"Invalid model `{value}`, format as `app_label.model_name`.")
         return app_label, model_name

@@ -6,23 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('salesmanorders', '0002_alter_order_ref'),
+        ("salesmanorders", "0002_alter_order_ref"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='_extra',
-            field=models.JSONField(blank=True, default=dict, verbose_name='Extra'),
+            model_name="order",
+            name="_extra",
+            field=models.JSONField(blank=True, default=dict, verbose_name="Extra"),
         ),
         migrations.AlterField(
-            model_name='orderitem',
-            name='_extra',
-            field=models.JSONField(blank=True, default=dict, verbose_name='Extra'),
+            model_name="orderitem",
+            name="_extra",
+            field=models.JSONField(blank=True, default=dict, verbose_name="Extra"),
         ),
         migrations.AlterField(
-            model_name='orderitem',
-            name='product_data',
-            field=models.JSONField(blank=True, default=dict, verbose_name='Product data'),
+            model_name="orderitem",
+            name="product_data",
+            field=models.JSONField(
+                blank=True, default=dict, verbose_name="Product data"
+            ),
         ),
     ]

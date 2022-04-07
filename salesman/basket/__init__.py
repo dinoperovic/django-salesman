@@ -1,1 +1,1 @@
-default_app_config = 'salesman.basket.apps.SalesmanBasketApp'
+default_app_config = "salesman.basket.apps.SalesmanBasketApp"

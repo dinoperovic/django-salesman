@@ -10,14 +10,14 @@ class ComplexModifier(BasketModifier):
     Refer to the BaskeModifier class to see available methods and call ordering.
     """
 
-    identifier = 'complex'
+    identifier = "complex"
 
     def setup_basket(self, basket, request):
         self.basket = basket
 
         # Set discount limit through the request.
         try:
-            self.max_discounts = int(self.request.GET['max_discounts'])
+            self.max_discounts = int(self.request.GET["max_discounts"])
         except (KeyError, ValueError):
             self.max_discounts = 0
         self.num_discounts = 0
@@ -38,7 +38,7 @@ class ComplexModifier(BasketModifier):
                 request,
                 label="Discount 10%",
                 amount=item.subtotal / -10,
-                identifier='complex-discount',
+                identifier="complex-discount",
             )
             self.num_discounts += 1
 
@@ -53,7 +53,7 @@ class ComplexModifier(BasketModifier):
             request,
             label="Random tax",
             amount=tax_amount,
-            identifier='complex-tax',
+            identifier="complex-tax",
         )
 
     def finalize_item(self, item, request):
@@ -71,8 +71,8 @@ class ComplexModifier(BasketModifier):
                 request,
                 label="Special discount 5%",
                 amount=item.total / -5,
-                extra={'diff': self.highest_discounted_item[0]},
-                identifier='complex-special-discount',
+                extra={"diff": self.highest_discounted_item[0]},
+                identifier="complex-special-discount",
             )
 
         # Add discount based on item quantity.
@@ -87,4 +87,4 @@ class ComplexModifier(BasketModifier):
 
     def finalize_basket(self, basket, request):
         # Set after all modifiers have processed the order.
-        basket.extra['is_expensive'] = basket.total > 1000
+        basket.extra["is_expensive"] = basket.total > 1000

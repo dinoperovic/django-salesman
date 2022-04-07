@@ -18,7 +18,7 @@ class BaseAdminMixin:
     """
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
+        self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
 
     def get_queryset(self, request):
@@ -33,7 +33,7 @@ class OrderItemAdminMixin(BaseAdminMixin):
 
     def product_data_display(self, obj):
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-            obj.product_data, context={'order_item': True}
+            obj.product_data, context={"order_item": True}
         )
 
     product_data_display.short_description = _("Product data")  # type: ignore
@@ -55,14 +55,14 @@ class OrderItemAdminMixin(BaseAdminMixin):
 
     def extra_display(self, obj):
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-            obj.extra, context={'order_item': True}
+            obj.extra, context={"order_item": True}
         )
 
     extra_display.short_description = _("Extra")  # type: ignore
 
     def extra_rows_display(self, obj):
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-            obj.extra_rows, context={'order_item': True}
+            obj.extra_rows, context={"order_item": True}
         )
 
     extra_rows_display.short_description = _("Extra rows")  # type: ignore
@@ -75,25 +75,25 @@ class OrderAdminMixin(BaseAdminMixin):
 
     def extra_display(self, obj):
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-            obj.extra, context={'order': True}
+            obj.extra, context={"order": True}
         )
 
     extra_display.short_description = _("Extra")  # type: ignore
 
     def extra_rows_display(self, obj):
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
-            obj.extra_rows, context={'order': True}
+            obj.extra_rows, context={"order": True}
         )
 
     extra_rows_display.short_description = _("Extra rows")  # type: ignore
 
     def date_created_display(self, obj):
-        return date_format(obj.date_created, format='DATETIME_FORMAT')
+        return date_format(obj.date_created, format="DATETIME_FORMAT")
 
     date_created_display.short_description = _("Date created")  # type: ignore
 
     def date_updated_display(self, obj):
-        return date_format(obj.date_updated, format='DATETIME_FORMAT')
+        return date_format(obj.date_updated, format="DATETIME_FORMAT")
 
     date_updated_display.short_description = _("Date updated")  # type: ignore
 
@@ -105,20 +105,20 @@ class OrderAdminMixin(BaseAdminMixin):
 
     def customer_display(self, obj):
         if not obj.user:
-            return '-'
-        app_label, model_name = settings.AUTH_USER_MODEL.lower().split('.')
-        url = reverse(f'admin:{app_label}_{model_name}_change', args=[obj.user.id])
+            return "-"
+        app_label, model_name = settings.AUTH_USER_MODEL.lower().split(".")
+        url = reverse(f"admin:{app_label}_{model_name}_change", args=[obj.user.id])
         return mark_safe(f'<a href="{url}">{obj.user}</a>')
 
     customer_display.short_description = _("Customer")  # type: ignore
 
     def shipping_address_display(self, obj):
-        return mark_safe(obj.shipping_address.replace('\n', '<br>')) or '-'
+        return mark_safe(obj.shipping_address.replace("\n", "<br>")) or "-"
 
     shipping_address_display.short_description = _("Shipping address")  # type: ignore
 
     def billing_address_display(self, obj):
-        return mark_safe(obj.billing_address.replace('\n', '<br>')) or '-'
+        return mark_safe(obj.billing_address.replace("\n", "<br>")) or "-"
 
     billing_address_display.short_description = _("Billing address")  # type: ignore
 
@@ -152,28 +152,28 @@ class OrderAdminRefundMixin:
         urls = super().get_urls()
         return [
             path(
-                '<path:object_id>/refund/',
+                "<path:object_id>/refund/",
                 self.admin_site.admin_view(self.refund_view),
-                name='salesman_order_refund',
+                name="salesman_order_refund",
             ),
         ] + urls
 
     def refund_view(self, request, object_id):
-        Order = get_salesman_model('Order')
+        Order = get_salesman_model("Order")
         order = get_object_or_404(Order, id=object_id)
 
-        app_label, model_name = app_settings.SALESMAN_ORDER_MODEL.lower().split('.')
-        object_url = reverse(f'admin:{app_label}_{model_name}_change', args=[object_id])
+        app_label, model_name = app_settings.SALESMAN_ORDER_MODEL.lower().split(".")
+        object_url = reverse(f"admin:{app_label}_{model_name}_change", args=[object_id])
 
-        if '_refund-error' in request.POST:
+        if "_refund-error" in request.POST:
             # Refund error, add error message and redirect to change view.
             msg = _("There was an error while trying to refund order.")
             self.message_user(request, msg, messages.ERROR, fail_silently=True)
             return redirect(object_url)
 
-        if '_refund-success' in request.POST:
+        if "_refund-success" in request.POST:
             # Refund success, add success message and redirect to change view.
-            failed = int(request.POST['_refund-success'])
+            failed = int(request.POST["_refund-success"])
             if failed:
                 msg = _("The Order “{}” was only partially refunded.")
                 status = messages.WARNING
@@ -184,10 +184,10 @@ class OrderAdminRefundMixin:
             return redirect(object_url)
 
         context = {
-            'title': _("Refund Order"),
-            'object': order,
-            'media': self.media,
-            'opts': self.model._meta,
-            'object_url': object_url,
+            "title": _("Refund Order"),
+            "object": order,
+            "media": self.media,
+            "opts": self.model._meta,
+            "object_url": object_url,
         }
-        return render(request, 'salesman/admin/refund.html', context)
+        return render(request, "salesman/admin/refund.html", context)

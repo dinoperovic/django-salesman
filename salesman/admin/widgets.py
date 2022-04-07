@@ -2,7 +2,7 @@ from django import forms
 
 from salesman.conf import app_settings
 
-EMPTY_CHOICE = ('', '---------')
+EMPTY_CHOICE = ("", "---------")
 
 
 class OrderStatusSelect(forms.Select):
@@ -25,7 +25,7 @@ class OrderStatusSelect(forms.Select):
         statuses = [status for status in app_settings.SALESMAN_ORDER_STATUS]
         current = self.order.status if self.order else None
         if value != current and value not in transitions.get(current, statuses):
-            option['attrs']['disabled'] = True
+            option["attrs"]["disabled"] = True
         return option
 
 
