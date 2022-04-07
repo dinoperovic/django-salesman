@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to Salesman. 
+Thank you for your interest in contributing to Salesman.
 
 Before you continue please consider discussing your desired changes using an issue tracker.
 
@@ -10,9 +10,14 @@ To get started you should fork and clone the repo, then setup your project using
 
 ```bash
 poetry install --extras "tests docs"
+poetry run pre-commit install
 ```
 
-Run the tests using `poetry run pytest` and check code style using `make check`.
+You can manually run tests and lint using:
+```bash
+poetry run pytest
+poetry run pre-commit run --all-files
+```
 
 ## Pull request
 

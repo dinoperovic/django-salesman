@@ -1,3 +1,3 @@
-Thank you for contributing to Salseman, before you continue make sure that:
-- Tests still pass (`poetry run pytest`).
-- Your code follows the style guide (`make check`).
+Thank you for contributing to Salesman, before you continue make sure that:
+- Tests still pass: `poetry run pytest`
+- There are no lint errors: `poetry run pre-commit run --all-files`

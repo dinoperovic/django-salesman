@@ -102,7 +102,10 @@ class Migration(migrations.Migration):
                     "status",
                     models.CharField(
                         default="NEW",
-                        help_text="Changing order status might trigger a notification to customer.",
+                        help_text=(
+                            "Changing order status might trigger a notification to "
+                            "customer."
+                        ),
                         max_length=128,
                         verbose_name="Status",
                     ),
@@ -111,7 +114,11 @@ class Migration(migrations.Migration):
                     "token",
                     models.CharField(
                         default=secrets.token_urlsafe,
-                        help_text="Allow non-authenticated customer to access the order with token. To access order suply a '?token={token}' in url querystring.",
+                        help_text=(
+                            "Allow non-authenticated customer to access the order with "
+                            "token. To access order suply a '?token={token}' in url "
+                            "querystring."
+                        ),
                         max_length=128,
                         unique=True,
                         verbose_name="Token",
