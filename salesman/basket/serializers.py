@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -5,33 +9,37 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from salesman.basket.models import BaseBasketItem
+from salesman.basket.models import BaseBasket, BaseBasketItem
 from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
+from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 
 Basket = get_salesman_model("Basket")
 BasketItem = get_salesman_model("BasketItem")
 
 
-class ProductField(serializers.DictField):
+class ProductField(serializers.Serializer):
     """
     Related product field that uses a serializer based on product type
     taken from ``SALESMAN_PRODUCT_TYPES`` setting.
     """
 
-    def to_representation(self, product, request=None):
+    def to_representation(self, product: Product) -> Any:
         product_types = app_settings.SALESMAN_PRODUCT_TYPES
         serializer_class = product_types[product._meta.label]
         return serializer_class(context=self.context).to_representation(product)
 
 
-class ExtraRowsField(serializers.ListField):
+class ExtraRowsField(serializers.Serializer):
     """
     Field to display a list of ``ExtraRowSerializer`` instances.
     """
 
-    def to_representation(self, rows):
+    def to_representation(
+        self,
+        rows: dict[str, ExtraRowSerializer],
+    ) -> list[dict[str, Any]]:
         return [dict(row.data, modifier=modifier) for modifier, row in rows.items()]
 
 
@@ -42,7 +50,7 @@ class ExtraRowSerializer(serializers.Serializer):
     """
 
     label = serializers.CharField(read_only=True, default="")
-    amount = PriceField(read_only=True, default=0)
+    amount = PriceField(read_only=True, default="0")
     extra = serializers.DictField(read_only=True, default={})
 
 
@@ -80,17 +88,17 @@ class BasketItemSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-    def get_url(self, obj):
+    def get_url(self, obj: BaseBasketItem) -> str:
         request = self.context.get("request", None)
         url = reverse("salesman-basket-detail", args=[obj.ref])
-        return request.build_absolute_uri(url) if request else url
+        return str(request.build_absolute_uri(url)) if request else url
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         context = self.context.copy()
         context["basket_item"] = self.instance
         return app_settings.SALESMAN_BASKET_ITEM_VALIDATOR(attrs, context=context)
 
-    def validate_extra(self, value):
+    def validate_extra(self, value: dict[str, Any]) -> dict[str, Any]:
         # Update basket `extra` instead of replacing it, remove null values.
         extra = self.instance.extra if self.instance else {}
         if value:
@@ -102,7 +110,7 @@ class BasketItemSerializer(serializers.ModelSerializer):
         context["basket_item"] = self.instance
         return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=context)
 
-    def to_representation(self, item):
+    def to_representation(self, item: BaseBasketItem) -> Any:
         basket, request = self.context["basket"], self.context["request"]
         basket.update(request)
         item = basket.find(item.ref)
@@ -128,7 +136,7 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
         model = BasketItem
         fields = ["ref", "product_type", "product_id", "quantity", "extra"]
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         # Validate and set product from generic relation.
         app_label, model_name = attrs["product_type"].split(".")
         model = apps.get_model(app_label, model_name)
@@ -145,21 +153,22 @@ class BasketItemCreateSerializer(serializers.ModelSerializer):
         context["basket_item"] = self.instance
         return app_settings.SALESMAN_BASKET_ITEM_VALIDATOR(attrs, context=context)
 
-    def validate_extra(self, value):
+    def validate_extra(self, value: dict[str, Any]) -> dict[str, Any]:
         context = self.context.copy()
         context["basket_item"] = self.instance
         return app_settings.SALESMAN_EXTRA_VALIDATOR(value, context=context)
 
-    def create(self, validated_data) -> BaseBasketItem:
+    def create(self, validated_data: dict[str, Any]) -> BaseBasketItem:
         basket = self.context["basket"]
-        return basket.add(
+        item: BaseBasketItem = basket.add(
             product=validated_data["product"],
             quantity=validated_data["quantity"],
             ref=validated_data.get("ref", None),
             extra=validated_data.get("extra", None),
         )
+        return item
 
-    def to_representation(self, item):
+    def to_representation(self, item: BaseBasketItem) -> Any:
         return BasketItemSerializer(context=self.context).to_representation(item)
 
 
@@ -178,7 +187,7 @@ class BasketSerializer(serializers.ModelSerializer):
         model = Basket
         fields = ["id", "items", "subtotal", "extra_rows", "total", "extra"]
 
-    def to_representation(self, basket):
+    def to_representation(self, basket: BaseBasket) -> Any:
         basket.update(self.context["request"])
         return super().to_representation(basket)
 
@@ -196,7 +205,7 @@ class BasketExtraSerializer(serializers.ModelSerializer):
         model = Basket
         fields = ["extra"]
 
-    def validate_extra(self, value):
+    def validate_extra(self, value: dict[str, Any]) -> dict[str, Any]:
         # Update basket extra instead of replacing it, remove null values.
         extra = self.instance.extra if self.instance else {}
         if value:

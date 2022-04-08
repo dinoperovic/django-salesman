@@ -1,4 +1,7 @@
+from typing import Any
+
 from django import forms
+from django.http import HttpRequest
 from django.urls import re_path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -10,6 +13,8 @@ from wagtail.admin.edit_handlers import (
     ObjectList,
     TabbedInterface,
 )
+
+from salesman.orders.models import BaseOrder
 
 from ..mixins import OrderAdminMixin
 from ..widgets import OrderStatusSelect, PaymentSelect
@@ -114,7 +119,7 @@ class WagtailOrderAdminMixin(OrderAdminMixin):
         ]
     )
 
-    def customer_display(self, obj):
+    def customer_display(self, obj: BaseOrder) -> str:
         if not obj.user:
             return "-"
         url = reverse("wagtailusers_users:edit", args=[obj.user.id])
@@ -122,8 +127,8 @@ class WagtailOrderAdminMixin(OrderAdminMixin):
 
     customer_display.short_description = _("Customer")  # type: ignore
 
-    def status_display(self, obj):
-        faded_statuses = [obj.Status.CANCELLED, obj.Status.REFUNDED]
+    def status_display(self, obj: BaseOrder) -> str:
+        faded_statuses = ["CANCELLED", "REFUNDED"]
         tag_class = "secondary" if obj.status in faded_statuses else "primary"
         template = '<span class="status-tag {}">{}</span>'
         return format_html(template, tag_class, obj.status_display)
@@ -138,18 +143,18 @@ class WagtailOrderAdminRefundMixin:
 
     refund_view_class = OrderRefundView
 
-    def get_admin_urls_for_registration(self):
-        urls = super().get_admin_urls_for_registration()
+    def get_admin_urls_for_registration(self) -> Any:
+        urls = super().get_admin_urls_for_registration()  # type: ignore
         urls += (
             re_path(
-                self.url_helper.get_action_url_pattern("refund"),
+                self.url_helper.get_action_url_pattern("refund"),  # type: ignore
                 self.refund_view,
-                name=self.url_helper.get_action_url_name("refund"),
+                name=self.url_helper.get_action_url_name("refund"),  # type: ignore
             ),
         )
         return urls
 
-    def refund_view(self, request, instance_pk):
+    def refund_view(self, request: HttpRequest, instance_pk: str) -> Any:
         kwargs = {"model_admin": self, "instance_pk": instance_pk}
         view_class = self.refund_view_class
         return view_class.as_view(**kwargs)(request)

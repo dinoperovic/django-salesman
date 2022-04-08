@@ -1,7 +1,6 @@
 from decimal import Decimal
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
-from django.db.models.options import Options
 from django.http import HttpRequest
 
 
@@ -16,7 +15,7 @@ class Product(Protocol):
     code: str
 
     # Django model attribute.
-    _meta: Options
+    _meta: Any
 
     def get_price(self, request: HttpRequest) -> Decimal:
         """

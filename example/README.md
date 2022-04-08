@@ -16,7 +16,7 @@ git clone https://github.com/dinoperovic/django-salesman.git
 
 ```bash
 cd django-salesman/
-poetry install -E example
+poetry install
 poetry run example/manage.py migrate
 poetry run example/manage.py create_dummy_products
 poetry run example/manage.py createsuperuser

@@ -1,6 +1,11 @@
+from typing import Any
+
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from rest_framework import mixins, status, viewsets
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from salesman.core.utils import get_salesman_model
@@ -18,26 +23,31 @@ class CheckoutViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     serializer_class = CheckoutSerializer
 
-    def get_view_name(self):
+    def get_view_name(self) -> str:
         name = super().get_view_name()
         if name == "Checkout List":
             return "Checkout"
         return name
 
-    def get_queryset(self):
+    def get_queryset(self) -> None:
         pass
 
-    def get_serializer_context(self):
+    def get_serializer_context(self) -> dict[str, Any]:
         context = super().get_serializer_context()
         context["basket"], _ = Basket.objects.get_or_create_from_request(self.request)
         context["basket"].update(self.request)
         return context
 
     @method_decorator(never_cache)
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(
+        self,
+        request: HttpRequest,
+        *args: Any,
+        **kwargs: Any,
+    ) -> HttpResponseBase:
         return super().dispatch(request, *args, **kwargs)
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
         Process the checkout, handle ``PaymentError``.
         """
@@ -46,7 +56,7 @@ class CheckoutViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         except PaymentError as e:
             return Response({"detail": str(e)}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
         Show a list of payment methods with errors if they exist.
         """

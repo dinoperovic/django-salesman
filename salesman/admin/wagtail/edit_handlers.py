@@ -1,4 +1,7 @@
+from typing import Any
+
 from django.core.exceptions import FieldDoesNotExist
+from django.http import HttpRequest
 from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -17,20 +20,20 @@ class ReadOnlyPanel(EditHandler):
     the value is rendered in html.
     """
 
-    def __init__(self, attr, *args, **kwargs):
+    def __init__(self, attr: str, *args: Any, **kwargs: Any) -> None:
         self.attr = attr
         self.formatter = kwargs.pop("formatter", None)
         self.renderer = kwargs.pop("renderer", None)
         super().__init__(*args, **kwargs)
 
-    def clone_kwargs(self):
-        kwargs = super().clone_kwargs()
+    def clone_kwargs(self) -> dict[str, Any]:
+        kwargs: dict[str, Any] = super().clone_kwargs()
         kwargs["attr"] = self.attr
         kwargs["formatter"] = self.formatter
         kwargs["renderer"] = self.renderer
         return kwargs
 
-    def on_model_bound(self):
+    def on_model_bound(self) -> None:
         """
         Set field data from model.
         """
@@ -45,26 +48,26 @@ class ReadOnlyPanel(EditHandler):
             except AttributeError:
                 pass
         if heading and not self.heading:
-            self.heading = heading
+            self.heading: str = heading
         if field and not self.help_text:
-            self.help_text = getattr(field, "help_text", "")
+            self.help_text: str = getattr(field, "help_text", "")
 
-    def get_value(self):
+    def get_value(self) -> Any:
         value = getattr(self.instance, self.attr)
         if callable(value):
             value = value(self.instance)
         return value
 
-    def format_value(self, value):
+    def format_value(self, value: Any) -> Any:
         if self.formatter and value is not None:
             value = self.formatter(value, self.instance, self.request)
         return value
 
-    def render(self):
+    def render(self) -> Any:
         value = self.get_value()
         return self.format_value(value)
 
-    def render_as_object(self):
+    def render_as_object(self) -> Any:
         if self.renderer:
             return self.renderer(self.get_value(), self.instance, self.request)
         return format_html(
@@ -77,7 +80,7 @@ class ReadOnlyPanel(EditHandler):
             self.render(),
         )
 
-    def render_as_field(self):
+    def render_as_field(self) -> Any:
         if self.renderer:
             return self.renderer(self.get_value(), self.instance, self.request)
         help_html = (
@@ -100,35 +103,35 @@ class ReadOnlyPanel(EditHandler):
 
 
 class OrderDatePanel(ReadOnlyPanel):
-    def format_value(self, value):
+    def format_value(self, value: Any) -> Any:
         if value:
             value = date_format(value, format="DATETIME_FORMAT")
         return value
 
 
 class OrderCheckboxPanel(ReadOnlyPanel):
-    def format_value(self, value):
+    def format_value(self, value: Any) -> str:
         icon, color = ("tick", "#157b57") if value else ("cross", "#cd3238")
         template = '<span class="icon icon-{}" style="color: {};"></span>'
         return format_html(template, icon, color)
 
 
 class OrderItemsPanel(ReadOnlyPanel):
-    def classes(self):
+    def classes(self) -> list[str]:
         return ["salesman-order-items"]
 
-    def render_as_field(self):
+    def render_as_field(self) -> str:
         return self.render()
 
-    def render_as_object(self):
+    def render_as_object(self) -> str:
         return self.render()
 
-    def format_json(self, value, obj, request):
+    def format_json(self, value: dict[str, Any], obj: Any, request: HttpRequest) -> str:
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
             value, context={"order_item": True}
         )
 
-    def render(self):
+    def render(self) -> str:
         head = f"""<tr>
             <td>{_('Name')}</td>
             <td>{_('Code')}</td>
@@ -168,10 +171,10 @@ class OrderAdminPanel(ReadOnlyPanel):
     Retrieves value from model_admin which is bound to the form in `get_edit_handler`.
     """
 
-    def on_model_bound(self):
+    def on_model_bound(self) -> None:
         pass
 
-    def on_form_bound(self):
+    def on_form_bound(self) -> None:
         if not hasattr(self.form, "model_admin"):
             raise AssertionError("OrderAdminPanel can only be used in OrderModelAdmin.")
 
@@ -180,5 +183,5 @@ class OrderAdminPanel(ReadOnlyPanel):
         if heading and not self.heading:
             self.heading = heading
 
-    def get_value(self):
+    def get_value(self) -> Any:
         return getattr(self.form.model_admin, self.attr)(self.instance)

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import TYPE_CHECKING, Any, List
 
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
-from django.urls import include, path
+from django.urls import URLPattern, URLResolver, include, path
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
@@ -34,7 +34,7 @@ class PaymentMethod:
     identifier: str
     label: str
 
-    def get_urls(self) -> list:
+    def get_urls(self) -> list[URLPattern | URLResolver]:
         """
         Hook for adding extra url patterns for payment method.
         Urls will be included as child patterns under the defined
@@ -78,7 +78,7 @@ class PaymentMethod:
         self,
         basket: BaseBasket,
         request: HttpRequest,
-    ) -> Union[str, dict]:
+    ) -> str | dict[str, Any]:
         """
         This method gets called when new checkout is submitted and
         is responsible for creating a new order from given basket.
@@ -99,7 +99,7 @@ class PaymentMethod:
         self,
         order: BaseOrder,
         request: HttpRequest,
-    ) -> Union[str, dict]:
+    ) -> str | dict[str, Any]:
         """
         This method gets called when payment for an existing order is requested.
 
@@ -135,9 +135,9 @@ class PaymentMethodsPool:
     """
 
     def __init__(self) -> None:
-        self._payments: Optional[list[PaymentMethod]] = None
+        self._payments: list[PaymentMethod] | None = None
 
-    def get_payments(self, kind: Optional[str] = None) -> List[PaymentMethod]:
+    def get_payments(self, kind: str | None = None) -> List[PaymentMethod]:
         """
         Returns payment method instances.
 
@@ -154,11 +154,11 @@ class PaymentMethodsPool:
             return [p for p in self._payments if method in p.__class__.__dict__]
         return self._payments
 
-    def get_urls(self) -> list:
+    def get_urls(self) -> list[URLPattern | URLResolver]:
         """
         Returns a list of url patterns for payments to be included.
         """
-        urlpatterns = []
+        urlpatterns: list[URLPattern | URLResolver] = []
         for payment in self.get_payments():
             urls = payment.get_urls()
             if urls:
@@ -166,7 +166,7 @@ class PaymentMethodsPool:
                 urlpatterns.append(path(base_url, include(urls)))
         return urlpatterns
 
-    def get_choices(self, kind: Optional[str] = None) -> list:
+    def get_choices(self, kind: str | None = None) -> list[tuple[str, str]]:
         """
         Return payments formated as choices list of tuples.
 
@@ -181,8 +181,8 @@ class PaymentMethodsPool:
     def get_payment(
         self,
         identifier: str,
-        kind: Optional[str] = None,
-    ) -> Optional[PaymentMethod]:
+        kind: str | None = None,
+    ) -> PaymentMethod | None:
         """
         Returns payment with given identifier.
 

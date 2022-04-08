@@ -1,13 +1,16 @@
+from typing import Any
+
 from django.apps import AppConfig, apps
 from django.db.models.deletion import ProtectedError
 from django.db.models.signals import pre_delete
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
+from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 
 
-def protect_basket_items(sender, instance, **kwargs):
+def protect_basket_items(sender: Any, instance: Product, **kwargs: Any) -> None:
     """
     Protect against deletion of products already added to basket.
     """
@@ -28,7 +31,7 @@ class SalesmanBasketApp(AppConfig):
     label = "salesmanbasket"
     verbose_name = _("Salesman Basket")
 
-    def ready(self):
+    def ready(self) -> None:
         # Connect `pre_delete` signal for each product model.
         for key in app_settings.SALESMAN_PRODUCT_TYPES.keys():
             app_label, model_name = key.split(".")

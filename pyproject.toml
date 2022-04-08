@@ -31,7 +31,7 @@ python = ">=3.8,<4.0"
 django = ">=3.1,<4.1"
 djangorestframework = ">=3.11,<3.14"
 
-# Optional dependencies
+# Optional
 Pygments = {version = "^2.6", optional = true}
 wagtail = {version = ">=2.9,<2.17", optional = true}
 pytest = {version = "~7.0.0", optional = true}
@@ -43,17 +43,21 @@ sphinx-autobuild = {version = "~2021.3.0", optional = true}
 sphinxcontrib-httpdomain = {version = "~1.8.0", optional = true}
 
 [tool.poetry.dev-dependencies]
+# Linting
 pre-commit = "*"
 isort = "5.10.1"
 black = "22.3.0"
 flake8 = "3.9.2"
 mypy = "0.942"
 
+# Example
+Pygments = "^2.6"
+wagtail = ">=2.9,<2.17"
+
 [tool.poetry.extras]
 pygments = ["Pygments"]
-example = ["Pygments", "wagtail"]
-tests = ["Pygments", "wagtail", "pytest", "pytest-django", "pytest-cov"]
-docs = ["wagtail", "sphinx", "sphinx-rtd-theme", "sphinx-autobuild", "sphinxcontrib-httpdomain"]
+tests = ["pytest", "pytest-django", "pytest-cov"]
+docs = ["sphinx", "sphinx-rtd-theme", "sphinx-autobuild", "sphinxcontrib-httpdomain"]
 
 [tool.isort]
 profile = "black"
@@ -61,8 +65,23 @@ known_first_party = ["salesman", "shop"]
 known_third_party = ["rest_framework", "wagtail", "pytest"]
 
 [tool.mypy]
+exclude = ["example"]
 ignore_missing_imports = true
-exclude = ".git|.venv|dist|migrations"
+# Strict
+warn_unused_configs = true
+disallow_any_generics = true
+disallow_subclassing_any = false
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = false
+no_implicit_reexport = true
+strict_equality = true
 
 [build-system]
 requires = ["poetry>=0.12"]

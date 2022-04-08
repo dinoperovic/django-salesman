@@ -1,18 +1,22 @@
 from __future__ import annotations
 
+import inspect
 from typing import TYPE_CHECKING, Any, Callable
 
 from django.utils.functional import cached_property
 
 if TYPE_CHECKING:  # pragma: no cover
-    from django.db.models import Model
+    from django.http import HttpRequest
+    from rest_framework.serializers import Serializer
 
+    from salesman.basket.modifiers import BasketModifier
+    from salesman.checkout.payment import PaymentMethod
     from salesman.orders.status import BaseOrderStatus
 
 
 class AppSettings:
     @cached_property
-    def SALESMAN_PRODUCT_TYPES(self) -> dict:
+    def SALESMAN_PRODUCT_TYPES(self) -> dict[str, type[Serializer]]:
         """
         A dictionary of product types and their respected serializers
         that are availible for purchase as product. Should be
@@ -25,7 +29,7 @@ class AppSettings:
 
         for key, value in product_types.items():
             model = self._model(key)
-            ret[key] = self._callable(value)
+            ret[key] = self._class(value)
 
             if not isinstance(model, Product):
                 self._error(
@@ -37,7 +41,7 @@ class AppSettings:
         return ret
 
     @cached_property
-    def SALESMAN_BASKET_MODIFIERS(self) -> list:
+    def SALESMAN_BASKET_MODIFIERS(self) -> list[type[BasketModifier]]:
         """
         A list of strings formated as ``path.to.CustomModifier``.
         Modifiers must extend ``salesman.basket.modifiers.BasketModifier`` class.
@@ -49,7 +53,7 @@ class AppSettings:
         ret, identifiers = [], []
 
         for value in basket_modifiers:
-            modifier = self._callable(value)
+            modifier: type[BasketModifier] = self._class(value)
             identifier = getattr(modifier, "identifier", None)
 
             if not issubclass(modifier, BasketModifier):
@@ -66,20 +70,20 @@ class AppSettings:
         return ret
 
     @cached_property
-    def SALESMAN_BASKET_ITEM_VALIDATOR(self) -> Callable:
+    def SALESMAN_BASKET_ITEM_VALIDATOR(self) -> Callable[..., dict[str, Any]]:
         """
         A dotted path to basket item validator function.
         """
         default = "salesman.basket.utils.validate_basket_item"
         value = self._setting("SALESMAN_BASKET_ITEM_VALIDATOR", default)
-        return self._callable(value)
+        return self._function(value)
 
     @property
     def SALESMAN_BASKET_MODEL(self) -> str:
         """
         A dotted path to the Basket model. Must be set before migrations.
         """
-        value = self._setting("SALESMAN_BASKET_MODEL", "salesmanbasket.Basket")
+        value: str = self._setting("SALESMAN_BASKET_MODEL", "salesmanbasket.Basket")
         self._model_label(value)
         return value
 
@@ -88,12 +92,15 @@ class AppSettings:
         """
         A dotted path to the Basket Item model. Must be set before migrations.
         """
-        value = self._setting("SALESMAN_BASKET_ITEM_MODEL", "salesmanbasket.BasketItem")
+        value: str = self._setting(
+            "SALESMAN_BASKET_ITEM_MODEL",
+            "salesmanbasket.BasketItem",
+        )
         self._model_label(value)
         return value
 
     @cached_property
-    def SALESMAN_PAYMENT_METHODS(self) -> list:
+    def SALESMAN_PAYMENT_METHODS(self) -> list[type[PaymentMethod]]:
         """
         A list of strings formated as ``path.to.CustomPayment``.
         Payments must extend ``salesman.checkout.payment.PaymentMethod`` class
@@ -105,7 +112,7 @@ class AppSettings:
         ret, identifiers = [], []
 
         for value in payment_methods:
-            payment = self._callable(value)
+            payment = self._class(value)
             identifier = getattr(payment, "identifier", None)
 
             if not issubclass(payment, PaymentMethod):
@@ -125,7 +132,7 @@ class AppSettings:
         return ret
 
     @cached_property
-    def SALESMAN_ORDER_STATUS(self) -> BaseOrderStatus:
+    def SALESMAN_ORDER_STATUS(self) -> type[BaseOrderStatus]:
         """
         A dotted path to enum class that contains available order statuses.
         Overriden class must extend ``salesman.orders.status.BaseOrderStatus`` class.
@@ -138,14 +145,14 @@ class AppSettings:
 
         default = "salesman.orders.status.OrderStatus"
         value = self._setting("SALESMAN_ORDER_STATUS", default)
-        status = self._callable(value)
+        status: type[BaseOrderStatus] = self._class(value)
 
         if not issubclass(status, BaseOrderStatus):
             self._error(f"Status `{status}` must subclass `{BaseOrderStatus}`.")
 
         required = ["NEW", "CREATED", "COMPLETED", "REFUNDED"]
         for item in required:
-            if item not in status.names or status[item].value != item:
+            if item not in status.names or status[item].value != item:  # type: ignore
                 self._error(
                     "Status must specify members with names/values "
                     "`NEW`, `CREATED`, `COMPLETED` and `REFUNDED`."
@@ -153,40 +160,42 @@ class AppSettings:
         return status
 
     @cached_property
-    def SALESMAN_ORDER_REFERENCE_GENERATOR(self) -> Callable:
+    def SALESMAN_ORDER_REFERENCE_GENERATOR(self) -> Callable[[HttpRequest], str]:
         """
         A dotted path to reference generator function for new orders.
         Function should accept a django request object as param: ``request``.
         """
         default = "salesman.orders.utils.generate_ref"
         value = self._setting("SALESMAN_ORDER_REFERENCE_GENERATOR", default)
-        return self._callable(value)
+        return self._function(value)
 
     @cached_property
-    def SALESMAN_ORDER_SERIALIZER(self) -> type:
+    def SALESMAN_ORDER_SERIALIZER(self) -> type[Serializer]:
         """
         A dotted path to a serializer class for Order.
         """
         default = "salesman.orders.serializers.OrderSerializer"
         value = self._setting("SALESMAN_ORDER_SERIALIZER", default)
-        return self._callable(value)
+        serializer: type[Serializer] = self._class(value)
+        return serializer
 
     @cached_property
-    def SALESMAN_ORDER_SUMMARY_SERIALIZER(self) -> type:
+    def SALESMAN_ORDER_SUMMARY_SERIALIZER(self) -> type[Serializer]:
         """
         A dotted path to a summary serializer class for Order.
         """
         value = self._setting("SALESMAN_ORDER_SUMMARY_SERIALIZER", None)
         if not value:
             return self.SALESMAN_ORDER_SERIALIZER
-        return self._callable(value)
+        serializer: type[Serializer] = self._class(value)
+        return serializer
 
     @property
     def SALESMAN_ORDER_MODEL(self) -> str:
         """
         A dotted path to the Order model. Must be set before migrations.
         """
-        value = self._setting("SALESMAN_ORDER_MODEL", "salesmanorders.Order")
+        value: str = self._setting("SALESMAN_ORDER_MODEL", "salesmanorders.Order")
         self._model_label(value)
         return value
 
@@ -195,7 +204,10 @@ class AppSettings:
         """
         A dotted path to the Order Item model. Must be set before migrations.
         """
-        value = self._setting("SALESMAN_ORDER_ITEM_MODEL", "salesmanorders.OrderItem")
+        value: str = self._setting(
+            "SALESMAN_ORDER_ITEM_MODEL",
+            "salesmanorders.OrderItem",
+        )
         self._model_label(value)
         return value
 
@@ -204,8 +216,9 @@ class AppSettings:
         """
         A dotted path to the Order Payment model. Must be set before migrations.
         """
-        value = self._setting(
-            "SALESMAN_ORDER_PAYMENT_MODEL", "salesmanorders.OrderPayment"
+        value: str = self._setting(
+            "SALESMAN_ORDER_PAYMENT_MODEL",
+            "salesmanorders.OrderPayment",
         )
         self._model_label(value)
         return value
@@ -215,12 +228,15 @@ class AppSettings:
         """
         A dotted path to the Order Note model. Must be set before migrations.
         """
-        value = self._setting("SALESMAN_ORDER_NOTE_MODEL", "salesmanorders.OrderNote")
+        value: str = self._setting(
+            "SALESMAN_ORDER_NOTE_MODEL",
+            "salesmanorders.OrderNote",
+        )
         self._model_label(value)
         return value
 
     @cached_property
-    def SALESMAN_PRICE_FORMATTER(self) -> Callable:
+    def SALESMAN_PRICE_FORMATTER(self) -> Callable[..., str]:
         """
         A dotted path to price formatter function. Function should accept a value
         of type: ``Decimal`` and return a price formatted string. Also recieves
@@ -229,10 +245,10 @@ class AppSettings:
         """
         default = "salesman.core.utils.format_price"
         value = self._setting("SALESMAN_PRICE_FORMATTER", default)
-        return self._callable(value)
+        return self._function(value)
 
     @cached_property
-    def SALESMAN_ADDRESS_VALIDATOR(self) -> Callable:
+    def SALESMAN_ADDRESS_VALIDATOR(self) -> Callable[..., str]:
         """
         A dotted path to address validator function. Function should accept a string
         value and return a validated version. Also recieves a ``context`` dictionary
@@ -241,10 +257,10 @@ class AppSettings:
         """
         default = "salesman.checkout.utils.validate_address"
         value = self._setting("SALESMAN_ADDRESS_VALIDATOR", default)
-        return self._callable(value)
+        return self._function(value)
 
     @cached_property
-    def SALESMAN_EXTRA_VALIDATOR(self) -> Callable:
+    def SALESMAN_EXTRA_VALIDATOR(self) -> Callable[..., dict[str, Any]]:
         """
         A dotted path to extra validator function. Function should accept a dict
         value and return a validated version. Also recieves a ``context`` dictionary
@@ -253,7 +269,7 @@ class AppSettings:
         """
         default = "salesman.basket.utils.validate_extra"
         value = self._setting("SALESMAN_EXTRA_VALIDATOR", default)
-        return self._callable(value)
+        return self._function(value)
 
     @property
     def SALESMAN_ADMIN_REGISTER(self) -> bool:
@@ -261,10 +277,11 @@ class AppSettings:
         Set to ``False`` to skip Salesman admin registration, in case
         you wish to build your own ``ModelAdmin`` for Django or Wagtail.
         """
-        return self._setting("SALESMAN_ADMIN_REGISTER", True)
+        value: bool = self._setting("SALESMAN_ADMIN_REGISTER", True)
+        return value
 
     @cached_property
-    def SALESMAN_ADMIN_JSON_FORMATTER(self) -> Callable:
+    def SALESMAN_ADMIN_JSON_FORMATTER(self) -> Callable[..., str]:
         """
         A dotted path to JSON formatter function. Function should accept a dict
         value and return an HTML formatted string. Also recieves a ``context``
@@ -272,7 +289,7 @@ class AppSettings:
         """
         default = "salesman.admin.utils.format_json"
         value = self._setting("SALESMAN_ADMIN_JSON_FORMATTER", default)
-        return self._callable(value)
+        return self._function(value)
 
     def _setting(self, name: str, default: Any = None) -> Any:
         from django.conf import settings
@@ -291,7 +308,7 @@ class AppSettings:
             self._error(f"Invalid model `{value}`, format as `app_label.model_name`.")
         return app_label, model_name
 
-    def _model(self, label: str) -> Model:
+    def _model(self, label: str) -> Any:
         from django.apps import apps
 
         app_label, model_name = self._model_label(label)
@@ -300,16 +317,25 @@ class AppSettings:
         except (LookupError, ValueError) as e:
             self._error(e)
 
-    def _callable(self, path: str) -> Any:
+    def _class(self, path: str) -> Any:
+        value = self._import(path)
+        if not inspect.isclass(value):
+            self._error(f"Specified `{value}` is not a class.")
+        return value
+
+    def _function(self, path: str) -> Callable[..., Any]:
+        value: Callable[..., Any] = self._import(path)
+        if not inspect.isfunction(value):
+            self._error(f"Specified `{value}` is not a function.")
+        return value
+
+    def _import(self, path: str) -> Any:
         from django.utils.module_loading import import_string
 
         try:
-            value = import_string(path)
+            return import_string(path)
         except ImportError as e:
             self._error(e)
-        if not callable(value):
-            self._error(f"Specified `{value}` is not a callable.")
-        return value
 
 
 app_settings = AppSettings()

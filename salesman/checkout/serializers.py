@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
@@ -6,7 +10,7 @@ from rest_framework.settings import api_settings
 
 from salesman.conf import app_settings
 
-from .payment import payment_methods_pool
+from .payment import PaymentMethod, payment_methods_pool
 
 
 class PaymentMethodSerializer(serializers.Serializer):
@@ -18,14 +22,14 @@ class PaymentMethodSerializer(serializers.Serializer):
     label = serializers.CharField(read_only=True)
     error = serializers.CharField(allow_null=True, read_only=True)
 
-    def to_representation(self, payment_method):
+    def to_representation(self, payment_method: PaymentMethod) -> Any:
         data = super().to_representation(payment_method)
         payment = payment_methods_pool.get_payment(payment_method.identifier)
         request = self.context["request"]
         try:
-            if "basket" in self.context:
+            if payment and "basket" in self.context:
                 payment.validate_basket(basket=self.context["basket"], request=request)
-            if "order" in self.context:
+            if payment and "order" in self.context:
                 payment.validate_order(order=self.context["order"], request=request)
         except (ValidationError, DjangoValidationError) as e:
             error = serializers.as_serializer_error(e)
@@ -62,23 +66,25 @@ class CheckoutSerializer(serializers.Serializer):
     # Show payment methods with error on GET.
     payment_methods = PaymentMethodSerializer(many=True, read_only=True)
 
-    def validate_shipping_address(self, value):
+    def validate_shipping_address(self, value: str) -> str:
         context = self.context.copy()
         context["address"] = "shipping"
         return app_settings.SALESMAN_ADDRESS_VALIDATOR(value, context=context)
 
-    def validate_billing_address(self, value):
+    def validate_billing_address(self, value: str) -> str:
         context = self.context.copy()
         context["address"] = "billing"
         return app_settings.SALESMAN_ADDRESS_VALIDATOR(value, context=context)
 
-    def validate_payment_method(self, value):
+    def validate_payment_method(self, value: str) -> PaymentMethod | None:
         basket, request = self.context["basket"], self.context["request"]
         payment = payment_methods_pool.get_payment(value)
-        payment.validate_basket(basket, request)
-        return payment
+        if payment:
+            payment.validate_basket(basket, request)
+            return payment
+        return None
 
-    def validate_extra(self, value):
+    def validate_extra(self, value: dict[str, Any]) -> dict[str, Any]:
         # Update basket `extra` instead of replacing it, remove null values.
         extra = self.context["basket"].extra
         if value:
@@ -87,7 +93,7 @@ class CheckoutSerializer(serializers.Serializer):
         # Validate using extra validator.
         return app_settings.SALESMAN_EXTRA_VALIDATOR(extra, context=self.context)
 
-    def save(self):
+    def save(self, **kwargs: Any) -> None:
         basket, request = self.context["basket"], self.context["request"]
         # Save extra data on basket.
         basket.extra = self.validated_data.get("extra", basket.extra)

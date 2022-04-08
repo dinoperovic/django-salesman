@@ -1,8 +1,13 @@
+from __future__ import annotations
+
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
+from salesman.orders.models import BaseOrder, BaseOrderItem, BaseOrderPayment
 
 from .filters import OrderIsPaidFilter, OrderStatusFilter
 from .forms import OrderModelForm, OrderNoteModelForm, OrderPaymentModelForm
@@ -28,14 +33,22 @@ class OrderItemInline(OrderItemAdminMixin, admin.TabularInline):
     ]
     readonly_fields = fields
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet[BaseOrderItem]:
         self.model.request = request
         return super().get_queryset(request)
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(
+        self,
+        request: HttpRequest,
+        obj: BaseOrderItem | None = None,
+    ) -> bool:
         return False
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(
+        self,
+        request: HttpRequest,
+        obj: BaseOrderItem | None = None,
+    ) -> bool:
         return False
 
 
@@ -46,7 +59,7 @@ class OrderPaymentInline(admin.TabularInline):
     readonly_fields = ["date_created"]
     extra = 0
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet[BaseOrderPayment]:
         self.model.request = request
         return super().get_queryset(request)
 
@@ -125,14 +138,22 @@ class BaseOrderAdmin(OrderAdminMixin, admin.ModelAdmin):
     ]
     inlines = [OrderItemInline, OrderPaymentInline, OrderNoteInline]
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet[BaseOrder]:
         self.model.request = request
         return super().get_queryset(request)
 
-    def has_add_permission(self, request, obj=None):
+    def has_add_permission(
+        self,
+        request: HttpRequest,
+        obj: BaseOrder | None = None,
+    ) -> bool:
         return False
 
-    def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(
+        self,
+        request: HttpRequest,
+        obj: BaseOrder | None = None,
+    ) -> bool:
         return False
 
 

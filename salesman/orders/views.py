@@ -1,14 +1,21 @@
-from django.http import Http404
+from typing import Any
+
+from django.db.models import QuerySet
+from django.http import Http404, HttpRequest
+from django.http.response import HttpResponseBase
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser
+from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 
 from salesman.checkout.payment import PaymentError, payment_methods_pool
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
+from salesman.orders.models import BaseOrder
 
 from .serializers import (
     OrderPaySerializer,
@@ -27,7 +34,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = app_settings.SALESMAN_ORDER_SERIALIZER
     lookup_field = "ref"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[BaseOrder]:
         queryset = self.optimize_queryset(Order.objects.all())
 
         if self.request.user.is_authenticated:
@@ -40,44 +47,50 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             # Allow non-authenticated users access to order with token.
             return queryset.filter(token=self.request.GET["token"])
 
-        return Order.objects.none()
+        queryset = Order.objects.none()
+        return queryset
 
-    def optimize_queryset(self, queryset):
+    def optimize_queryset(self, queryset: QuerySet[BaseOrder]) -> QuerySet[BaseOrder]:
         """
         Extract fields for pre-fetching from order serializer and apply to queryset.
         """
-        serializer_class = self.get_serializer_class()
-        if hasattr(serializer_class, "Meta"):
-            fields = getattr(serializer_class.Meta, "select_related_fields", None)
+        serializer_meta = getattr(self.get_serializer_class(), "Meta", None)
+        if serializer_meta:
+            fields = getattr(serializer_meta, "select_related_fields", None)
             if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
                 queryset = queryset.select_related(*fields)
-            fields = getattr(serializer_class.Meta, "prefetch_related_fields", None)
+            fields = getattr(serializer_meta, "prefetch_related_fields", None)
             if fields and (isinstance(fields, list) or isinstance(fields, tuple)):
                 queryset = queryset.prefetch_related(*fields)
         return queryset
 
-    def get_object(self):
+    def get_object(self) -> BaseOrder:
         if not hasattr(self, "_object"):
-            self._object = super().get_object()
+            self._object: BaseOrder = super().get_object()
         return self._object
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> type[BaseSerializer]:
         if self.action in ["list", "all"]:
             return app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
         return super().get_serializer_class()
 
-    def get_serializer_context(self):
+    def get_serializer_context(self) -> dict[str, Any]:
         context = super().get_serializer_context()
         if self.detail and self.lookup_field in self.kwargs:
             context["order"] = self.get_object()
         return context
 
     @method_decorator(never_cache)
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(
+        self,
+        request: HttpRequest,
+        *args: Any,
+        **kwargs: Any,
+    ) -> HttpResponseBase:
         return super().dispatch(request, *args, **kwargs)
 
     @action(detail=False, methods=["get"])
-    def last(self, request):
+    def last(self, request: Request) -> Response:
         """
         Show last customer order.
         """
@@ -88,7 +101,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"], permission_classes=[IsAdminUser])
-    def all(self, request):
+    def all(self, request: Request) -> Response:
         """
         Show all orders to the admin user.
         """
@@ -100,7 +113,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serializer_class=OrderStatusSerializer,
         permission_classes=[IsAdminUser],
     )
-    def status(self, request, ref):
+    def status(self, request: Request, ref: str) -> Response:
         """
         Change order status. Available only to admin user.
         """
@@ -116,7 +129,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
     @action(detail=True, methods=["get", "post"], serializer_class=OrderPaySerializer)
-    def pay(self, request, ref):
+    def pay(self, request: Request, ref: str) -> Response:
         """
         Pay for order.
         """
@@ -140,7 +153,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serializer_class=OrderRefundSerializer,
         permission_classes=[IsAdminUser],
     )
-    def refund(self, request, ref):
+    def refund(self, request: Request, ref: str) -> Response:
         """
         Refund all order payments.
         """

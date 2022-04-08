@@ -8,5 +8,5 @@ class PriceField(serializers.CharField):
     Price field used to display formated price whitin a serializer.
     """
 
-    def to_representation(self, value):
+    def to_representation(self, value: str) -> str:
         return app_settings.SALESMAN_PRICE_FORMATTER(value, context=self.context)

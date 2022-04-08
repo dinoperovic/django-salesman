@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -5,11 +9,12 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
 
-from salesman.checkout.payment import payment_methods_pool
+from salesman.checkout.payment import PaymentMethod, payment_methods_pool
 from salesman.checkout.serializers import PaymentMethodSerializer
 from salesman.conf import app_settings
 from salesman.core.serializers import PriceField
 from salesman.core.utils import get_salesman_model
+from salesman.orders.models import BaseOrder
 
 Order = get_salesman_model("Order")
 OrderItem = get_salesman_model("OrderItem")
@@ -114,12 +119,12 @@ class OrderSerializer(serializers.ModelSerializer):
         prefetch_related_fields = ["items", "payments", "notes"]
         select_related_fields = ["user"]
 
-    def get_url(self, obj):
+    def get_url(self, obj: BaseOrder) -> str:
         request = self.context.get("request", None)
         url = reverse("salesman-order-detail", args=[obj.ref])
-        return request.build_absolute_uri(url) if request else url
+        return str(request.build_absolute_uri(url)) if request else url
 
-    def get_notes(self, obj):
+    def get_notes(self, obj: BaseOrder) -> dict[str, Any]:
         notes = [x for x in obj.notes.all() if x.public]
         return OrderNoteSerializer(notes, many=True).data
 
@@ -133,7 +138,7 @@ class StatusTransitionSerializer(serializers.Serializer):
     label = serializers.CharField(read_only=True)
     error = serializers.CharField(allow_null=True, read_only=True)
 
-    def to_representation(self, status):
+    def to_representation(self, status: str) -> Any:
         data = super().to_representation(status)
         order = self.context["order"]
         try:
@@ -162,11 +167,11 @@ class OrderStatusSerializer(serializers.ModelSerializer):
         model = Order
         fields = ["status", "status_display", "status_transitions"]
 
-    def validate_status(self, status):
+    def validate_status(self, status: str) -> str:
         order = self.context["order"]
         return app_settings.SALESMAN_ORDER_STATUS.validate_transition(status, order)
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: BaseOrder) -> Any:
         data = super().to_representation(instance)
         if self.context["request"].method == "PUT" and "status_transitions" in data:
             del data["status_transitions"]
@@ -186,13 +191,15 @@ class OrderPaySerializer(serializers.Serializer):
     # Show payment methods with error on GET.
     payment_methods = PaymentMethodSerializer(many=True, read_only=True)
 
-    def validate_payment_method(self, value):
+    def validate_payment_method(self, value: str) -> PaymentMethod | None:
         order, request = self.context["order"], self.context["request"]
         payment = payment_methods_pool.get_payment(value)
-        payment.validate_order(order, request)
-        return payment
+        if payment:
+            payment.validate_order(order, request)
+            return payment
+        return None
 
-    def save(self):
+    def save(self, **kwargs: Any) -> None:
         # Process the payment.
         order, request = self.context["order"], self.context["request"]
         payment = self.validated_data["payment_method"]
@@ -212,13 +219,13 @@ class OrderRefundSerializer(serializers.Serializer):
     refunded = serializers.ListField(read_only=True)
     failed = serializers.ListField(read_only=True)
 
-    def validate(self, attrs):
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         order = self.context["order"]
         if order.status == order.Status.REFUNDED:
             raise serializers.ValidationError(_("Order is already marked as Refunded."))
         return attrs
 
-    def save(self):
+    def save(self, **kwargs: Any) -> None:
         # Process the refund.
         order = self.context["order"]
         refunded, failed = [], []

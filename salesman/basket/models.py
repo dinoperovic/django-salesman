@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from decimal import Decimal
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Any, Generator
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -16,14 +16,17 @@ from salesman.conf import app_settings
 from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 
+if TYPE_CHECKING:
+    from django.db.models.manager import RelatedManager
+
 BASKET_ID_SESSION_KEY = "BASKET_ID"
 
 
-class BasketManager(models.Manager):
+class BasketManager(models.Manager["BaseBasket"]):
     def get_or_create_from_request(
         self,
         request: HttpRequest,
-    ) -> Tuple[BaseBasket, bool]:
+    ) -> tuple[BaseBasket, bool]:
         """
         Get basket from request or create a new one.
         If user is logged in session basket gets merged into a user basket.
@@ -59,7 +62,7 @@ class BasketManager(models.Manager):
                 del request.session[BASKET_ID_SESSION_KEY]
         else:
             basket, created = session_basket or self.create(), not session_basket
-            request.session[BASKET_ID_SESSION_KEY] = basket.id
+            request.session[BASKET_ID_SESSION_KEY] = basket.pk
 
         return basket, created
 
@@ -78,8 +81,9 @@ class BaseBasket(models.Model):
     date_updated = models.DateTimeField(_("Date updated"), auto_now=True)
 
     objects = BasketManager()
+    items: RelatedManager[BaseBasketItem]
 
-    _cached_items: Optional[list[BaseBasketItem]] = None
+    _cached_items: list[BaseBasketItem] | None = None
 
     class Meta:
         abstract = True
@@ -87,10 +91,10 @@ class BaseBasket(models.Model):
         verbose_name_plural = _("Baskets")
         ordering = ["-date_created"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.pk) if self.pk else "(unsaved)"
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[BaseBasketItem, None, None]:
         for item in self.items.all():
             yield item
 
@@ -114,7 +118,7 @@ class BaseBasket(models.Model):
             for item in items:
                 modifier.setup_item(item, request)
 
-        self.extra_rows: dict = OrderedDict()
+        self.extra_rows: dict[str, Any] = OrderedDict()
         self.subtotal = Decimal(0)
         self.total = Decimal(0)
 
@@ -140,8 +144,8 @@ class BaseBasket(models.Model):
         self,
         product: Product,
         quantity: int = 1,
-        ref: Optional[str] = None,
-        extra: Optional[dict] = None,
+        ref: str | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> BaseBasketItem:
         """
         Add product to the basket.
@@ -180,7 +184,7 @@ class BaseBasket(models.Model):
             item.delete()
             self._cached_items = None
 
-    def find(self, ref: str) -> Optional[BaseBasketItem]:
+    def find(self, ref: str) -> BaseBasketItem | None:
         """
         Find item with given ``ref`` in the basket.
 
@@ -274,7 +278,7 @@ class BaseBasketItem(models.Model):
     # Generic relation to product.
     product_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     product_id = models.PositiveIntegerField(_("Product id"))
-    product: Product = GenericForeignKey("product_content_type", "product_id")
+    product = GenericForeignKey("product_content_type", "product_id")
 
     quantity = models.PositiveIntegerField(_("Quantity"), default=1)
     extra = models.JSONField(_("Extra"), blank=True, default=dict)
@@ -289,12 +293,12 @@ class BaseBasketItem(models.Model):
         unique_together = ("basket", "ref")
         ordering = ["date_created"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.quantity}x {self.product}"
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         # Set default ref.
-        if not self.ref:
+        if not self.ref and self.product:
             self.ref = self.get_product_ref(self.product)
         super().save(*args, **kwargs)
 
@@ -310,8 +314,11 @@ class BaseBasketItem(models.Model):
         """
         from .modifiers import basket_modifiers_pool
 
-        self.extra_rows: dict = OrderedDict()
-        self.unit_price = Decimal(self.product.get_price(request))
+        self.extra_rows: dict[str, Any] = OrderedDict()
+        if self.product:
+            self.unit_price = Decimal(self.product.get_price(request))
+        else:
+            self.unit_price = Decimal(0)
         self.subtotal = self.unit_price * self.quantity
         self.total = self.subtotal
 
@@ -319,18 +326,18 @@ class BaseBasketItem(models.Model):
             modifier.process_item(self, request)
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         Returns product `name`.
         """
-        return self.product.name
+        return str(self.product.name) if self.product else "(no name)"
 
     @property
-    def code(self):
+    def code(self) -> str:
         """
         Returns product `name`.
         """
-        return self.product.code
+        return str(self.product.code) if self.product else "(no code)"
 
     @classmethod
     def get_product_ref(cls, product: Product) -> str:

@@ -1,8 +1,10 @@
+from typing import Any
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
-def validate_address(value: str, context: dict = {}) -> str:
+def validate_address(value: str, context: dict[str, Any] = {}) -> str:
     """
     Default address validator function. Can be overriden by providing a
     dotted path to a function in ``SALESMAN_ADDRESS_VALIDATOR`` setting.

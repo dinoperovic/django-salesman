@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Type
 
 from django.db.models import Model
@@ -44,7 +46,7 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
 
     def get_base_form_class(
         self,
-        form_class: Type[WagtailOrderModelForm] = None,
+        form_class: Type[WagtailOrderModelForm] | None = None,
     ) -> Type[WagtailOrderModelForm]:
         """
         Returns Model form class with model_admin instance attached.

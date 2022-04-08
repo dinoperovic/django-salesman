@@ -1,5 +1,6 @@
 import json
 from decimal import Decimal
+from typing import Any
 
 from django.http import HttpRequest
 from django.utils.html import format_html
@@ -10,7 +11,7 @@ from salesman.conf import app_settings
 from salesman.orders.models import Order
 
 
-def format_json(value: dict, context: dict = {}) -> str:
+def format_json(value: dict[str, Any], context: dict[str, Any] = {}) -> str:
     """
     Format json and add color using pygments with fallback.
 

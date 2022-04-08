@@ -1,12 +1,12 @@
 from decimal import Decimal
+from typing import Any
 
 from django.apps import apps
-from django.db.models import Model
 
 from salesman.conf import app_settings
 
 
-def format_price(value: Decimal, context: dict = {}) -> str:
+def format_price(value: Decimal, context: dict[str, Any] = {}) -> str:
     """
     Default price format function. Can be overriden by providing a
     dotted path to a function in ``SALESMAN_PRICE_FORMATTER`` setting.
@@ -21,7 +21,7 @@ def format_price(value: Decimal, context: dict = {}) -> str:
     return f"{value:.2f}"
 
 
-def get_salesman_model(name: str) -> Model:
+def get_salesman_model(name: str) -> Any:
     """
     Loads and returns a Salesman model by name.
     Should be used for accessing all models to allow for swappable models.

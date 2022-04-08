@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -73,14 +73,14 @@ class OrderStatus(BaseOrderStatus):
     REFUNDED = "REFUNDED", _("Refunded")  # Fully refunded by seller.
 
     @classmethod
-    def get_payable(cls) -> list:
+    def get_payable(cls) -> list[Any]:
         """
         Returns default payable statuses.
         """
         return [cls.CREATED, cls.HOLD, cls.FAILED]
 
     @classmethod
-    def get_transitions(cls) -> dict:
+    def get_transitions(cls) -> dict[str, list[Any]]:
         """
         Returns default status transitions.
         """

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from decimal import Decimal
-from typing import List, Optional, Union
+from typing import Any, List
 
 from django.http import HttpRequest
 
@@ -75,13 +77,13 @@ class BasketModifier:
 
     def add_extra_row(
         self,
-        obj: Union[BaseBasket, BaseBasketItem],
+        obj: BaseBasket | BaseBasketItem,
         request: HttpRequest,
         label: str,
         amount: Decimal,
-        extra: dict = {},
+        extra: dict[str, Any] = {},
         charge: bool = True,
-        identifier: Optional[str] = None,
+        identifier: str | None = None,
     ) -> None:
         """
         Adds extra row to either the basket or item.
@@ -110,8 +112,8 @@ class BasketModifiersPool:
     Pool for storing modifier instances.
     """
 
-    def __init__(self):
-        self._modifiers: Optional[list[BasketModifier]] = None
+    def __init__(self) -> None:
+        self._modifiers: list[BasketModifier] | None = None
 
     def get_modifiers(self) -> List[BasketModifier]:
         """
