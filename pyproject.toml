@@ -56,8 +56,9 @@ wagtail = ">=2.9,<2.17"
 
 [tool.poetry.extras]
 pygments = ["Pygments"]
-tests = ["pytest", "pytest-django", "pytest-cov"]
-docs = ["sphinx", "sphinx-rtd-theme", "sphinx-autobuild", "sphinxcontrib-httpdomain"]
+example = ["Pygments", "wagtail"]
+tests = ["Pygments", "wagtail", "pytest", "pytest-django", "pytest-cov"]
+docs = ["wagtail", "sphinx", "sphinx-rtd-theme", "sphinx-autobuild", "sphinxcontrib-httpdomain"]
 
 [tool.isort]
 profile = "black"
