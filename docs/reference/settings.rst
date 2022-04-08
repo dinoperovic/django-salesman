@@ -15,7 +15,7 @@ To use it in project:
     format_price = app_settings.SALESMAN_PRICE_FORMATTER
 
 
-.. autoclass:: salesman.conf.DefaultSettings
+.. autoclass:: salesman.conf.AppSettings
     :members:
 
 .. autoattribute:: salesman.conf.app_settings
