@@ -43,16 +43,11 @@ sphinx-autobuild = {version = "~2021.3.0", optional = true}
 sphinxcontrib-httpdomain = {version = "~1.8.0", optional = true}
 
 [tool.poetry.dev-dependencies]
-# Linting
 pre-commit = "*"
 isort = "5.10.1"
 black = "22.3.0"
 flake8 = "3.9.2"
 mypy = "0.942"
-
-# Example
-Pygments = "^2.6"
-wagtail = ">=2.9,<2.17"
 
 [tool.poetry.extras]
 pygments = ["Pygments"]
