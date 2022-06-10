@@ -150,8 +150,7 @@ class BaseOrder(ClusterableModel):
         return self.ref
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if self.extra:
-            self._extra = dict(self.extra, rows=self.extra_rows)
+        self._extra = dict(self.extra or {}, rows=self.extra_rows)
         if "extra" in kwargs.get("update_fields", []):
             kwargs["update_fields"].remove("extra")
             kwargs["update_fields"].append("_extra")
@@ -371,8 +370,7 @@ class BaseOrderItem(models.Model):
         return f"{self.quantity}x {self.name} ({self.code})"
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if self.extra:
-            self._extra = dict(self.extra, rows=self.extra_rows)
+        self._extra = dict(self.extra or {}, rows=self.extra_rows)
         if "extra" in kwargs.get("update_fields", []):
             kwargs["update_fields"].remove("extra")
             kwargs["update_fields"].append("_extra")

@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 
 from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
+from salesman.basket.serializers import ExtraRowsField
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 from shop.models import Product
@@ -37,10 +38,13 @@ def test_create_and_populate_from_basket(rf):
     extra_rows = basket.extra_rows
     delattr(basket, "total")  # delete to trigger update in `populate_from_basket`
     order = Order.objects.create_from_basket(basket, request)
+    order = Order.objects.get(id=order.id)  # fetch order to re-initialize
     assert order.items.count() == 2
     assert order.total == total
     assert order.subtotal == subtotal
     assert order.extra == basket.extra
+    assert order.extra_rows == ExtraRowsField().to_representation(extra_rows)
+
     assert len(order.extra_rows) == len(extra_rows)
     # Test populate with kwargs
     order2 = Order.objects.create_from_request(request)
