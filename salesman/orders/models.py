@@ -22,7 +22,7 @@ from salesman.orders.status import BaseOrderStatus
 
 from .signals import status_changed
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from salesman.checkout.payment import PaymentMethod
 
 try:

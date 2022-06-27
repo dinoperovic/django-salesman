@@ -15,7 +15,7 @@
     {# Add refund button if needed. #}
     {% if view.refund_url %}
       <li class="preview footer__container">
-        <a href="{{ view.refund_url }}" class="button">{% trans "Refund order" %}</a>
+        <a href="{{ view.refund_url }}" class="button" style="min-height: 39px">{% trans "Refund order" %}</a>
       </li>
     {% endif %}
   </ul>

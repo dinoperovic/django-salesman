@@ -1,5 +1,6 @@
 *.egg-info/
 *.pyc
+*.sqlite3
 .DS_Store
 .cache
 .coverage
@@ -13,7 +14,6 @@
 __pycache__/
 _build/
 coverage.xml
-db.sqlite3
 dist/
 example/public/
 htmlcov/

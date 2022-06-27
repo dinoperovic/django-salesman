@@ -197,7 +197,7 @@ class OrderPaySerializer(serializers.Serializer):
         if payment:
             payment.validate_order(order, request)
             return payment
-        return None
+        return None  # pragma: no cover
 
     def save(self, **kwargs: Any) -> None:
         # Process the payment.

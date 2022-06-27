@@ -8,6 +8,11 @@ from salesman.orders.status import BaseOrderStatus
 from shop.models import InvalidProduct
 
 
+def test_app_settings():
+    with pytest.raises(ImproperlyConfigured):
+        app_settings._class("salesman.core.utils.format_price")
+
+
 @pytest.mark.django_db
 def test_product_types(settings):
     assert app_settings.SALESMAN_PRODUCT_TYPES["shop.Product"]
@@ -236,6 +241,11 @@ def test_order_serializer(settings):
         )
         assert app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
         del app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
+
+    settings.SALESMAN_ORDER_SUMMARY_SERIALIZER = (
+        "salesman.orders.serializers.OrderSerializer"
+    )
+    assert app_settings.SALESMAN_ORDER_SUMMARY_SERIALIZER
 
 
 not_callable_price_formatter_function = 1

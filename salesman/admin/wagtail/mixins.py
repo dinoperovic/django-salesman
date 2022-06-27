@@ -18,7 +18,7 @@ from salesman.orders.models import BaseOrder
 
 from ..mixins import OrderAdminMixin
 from ..widgets import OrderStatusSelect, PaymentSelect
-from .edit_handlers import (
+from .panels import (
     OrderAdminPanel,
     OrderCheckboxPanel,
     OrderDatePanel,

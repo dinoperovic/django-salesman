@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 from django.db import transaction
 from django.db.models.deletion import ProtectedError
@@ -145,6 +147,10 @@ def test_basket_item_update(rf):
     assert item.subtotal == price
     assert item.total == price
     assert len(item.extra_rows) == 0
+    # Test no product unit price is set to 0
+    item.product = None
+    item.update(request)
+    assert item.unit_price == Decimal(0)
 
 
 @pytest.mark.django_db

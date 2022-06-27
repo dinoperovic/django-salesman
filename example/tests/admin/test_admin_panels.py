@@ -3,6 +3,7 @@ from decimal import Decimal
 
 import pytest
 from django.utils.formats import date_format
+from wagtail.utils.version import get_main_version as get_wagtail_version
 
 from salesman.admin import utils
 from salesman.admin.mixins import OrderAdminMixin
@@ -20,6 +21,8 @@ from salesman.core.utils import get_salesman_model
 Order = get_salesman_model("Order")
 OrderItem = get_salesman_model("OrderItem")
 
+WAGTAIL_VERSION = get_wagtail_version()
+
 
 @pytest.mark.django_db
 def test_read_only_panel():
@@ -27,7 +30,6 @@ def test_read_only_panel():
 
     panel = ReadOnlyPanel("status")
     panel.model = Order
-    panel.instance = order
 
     # test clone
     kwargs = panel.clone_kwargs()
@@ -41,36 +43,50 @@ def test_read_only_panel():
     assert panel.heading == field.verbose_name
     assert panel.help_text == field.help_text
 
+    if WAGTAIL_VERSION >= "3.0.0":
+        bound_panel = panel.BoundPanel(panel, order, None, None)
+    else:
+        bound_panel = panel
+        bound_panel.instance = order
+
     # test render with formatter
-    assert panel.render() == "NEW"
+    assert bound_panel.render() == "NEW"
 
     def _formatter(value, obj, request):
         return "<span>NEW</span>"
 
-    panel.formatter = _formatter
-    assert panel.render() == "<span>NEW</span>"
+    bound_panel.formatter = _formatter
+    assert bound_panel.render() == "<span>NEW</span>"
 
     # test render as with renderer
-    assert panel.render_as_object().startswith("<fieldset><legend>Status</legend>")
+    assert bound_panel.render_as_object().startswith(
+        "<fieldset><legend>Status</legend>"
+    )
     result = '<div class="field"><label>Status:</label>'
-    assert panel.render_as_field().startswith(result)
+    assert bound_panel.render_as_field().startswith(result)
 
     def _renderer(value, obj, request):
         return "<div>New</div>"
 
-    panel.renderer = _renderer
-    assert panel.render_as_object() == "<div>New</div>"
-    assert panel.render_as_field() == "<div>New</div>"
+    bound_panel.renderer = _renderer
+    assert bound_panel.render_as_object() == "<div>New</div>"
+    assert bound_panel.render_as_field() == "<div>New</div>"
 
     # test callable property
     panel = ReadOnlyPanel("total_display")
     panel.model = OrderAdminMixin
-    panel.instance = OrderAdminMixin()
-    panel.instance.total = Decimal("120")
+    instance = OrderAdminMixin()
+    instance.total = Decimal("120")
+
+    if WAGTAIL_VERSION >= "3.0.0":
+        bound_panel = panel.BoundPanel(panel, instance, None, None)
+    else:
+        bound_panel = panel
+        bound_panel.instance = instance
+
     panel.on_model_bound()
-    panel.on_form_bound()
     assert panel.heading == "Total"
-    assert panel.render() == "120.00"
+    assert bound_panel.render() == "120.00"
     panel.attr = "total_display_missing"
     panel.on_model_bound()
     assert panel.heading == "Total"
@@ -96,13 +112,20 @@ def test_order_items_panel():
     )
     panel = OrderItemsPanel("items")
     panel.model = Order
-    panel.instance = order
 
-    assert panel.classes() == ["salesman-order-items"]
-    assert panel.render_as_field() == panel.render()
-    assert panel.render_as_object() == panel.render()
-    assert panel.format_json({"test": 1}, order, None) == utils.format_json({"test": 1})
-    assert panel.render().startswith('<table class="listing full-width">')
+    if WAGTAIL_VERSION >= "3.0.0":
+        bound_panel = panel.BoundPanel(panel, order, None, None)
+    else:
+        bound_panel = panel
+        bound_panel.instance = order
+
+    assert bound_panel.classes() == ["salesman-order-items"]
+    assert bound_panel.render_as_field() == bound_panel.render()
+    assert bound_panel.render_as_object() == bound_panel.render()
+    assert bound_panel.format_json({"test": 1}, order, None) == utils.format_json(
+        {"test": 1}
+    )
+    assert bound_panel.render().startswith('<table class="listing full-width">')
 
 
 @pytest.mark.django_db
@@ -110,12 +133,20 @@ def test_order_admin_panel():
     order = Order.objects.create(ref="1", subtotal=120, total=120)
     panel = OrderAdminPanel("total_display")
     panel.model = Order
-    panel.instance = order
-    panel.form = WagtailOrderModelForm()
+
+    if WAGTAIL_VERSION >= "3.0.0":
+        form = WagtailOrderModelForm()
+        with pytest.raises(AssertionError):
+            bound_panel = panel.BoundPanel(panel, order, None, form)
+        form.model_admin = OrderAdmin()
+        bound_panel = panel.BoundPanel(panel, order, None, form)
+    else:
+        bound_panel = panel
+        bound_panel.instance = order
+        bound_panel.form = WagtailOrderModelForm()
+        bound_panel.form.model_admin = OrderAdmin()
+        bound_panel.on_form_bound()
+
     panel.on_model_bound()
-    with pytest.raises(AssertionError):
-        panel.on_form_bound()
-    panel.form.model_admin = OrderAdmin()
-    panel.on_form_bound()
-    assert panel.heading == "Total"
-    assert panel.get_value() == "120.00"
+    assert bound_panel.heading == "Total"
+    assert bound_panel.get_value() == "120.00"

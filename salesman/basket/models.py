@@ -16,7 +16,7 @@ from salesman.conf import app_settings
 from salesman.core.typing import Product
 from salesman.core.utils import get_salesman_model
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from django.db.models.manager import RelatedManager
 
 BASKET_ID_SESSION_KEY = "BASKET_ID"

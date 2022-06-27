@@ -180,3 +180,4 @@ SALESMAN_ORDER_NOTE_MODEL = "shop.OrderNote"
 
 # wagtail
 WAGTAIL_SITE_NAME = "My Example Site"
+WAGTAILADMIN_BASE_URL = "https://localhost:8000"

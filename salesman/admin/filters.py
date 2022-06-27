@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from salesman.conf import app_settings
 from salesman.orders.models import BaseOrder
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .admin import BaseOrderAdmin
 
 
