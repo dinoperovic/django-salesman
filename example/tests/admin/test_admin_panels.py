@@ -48,7 +48,7 @@ def test_read_only_panel():
             panel, instance=order, request=None, form=None, prefix=None
         )
     elif WAGTAIL_VERSION >= "3.0.0":
-        bound_panel = panel.BoundPanel(panel, order, None, None)
+        bound_panel = panel.BoundPanel(panel, instance=order, request=None, form=None)
     else:
         bound_panel = panel
         bound_panel.instance = order
@@ -87,7 +87,9 @@ def test_read_only_panel():
             panel, instance=instance, request=None, form=None, prefix=None
         )
     elif WAGTAIL_VERSION >= "3.0.0":
-        bound_panel = panel.BoundPanel(panel, instance, None, None)
+        bound_panel = panel.BoundPanel(
+            panel, instance=instance, request=None, form=None
+        )
     else:
         bound_panel = panel
         bound_panel.instance = instance
@@ -126,7 +128,7 @@ def test_order_items_panel():
             panel, instance=order, request=None, form=None, prefix=None
         )
     elif WAGTAIL_VERSION >= "3.0.0":
-        bound_panel = panel.BoundPanel(panel, order, None, None)
+        bound_panel = panel.BoundPanel(panel, instance=order, request=None, form=None)
     else:
         bound_panel = panel
         bound_panel.instance = order
@@ -159,9 +161,11 @@ def test_order_admin_panel():
     elif WAGTAIL_VERSION >= "3.0.0":
         form = WagtailOrderModelForm()
         with pytest.raises(AssertionError):
-            bound_panel = panel.BoundPanel(panel, order, None, form)
+            bound_panel = panel.BoundPanel(
+                panel, instance=order, request=None, form=form
+            )
         form.model_admin = OrderAdmin()
-        bound_panel = panel.BoundPanel(panel, order, None, form)
+        bound_panel = panel.BoundPanel(panel, instance=order, request=None, form=form)
     else:
         bound_panel = panel
         bound_panel.instance = order
