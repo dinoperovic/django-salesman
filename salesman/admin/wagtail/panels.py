@@ -115,11 +115,9 @@ class ReadOnlyPanel(Panel):
         def __init__(
             self,
             panel: Panel,
-            instance: Any,
-            request: HttpRequest,
-            form: Any,
+            **kwargs: Any,
         ) -> None:
-            super().__init__(panel, instance, request, form)
+            super().__init__(panel, **kwargs)
             self.attr = panel.attr
             self.formatter = panel.formatter
             self.renderer = panel.renderer
@@ -138,6 +136,17 @@ class ReadOnlyPanel(Panel):
         def render(self) -> Any:
             value = self.get_value()
             return self.format_value(value)
+
+        def render_html(self, context: dict[str, Any]) -> Any:
+            """
+            New method for rendering the field in Wagtail 4.
+            """
+            if self.renderer:
+                return self.renderer(self.get_value(), self.instance, self.request)
+            return format_html(
+                "<div>{}</div>",
+                self.render(),
+            )
 
         def render_as_object(self) -> Any:
             if self.renderer:
@@ -330,11 +339,9 @@ class OrderAdminPanel(ReadOnlyPanel):
         def __init__(
             self,
             panel: Panel,
-            instance: Any,
-            request: HttpRequest,
-            form: Any,
+            **kwargs: Any,
         ) -> None:
-            super().__init__(panel, instance, request, form)
+            super().__init__(panel, **kwargs)
 
             if not hasattr(self.form, "model_admin"):
                 raise AssertionError(

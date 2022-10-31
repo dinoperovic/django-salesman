@@ -1,4 +1,5 @@
 /* Style for order items table. */
+.salesman-order-items .w-panel__content > div,
 .salesman-order-items .object-layout {
   flex-direction: row;
   overflow: auto;
