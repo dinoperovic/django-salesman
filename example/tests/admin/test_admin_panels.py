@@ -43,7 +43,11 @@ def test_read_only_panel():
     assert panel.heading == field.verbose_name
     assert panel.help_text == field.help_text
 
-    if WAGTAIL_VERSION >= "3.0.0":
+    if WAGTAIL_VERSION >= "4.0.0":
+        bound_panel = panel.BoundPanel(
+            panel, instance=order, request=None, form=None, prefix=None
+        )
+    elif WAGTAIL_VERSION >= "3.0.0":
         bound_panel = panel.BoundPanel(panel, order, None, None)
     else:
         bound_panel = panel
@@ -78,7 +82,11 @@ def test_read_only_panel():
     instance = OrderAdminMixin()
     instance.total = Decimal("120")
 
-    if WAGTAIL_VERSION >= "3.0.0":
+    if WAGTAIL_VERSION >= "4.0.0":
+        bound_panel = panel.BoundPanel(
+            panel, instance=instance, request=None, form=None, prefix=None
+        )
+    elif WAGTAIL_VERSION >= "3.0.0":
         bound_panel = panel.BoundPanel(panel, instance, None, None)
     else:
         bound_panel = panel
@@ -113,7 +121,11 @@ def test_order_items_panel():
     panel = OrderItemsPanel("items")
     panel.model = Order
 
-    if WAGTAIL_VERSION >= "3.0.0":
+    if WAGTAIL_VERSION >= "4.0.0":
+        bound_panel = panel.BoundPanel(
+            panel, instance=order, request=None, form=None, prefix=None
+        )
+    elif WAGTAIL_VERSION >= "3.0.0":
         bound_panel = panel.BoundPanel(panel, order, None, None)
     else:
         bound_panel = panel
@@ -134,7 +146,17 @@ def test_order_admin_panel():
     panel = OrderAdminPanel("total_display")
     panel.model = Order
 
-    if WAGTAIL_VERSION >= "3.0.0":
+    if WAGTAIL_VERSION >= "4.0.0":
+        form = WagtailOrderModelForm()
+        with pytest.raises(AssertionError):
+            bound_panel = panel.BoundPanel(
+                panel, instance=order, request=None, form=form, prefix=None
+            )
+        form.model_admin = OrderAdmin()
+        bound_panel = panel.BoundPanel(
+            panel, instance=order, request=None, form=form, prefix=None
+        )
+    elif WAGTAIL_VERSION >= "3.0.0":
         form = WagtailOrderModelForm()
         with pytest.raises(AssertionError):
             bound_panel = panel.BoundPanel(panel, order, None, form)
