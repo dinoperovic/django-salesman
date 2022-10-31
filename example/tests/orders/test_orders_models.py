@@ -127,6 +127,7 @@ def test_order_item_properties(rf):
     assert item.code == "1"
     del item.product_data["name"]
     del item.product_data["code"]
+    product.save()
     item.save()
     assert str(item) == "1x (no name) ((no code))"  # empty product_data
     assert item.code == "(no code)"
