@@ -1,6 +1,12 @@
 {% extends "modeladmin/edit.html" %}
 {% load i18n wagtailadmin_tags %}
 
+{% block form %}
+  <div class="salesman-order-form">
+    {{ block.super }}
+  </div>
+{% endblock %}
+
 {% block footer %}
 <footer class="footer">
   <ul>
