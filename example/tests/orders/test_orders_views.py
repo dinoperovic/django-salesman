@@ -34,6 +34,7 @@ def test_order_views(django_user_model):
     )
     OrderItem.objects.create(
         order=order2,
+        product=product,
         product_data={"name": "Test data"},
         unit_price=70,
         subtotal=70,

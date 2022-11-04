@@ -5,6 +5,7 @@ from wagtail.admin.edit_handlers import EditHandler, FieldPanel, ObjectList
 
 from salesman.admin import wagtail_hooks
 from salesman.core.utils import get_salesman_model
+from shop.models import Product
 
 site = AdminSite()
 
@@ -21,10 +22,13 @@ def test_order_admin(rf, client, django_user_model):
     request.session = {}
     request._messages = FallbackStorage(request)
     order = Order.objects.create(ref="2020-00001", subtotal=100, total=120)
+    product = Product.objects.create(name="Test Product", price=100)
     OrderItem.objects.create(
-        order=order, unit_price=10, subtotal=20, total=20, quantity=2
+        order=order, product=product, unit_price=10, subtotal=20, total=20, quantity=2
     )
-    OrderItem.objects.create(order=order, unit_price=1, subtotal=2, total=2, quantity=1)
+    OrderItem.objects.create(
+        order=order, product=product, unit_price=1, subtotal=2, total=2, quantity=1
+    )
     modeladmin = wagtail_hooks.OrderAdmin()
     modeladmin.model = Order
     modeladmin.model.request = request

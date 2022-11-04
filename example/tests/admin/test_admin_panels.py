@@ -17,6 +17,7 @@ from salesman.admin.wagtail.edit_handlers import (
 from salesman.admin.wagtail.forms import WagtailOrderModelForm
 from salesman.admin.wagtail_hooks import OrderAdmin
 from salesman.core.utils import get_salesman_model
+from shop.models import Product
 
 Order = get_salesman_model("Order")
 OrderItem = get_salesman_model("OrderItem")
@@ -117,8 +118,9 @@ def test_order_checkbox_panel():
 @pytest.mark.django_db
 def test_order_items_panel():
     order = Order.objects.create(ref="1", subtotal=120, total=120)
+    product = Product.objects.create(name="Test Product", price=50)
     OrderItem.objects.create(
-        order=order, unit_price=50, subtotal=100, total=120, quantity=2
+        order=order, product=product, unit_price=50, subtotal=100, total=120, quantity=2
     )
     panel = OrderItemsPanel("items")
     panel.model = Order

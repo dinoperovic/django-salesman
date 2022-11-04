@@ -10,6 +10,7 @@ from salesman.admin.mixins import BaseAdminMixin, OrderAdminMixin, OrderItemAdmi
 from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
+from shop.models import Product
 
 site = AdminSite()
 
@@ -35,8 +36,10 @@ def test_order_item_admin_mixin():
     order = Order.objects.create(ref="1")
     extra = {"test": "123", "rows": ["value"]}
     product_data = {"name": "Test product"}
+    product = Product.objects.create(name="Test Product", price=10)
     item = OrderItem.objects.create(
         order=order,
+        product=product,
         unit_price=10,
         subtotal=20,
         total=20,

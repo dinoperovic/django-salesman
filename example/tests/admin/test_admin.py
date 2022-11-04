@@ -6,6 +6,7 @@ from django.urls import reverse
 from salesman.admin import admin
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
+from shop.models import Product
 
 site = AdminSite()
 
@@ -22,8 +23,9 @@ def test_order_item_inline(rf, django_user_model):
     )
     modeladmin = admin.OrderItemInline(OrderItem, site)
     order = Order.objects.create(ref="1")
+    product = Product.objects.create(name="Test", price=10)
     item = OrderItem.objects.create(
-        order=order, unit_price=10, subtotal=20, total=20, quantity=2
+        order=order, product=product, unit_price=10, subtotal=20, total=20, quantity=2
     )
     modeladmin.get_queryset(request)
     assert modeladmin.model.request == request
