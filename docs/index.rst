@@ -75,7 +75,3 @@ Features
     reference/index
     releases/index
     credits
-
-.. image:: _static/buymeacoffee.svg
-    :target: https://www.buymeacoffee.com/dinoperovic
-    :alt: Buy me a coffee

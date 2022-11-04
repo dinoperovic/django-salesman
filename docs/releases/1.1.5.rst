@@ -1,0 +1,10 @@
+#####
+1.1.5
+#####
+
+*2022-11-04*
+
+Added
+-----
+
+- Add support for ``Wagtail 4.0`` and ``Wagtail 4.1``.
