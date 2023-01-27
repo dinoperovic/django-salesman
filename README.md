@@ -9,7 +9,7 @@
         <img alt="PyPI" src="https://img.shields.io/pypi/v/django-salesman">
     </a>
     <a href="https://github.com/dinoperovic/django-salesman/actions?query=workflow:Test">
-        <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/dinoperovic/django-salesman/Test/master">
+        <img alt="GitHub - Test status" src="https://github.com/dinoperovic/django-salesman/actions/workflows/test.yml/badge.svg">
     </a>
     <a href="http://codecov.io/github/dinoperovic/django-salesman">
         <img alt="Codecov branch" src="https://img.shields.io/codecov/c/github/dinoperovic/django-salesman/master">
