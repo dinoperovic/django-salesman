@@ -62,6 +62,8 @@ class CheckoutViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         """
         Show a list of payment methods with errors if they exist.
         """
-        instance = {"payment_methods": payment_methods_pool.get_payments("basket")}
+        instance = {
+            "payment_methods": payment_methods_pool.get_payments("basket", request)
+        }
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

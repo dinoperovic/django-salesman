@@ -183,13 +183,16 @@ class OrderPaySerializer(serializers.Serializer):
     Serializer used to pay for existing order via payment method.
     """
 
-    payment_method = serializers.ChoiceField(
-        choices=payment_methods_pool.get_choices("order"),
-        write_only=True,
-    )
+    payment_method = serializers.ChoiceField(choices=[], write_only=True)
 
     # Show payment methods with error on GET.
     payment_methods = PaymentMethodSerializer(many=True, read_only=True)
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["payment_method"].choices = payment_methods_pool.get_choices(
+            "order", self.context["request"]
+        )
 
     def validate_payment_method(self, value: str) -> PaymentMethod | None:
         order, request = self.context["order"], self.context["request"]
