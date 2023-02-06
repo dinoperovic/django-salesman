@@ -42,6 +42,18 @@ class PaymentMethod:
         """
         return []
 
+    def is_enabled(self, request: HttpRequest) -> bool:
+        """
+        Method used to check that payment method is enabled for a given request.
+
+        Args:
+            request (HttpRequest): Django request
+
+        Returns:
+            bool: True if payment method is enabled
+        """
+        return True
+
     def validate_basket(self, basket: BaseBasket, request: HttpRequest) -> None:
         """
         Method used to validate that payment method is valid for the given basket.
@@ -137,7 +149,11 @@ class PaymentMethodsPool:
     def __init__(self) -> None:
         self._payments: list[PaymentMethod] | None = None
 
-    def get_payments(self, kind: str | None = None) -> List[PaymentMethod]:
+    def get_payments(
+        self,
+        kind: str | None = None,
+        request: HttpRequest = None,
+    ) -> List[PaymentMethod]:
         """
         Returns payment method instances.
 
@@ -149,10 +165,14 @@ class PaymentMethodsPool:
         """
         if not self._payments:
             self._payments = [P() for P in app_settings.SALESMAN_PAYMENT_METHODS]
+
+        payments = self._payments
         if kind in ["basket", "order"]:
             method = f"{kind}_payment"
-            return [p for p in self._payments if method in p.__class__.__dict__]
-        return self._payments
+            payments = [p for p in payments if method in p.__class__.__dict__]
+        if request:
+            payments = [p for p in payments if p.is_enabled(request)]
+        return payments
 
     def get_urls(self) -> list[URLPattern | URLResolver]:
         """
@@ -166,7 +186,11 @@ class PaymentMethodsPool:
                 urlpatterns.append(path(base_url, include(urls)))
         return urlpatterns
 
-    def get_choices(self, kind: str | None = None) -> list[tuple[str, str]]:
+    def get_choices(
+        self,
+        kind: str | None = None,
+        request: HttpRequest = None,
+    ) -> list[tuple[str, str]]:
         """
         Return payments formated as choices list of tuples.
 
@@ -176,12 +200,13 @@ class PaymentMethodsPool:
         Returns:
             list: List of choices
         """
-        return [(p.identifier, p.label) for p in self.get_payments(kind=kind)]
+        return [(p.identifier, p.label) for p in self.get_payments(kind, request)]
 
     def get_payment(
         self,
         identifier: str,
         kind: str | None = None,
+        request: HttpRequest = None,
     ) -> PaymentMethod | None:
         """
         Returns payment with given identifier.
@@ -193,7 +218,7 @@ class PaymentMethodsPool:
         Returns:
             PaymentMethod: Payment method instance
         """
-        for payment in self.get_payments(kind=kind):
+        for payment in self.get_payments(kind, request):
             if payment.identifier == identifier:
                 return payment
         return None

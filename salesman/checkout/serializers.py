@@ -53,10 +53,7 @@ class CheckoutSerializer(serializers.Serializer):
         write_only=True,
         style={"base_template": "textarea.html"},
     )
-    payment_method = serializers.ChoiceField(
-        choices=payment_methods_pool.get_choices("basket"),
-        write_only=True,
-    )
+    payment_method = serializers.ChoiceField(choices=[], write_only=True)
     extra = serializers.JSONField(
         default=dict,
         write_only=True,
@@ -65,6 +62,12 @@ class CheckoutSerializer(serializers.Serializer):
 
     # Show payment methods with error on GET.
     payment_methods = PaymentMethodSerializer(many=True, read_only=True)
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["payment_method"].choices = payment_methods_pool.get_choices(
+            "basket", self.context["request"]
+        )
 
     def validate_shipping_address(self, value: str) -> str:
         context = self.context.copy()

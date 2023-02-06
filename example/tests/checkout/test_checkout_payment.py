@@ -11,6 +11,7 @@ def test_base_payment_method():
     with pytest.raises(NotImplementedError):
         method.order_payment(None, None)
     assert not method.refund_payment(None)
+    assert method.is_enabled(None) is True
 
 
 def test_payment_methods_pool():

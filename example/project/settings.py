@@ -167,6 +167,7 @@ SALESMAN_PAYMENT_METHODS = [
     "shop.payment.PayInAdvance",
     "shop.payment.PayOnDelivery",
     "shop.payment.CreditCardPayment",
+    "shop.payment.AdminPayment",
 ]
 SALESMAN_ADDRESS_VALIDATOR = "shop.utils.custom_address_validator"
 SALESMAN_PRICE_FORMATTER = "shop.utils.custom_price_format"
