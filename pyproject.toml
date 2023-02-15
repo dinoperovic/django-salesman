@@ -81,6 +81,9 @@ warn_return_any = false
 no_implicit_reexport = true
 strict_equality = true
 
+[tool.pyright]
+typeCheckingMode = "off"
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
