@@ -117,14 +117,17 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     )
     def status(self, request: Request, ref: str) -> Response:
         """
-        Change order status. Available only to admin user.
+        View order status. Available only to admin user.
         """
         order = self.get_object()
         serializer = self.get_serializer(order)
         return Response(serializer.data)
 
     @status.mapping.put
-    def change_status(self, request: Request, ref: str) -> Response:
+    def status_update(self, request: Request, ref: str) -> Response:
+        """
+        Update order status. Available only to admin user.
+        """
         order = self.get_object()
         serializer = self.get_serializer(order, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -134,14 +137,17 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     @action(["get"], True, serializer_class=OrderPaySerializer)
     def pay(self, request: Request, ref: str) -> Response:
         """
-        Pay for order.
+        View order payment methods.
         """
         instance = {"payment_methods": payment_methods_pool.get_payments("order")}
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     @pay.mapping.post
-    def create_payment(self, request: Request, ref: str) -> Response:
+    def pay_create(self, request: Request, ref: str) -> Response:
+        """
+        Create order payment.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:

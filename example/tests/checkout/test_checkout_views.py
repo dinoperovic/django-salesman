@@ -80,11 +80,15 @@ def test_checkout_views(settings, django_user_model):
 
     # test anonymous user checkout is not allowed
     setattr(settings, "SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT", False)
+    response = client.get(url)
+    assert response.status_code == 403
     response = client.post(url, valid_data, "json")
-    assert response.status_code == 400
+    assert response.status_code == 403
 
     # test anonymous user checkout is not allowed but authorized
     user = django_user_model.objects.create_user(username="user", password="password")
     client.force_login(user)
+    response = client.get(url)
+    assert response.status_code == 200
     response = client.post(url, valid_data, "json")
     assert response.status_code == 201

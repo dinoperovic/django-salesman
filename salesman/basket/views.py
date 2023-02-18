@@ -68,7 +68,7 @@ class BasketViewSet(viewsets.ModelViewSet):
     def get_basket_response(self) -> Response:
         context = self.get_serializer_context()
         serializer = BasketSerializer(self.get_basket(), context=context)
-        return Response(serializer.data)
+        return Response(dict(serializer.data))
 
     def finalize_response(
         self,
@@ -135,7 +135,7 @@ class BasketViewSet(viewsets.ModelViewSet):
     @action(["get"], False, serializer_class=BasketExtraSerializer)
     def extra(self, request: Request) -> Response:
         """
-        Update basket extra data.
+        Show basket extra data.
         """
         basket = self.get_basket()
         serializer = self.get_serializer(basket)
@@ -143,6 +143,9 @@ class BasketViewSet(viewsets.ModelViewSet):
 
     @extra.mapping.put
     def extra_update(self, request: Request) -> Response:
+        """
+        Update basket extra data.
+        """
         basket = self.get_basket()
         serializer = self.get_serializer(basket, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)

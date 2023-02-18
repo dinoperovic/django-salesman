@@ -36,10 +36,11 @@ Then register your payment method in ``settings.py``:
 Now you can make a basket purchase through the :http:post:`/checkout/` request
 with ``payment_method`` set to ``pay-in-advance``.
 
+For more information about payment methods see :ref:`payment_methods`.
+
 .. raw:: html
 
-    <h3>3. Prevent anonymous user to checkout orders</h3>
+    <h3>Anonymous checkout</h3>
 
-By default anonymous users can checkout. To prevent this behavior set ``SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT = False``
+By default anonymous users can checkout. To prevent this behavior set ``SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT = False``.
 
-For more information about payment methods see :ref:`payment_methods`.

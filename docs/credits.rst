@@ -16,3 +16,11 @@ Graphic design
 
 Logo designed by `Matej Purgar <https://www.behance.net/purgarama8da4>`_ using
 `Monopoly Vectors by Vecteezy <https://www.vecteezy.com/free-vector/monopoly>`_.
+
+
+Contributors
+============
+
+Thanks to people contributing on GitHub:
+
+- `@laricko <https://github.com/laricko>`_

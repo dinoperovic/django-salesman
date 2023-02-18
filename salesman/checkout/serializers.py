@@ -69,14 +69,6 @@ class CheckoutSerializer(serializers.Serializer):
             "basket", self.context["request"]
         )
 
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any] | None:
-        if (
-            not app_settings.SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT
-            and not self.context["request"].user.is_authenticated
-        ):
-            raise DjangoValidationError({"detail": "Anonymous checkout is not allowed"})
-        return super().validate(attrs)
-
     def validate_shipping_address(self, value: str) -> str:
         context = self.context.copy()
         context["address"] = "shipping"
