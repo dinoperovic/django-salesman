@@ -291,6 +291,14 @@ class AppSettings:
         value = self._setting("SALESMAN_ADMIN_JSON_FORMATTER", default)
         return self._function(value)
 
+    @property
+    def SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT(self) -> bool:
+        """
+        Set to ``False`` if you want to prevent to order if user not authorized.
+        """
+        value: bool = self._setting("SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT", True)
+        return value
+
     def _setting(self, name: str, default: Any = None) -> Any:
         from django.conf import settings
 

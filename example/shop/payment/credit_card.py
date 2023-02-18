@@ -5,9 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import path, reverse
 
-from salesman.basket.models import Basket
 from salesman.checkout.payment import PaymentMethod
-from shop.models import Order
+from shop.models import Basket, Order
 
 
 class CreditCardPayment(PaymentMethod):

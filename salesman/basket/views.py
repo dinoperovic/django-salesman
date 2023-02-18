@@ -110,21 +110,21 @@ class BasketViewSet(viewsets.ModelViewSet):
         self.get_basket().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=["get"])
+    @action(["get"], False)
     def count(self, request: Request) -> Response:
         """
         Show basket item count.
         """
         return Response({"count": self.get_basket().count})
 
-    @action(detail=False, methods=["get"])
+    @action(["get"], False)
     def quantity(self, request: Request) -> Response:
         """
         Show basket total quantity.
         """
         return Response({"quantity": self.get_basket().quantity})
 
-    @action(detail=False, methods=["post"], serializer_class=BasketSerializer)
+    @action(["post"], False, serializer_class=BasketSerializer)
     def clear(self, request: Request) -> Response:
         """
         Clear all items from basket.
@@ -132,21 +132,21 @@ class BasketViewSet(viewsets.ModelViewSet):
         self.get_basket().clear()
         return self.list(request)
 
-    @action(
-        detail=False,
-        methods=["get", "put"],
-        serializer_class=BasketExtraSerializer,
-    )
+    @action(["get"], False, serializer_class=BasketExtraSerializer)
     def extra(self, request: Request) -> Response:
+        """
+        Show basket extra data.
+        """
+        basket = self.get_basket()
+        serializer = self.get_serializer(basket)
+        return Response(serializer.data)
+
+    @extra.mapping.put
+    def extra_update(self, request: Request) -> Response:
         """
         Update basket extra data.
         """
         basket = self.get_basket()
-
-        if request.method == "GET":
-            serializer = self.get_serializer(basket)
-            return Response(serializer.data)
-
         serializer = self.get_serializer(basket, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

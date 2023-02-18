@@ -10,7 +10,7 @@ Order = get_salesman_model("Order")
 
 
 @pytest.mark.django_db
-def test_checkout_views(settings):
+def test_checkout_views(settings, django_user_model):
     url = reverse("salesman-checkout-list")
     client = APIClient()
 
@@ -38,7 +38,7 @@ def test_checkout_views(settings):
         "payment_method": "dummy",
         "extra": {"test": 1},
     }
-    response = client.post(url, valid_data, format="json")
+    response = client.post(url, valid_data, "json")
     assert response.status_code == 400
 
     # add item to cart
@@ -55,7 +55,7 @@ def test_checkout_views(settings):
     assert response.status_code == 400
 
     # test process new checkout
-    response = client.post(url, valid_data, format="json")
+    response = client.post(url, valid_data, "json")
     assert response.status_code == 201
     assert "url" in response.json()
 
@@ -67,9 +67,28 @@ def test_checkout_views(settings):
     assert order.extra["test"] == valid_data["extra"]["test"]
 
     # test `PaymentError` caught
-    client.put(
-        reverse("salesman-basket-extra"), {"extra": {"raise_error": 1}}, format="json"
-    )
-    response = client.post(url, valid_data, format="json")
+    client.put(reverse("salesman-basket-extra"), {"extra": {"raise_error": 1}}, "json")
+    response = client.post(url, valid_data, "json")
     assert response.status_code == 402
     assert response.json()["detail"] == "Dummy payment error"
+
+    # add item to cart
+    response = client.post(
+        reverse("salesman-basket-list"),
+        {"product_type": "shop.Product", "product_id": product.id},
+    )
+
+    # test anonymous user checkout is not allowed
+    setattr(settings, "SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT", False)
+    response = client.get(url)
+    assert response.status_code == 403
+    response = client.post(url, valid_data, "json")
+    assert response.status_code == 403
+
+    # test anonymous user checkout is not allowed but authorized
+    user = django_user_model.objects.create_user(username="user", password="password")
+    client.force_login(user)
+    response = client.get(url)
+    assert response.status_code == 200
+    response = client.post(url, valid_data, "json")
+    assert response.status_code == 201

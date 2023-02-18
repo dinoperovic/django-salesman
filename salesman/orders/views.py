@@ -91,7 +91,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     ) -> HttpResponseBase:
         return super().dispatch(request, *args, **kwargs)
 
-    @action(detail=False, methods=["get"])
+    @action(["get"], False)
     def last(self, request: Request) -> Response:
         """
         Show last customer order.
@@ -102,7 +102,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(order)
         return Response(serializer.data)
 
-    @action(detail=False, methods=["get"], permission_classes=[IsAdminUser])
+    @action(["get"], False, permission_classes=[IsAdminUser])
     def all(self, request: Request) -> Response:
         """
         Show all orders to the admin user.
@@ -110,36 +110,44 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return self.list(request)
 
     @action(
-        detail=True,
-        methods=["get", "put"],
+        ["get"],
+        True,
         serializer_class=OrderStatusSerializer,
         permission_classes=[IsAdminUser],
     )
     def status(self, request: Request, ref: str) -> Response:
         """
-        Change order status. Available only to admin user.
+        View order status. Available only to admin user.
         """
         order = self.get_object()
+        serializer = self.get_serializer(order)
+        return Response(serializer.data)
 
-        if request.method == "GET":
-            serializer = self.get_serializer(order)
-            return Response(serializer.data)
-
+    @status.mapping.put
+    def status_update(self, request: Request, ref: str) -> Response:
+        """
+        Update order status. Available only to admin user.
+        """
+        order = self.get_object()
         serializer = self.get_serializer(order, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
-    @action(detail=True, methods=["get", "post"], serializer_class=OrderPaySerializer)
+    @action(["get"], True, serializer_class=OrderPaySerializer)
     def pay(self, request: Request, ref: str) -> Response:
         """
-        Pay for order.
+        View order payment methods.
         """
-        if request.method == "GET":
-            instance = {"payment_methods": payment_methods_pool.get_payments("order")}
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
+        instance = {"payment_methods": payment_methods_pool.get_payments("order")}
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
+    @pay.mapping.post
+    def pay_create(self, request: Request, ref: str) -> Response:
+        """
+        Create order payment.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
@@ -150,8 +158,8 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({"detail": str(e)}, status=status.HTTP_402_PAYMENT_REQUIRED)
 
     @action(
-        detail=True,
-        methods=["post"],
+        ["post"],
+        True,
         serializer_class=OrderRefundSerializer,
         permission_classes=[IsAdminUser],
     )

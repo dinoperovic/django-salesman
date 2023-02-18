@@ -5,11 +5,14 @@ from typing import Any
 from django.http import HttpRequest
 from django.http.response import HttpResponseBase
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rest_framework import mixins, status, viewsets
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
 
 from .payment import PaymentError, payment_methods_pool
@@ -39,6 +42,14 @@ class CheckoutViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         context["basket"], _ = Basket.objects.get_or_create_from_request(self.request)
         context["basket"].update(self.request)
         return context
+
+    def check_permissions(self, request: Request) -> None:
+        super().check_permissions(request)
+
+        if not app_settings.SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT and not bool(
+            request.user and request.user.is_authenticated
+        ):
+            raise PermissionDenied(detail=_("Anonymous checkout not allowed."))
 
     @method_decorator(never_cache)
     def dispatch(
