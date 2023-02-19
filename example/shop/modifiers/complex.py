@@ -17,7 +17,7 @@ class ComplexModifier(BasketModifier):
 
         # Set discount limit through the request.
         try:
-            self.max_discounts = int(self.request.GET["max_discounts"])
+            self.max_discounts = int(request.GET["max_discounts"])
         except (KeyError, ValueError):
             self.max_discounts = 0
         self.num_discounts = 0
