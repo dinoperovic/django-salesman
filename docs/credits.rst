@@ -24,3 +24,4 @@ Contributors
 Thanks to people contributing on GitHub:
 
 - `@laricko <https://github.com/laricko>`_
+- `@chriswedgwood <https://github.com/chriswedgwood>`_
