@@ -50,7 +50,7 @@ After that make sure to generate and run the migrations.
 
 .. code:: bash
 
-    python manage.py makemigrations
+    python manage.py makemigrations shop
     python manage.py migrate
 
 
