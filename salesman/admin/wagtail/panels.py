@@ -13,15 +13,14 @@ from salesman.conf import app_settings
 
 from ..utils import format_price
 
-from wagtail.utils.version import get_main_version as get_wagtail_version
-if get_wagtail_version() >= "4.0.0":
-    from wagtail.admin.panels import Panel
-else: 
-    from wagtail.admin.edit_handlers import EditHandler as Panel
+from wagtail.utils.version import get_main_version as get_wagtail_version    
 
 if get_wagtail_version() < "3.0.0":  # pragma: no cover
+    from wagtail.admin.edit_handlers import EditHandler as Panel
     # Attach dummy BoundPanel class for older Wagtail versions
     Panel.BoundPanel = object
+else:
+    from wagtail.admin.panels import Panel
 
 
 class ReadOnlyPanel(Panel):
