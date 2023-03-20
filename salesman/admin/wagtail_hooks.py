@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Type
 
-from wagtail.admin.edit_handlers import EditHandler, ObjectList
+from wagtail.utils.version import get_main_version as get_wagtail_version
+if get_wagtail_version() >= "4.0.0":
+    from wagtail.admin.panels import EditHandler, ObjectList
+else:
+    from wagtail.admin.edit_handlers import EditHandler, TabbedInterface as ObjectList
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 
 from salesman.conf import app_settings

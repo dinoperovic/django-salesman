@@ -6,13 +6,24 @@ from django.urls import re_path, reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    InlinePanel,
-    MultiFieldPanel,
-    ObjectList,
-    TabbedInterface,
-)
+
+from wagtail.utils.version import get_main_version as get_wagtail_version
+if get_wagtail_version() >= "4.0.0":
+    from wagtail.admin.panels import (
+        FieldPanel,
+        InlinePanel,
+        MultiFieldPanel,
+        ObjectList,
+        TabbedInterface,
+    )
+else:
+    from wagtail.admin.edit_handlers import (
+        FieldPanel,
+        InlinePanel,
+        MultiFieldPanel,
+        ObjectList,
+        TabbedInterface,
+    )
 
 from salesman.orders.models import BaseOrder
 

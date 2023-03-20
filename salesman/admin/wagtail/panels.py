@@ -8,12 +8,16 @@ from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import EditHandler as Panel
-from wagtail.utils.version import get_main_version as get_wagtail_version
 
 from salesman.conf import app_settings
 
 from ..utils import format_price
+
+from wagtail.utils.version import get_main_version as get_wagtail_version
+if get_wagtail_version() >= "4.0.0":
+    from wagtail.admin.panels import Panel
+else: 
+    from wagtail.admin.edit_handlers import EditHandler as Panel
 
 if get_wagtail_version() < "3.0.0":  # pragma: no cover
     # Attach dummy BoundPanel class for older Wagtail versions
