@@ -21,7 +21,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
-    name: Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }}
+    name: Python ${{ matrix.python-version }} - Django ${{ matrix.django-version }} - Wagtail ${{ matrix.wagtail-version }}
     runs-on: ubuntu-latest
     needs: lint
     strategy:
@@ -29,9 +29,13 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         django-version: ["4.1", "4.2"]
         wagtail-version: ["4.0", "5.0"]
+        exclude:
+          - django-version: "4.2"
+            wagtail-version: "4.0"
         include:
           - python-version: "3.11"
             django-version: "4.2"
+            wagtail-version: "5.0"
             codecov: true
     steps:
       - uses: actions/checkout@v2
