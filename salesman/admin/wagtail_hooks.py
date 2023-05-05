@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Type
+from typing import Type
 
 from wagtail.admin.panels import ObjectList, Panel
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
