@@ -5,11 +5,7 @@ on:
     branches:
       - master
       - "release/**"
-    paths:
-      - "**.py"
   pull_request:
-    paths:
-      - "**.py"
 
 jobs:
   lint:
