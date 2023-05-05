@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Type
 
-from wagtail.admin.edit_handlers import EditHandler, ObjectList
+from wagtail.admin.panels import ObjectList, Panel
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 
 from salesman.conf import app_settings
@@ -61,7 +61,7 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
             {"model_admin": self},
         )
 
-    def get_edit_handler(self, *args: Any, **kwargs: Any) -> EditHandler:
+    def get_edit_handler(self) -> Panel:
         """
         Returns edit handler with custom base form class attached.
 
@@ -81,7 +81,7 @@ class BaseOrderAdmin(WagtailOrderAdminMixin, ModelAdmin):
         elif hasattr(self, "default_edit_handler") and self.default_edit_handler:
             edit_handler = self.default_edit_handler
         else:
-            edit_handler = super().get_edit_handler(*args, **kwargs)
+            edit_handler = super().get_edit_handler()
 
         edit_handler.base_form_class = self.get_base_form_class(
             form_class=getattr(edit_handler, "base_form_class", None)

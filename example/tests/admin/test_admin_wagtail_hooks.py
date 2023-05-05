@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.messages.storage.fallback import FallbackStorage
-from wagtail.admin.edit_handlers import EditHandler, FieldPanel, ObjectList
+from wagtail.admin.panels import FieldPanel, ObjectList, Panel
 
 from salesman.admin import wagtail_hooks
 from salesman.core.utils import get_salesman_model
@@ -78,20 +78,20 @@ def test_order_admin(rf, client, django_user_model):
     assert view.get_meta_title() == "Confirm Order refund"
 
     # test get_edit_handler
-    edit_handler = modeladmin.get_edit_handler(order, request)
+    edit_handler = modeladmin.get_edit_handler()
     assert edit_handler == modeladmin.default_edit_handler
     modeladmin.default_edit_handler = None
-    edit_handler = modeladmin.get_edit_handler(order, request)
+    edit_handler = modeladmin.get_edit_handler()
     assert isinstance(edit_handler, ObjectList)
     modeladmin.model.panels = [FieldPanel("model_panel")]
-    edit_handler = modeladmin.get_edit_handler(order, request)
+    edit_handler = modeladmin.get_edit_handler()
     assert edit_handler.children == modeladmin.model.panels
-    modeladmin.model.edit_handler = EditHandler(heading="model_edit_handler")
-    edit_handler = modeladmin.get_edit_handler(order, request)
+    modeladmin.model.edit_handler = Panel(heading="model_edit_handler")
+    edit_handler = modeladmin.get_edit_handler()
     assert edit_handler == modeladmin.model.edit_handler
     modeladmin.panels = [FieldPanel("admin_panel")]
-    edit_handler = modeladmin.get_edit_handler(order, request)
+    edit_handler = modeladmin.get_edit_handler()
     assert edit_handler.children == modeladmin.panels
-    modeladmin.edit_handler = EditHandler(heading="admin_edit_handler")
-    edit_handler = modeladmin.get_edit_handler(order, request)
+    modeladmin.edit_handler = Panel(heading="admin_edit_handler")
+    edit_handler = modeladmin.get_edit_handler()
     assert edit_handler == modeladmin.edit_handler

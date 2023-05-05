@@ -51,10 +51,10 @@ Widgets
 Wagtail
 =======
 
-Edit handlers
--------------
+Panels
+------
 
-.. automodule:: salesman.admin.wagtail.edit_handlers
+.. automodule:: salesman.admin.wagtail.panels
     :members:
 
 Forms

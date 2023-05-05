@@ -7,14 +7,14 @@ from wagtail.utils.version import get_main_version as get_wagtail_version
 
 from salesman.admin import utils
 from salesman.admin.mixins import OrderAdminMixin
-from salesman.admin.wagtail.edit_handlers import (
+from salesman.admin.wagtail.forms import WagtailOrderModelForm
+from salesman.admin.wagtail.panels import (
     OrderAdminPanel,
     OrderCheckboxPanel,
     OrderDatePanel,
     OrderItemsPanel,
     ReadOnlyPanel,
 )
-from salesman.admin.wagtail.forms import WagtailOrderModelForm
 from salesman.admin.wagtail_hooks import OrderAdmin
 from salesman.core.utils import get_salesman_model
 from shop.models import Product

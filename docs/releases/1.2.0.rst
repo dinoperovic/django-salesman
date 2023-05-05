@@ -1,0 +1,18 @@
+#####
+1.2.0
+#####
+
+*TBA*
+
+Added
+-----
+
+- Added support for Django `4.2`
+- Added support for Wagtail `5.0`
+- Added option to disable anonymous checkout using ``SALESMAN_ALLOW_ANONYMOUS_USER_CHECKOUT`` setting. (`@laricko <https://github.com/laricko>`_)
+
+Removed
+-------
+
+- Removed support for Django `3.1`, `3.2` and `4.0`
+- Removed support for Wagtail `2.0` and `3.0`

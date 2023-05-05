@@ -85,7 +85,7 @@ class CheckoutSerializer(serializers.Serializer):
         if payment:
             payment.validate_basket(basket, request)
             return payment
-        return None  # pragma: no cover
+        return None
 
     def validate_extra(self, value: dict[str, Any]) -> dict[str, Any]:
         # Update basket `extra` instead of replacing it, remove null values.

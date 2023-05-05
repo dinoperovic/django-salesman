@@ -8,16 +8,11 @@ from django.utils.formats import date_format
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import EditHandler as Panel
-from wagtail.utils.version import get_main_version as get_wagtail_version
+from wagtail.admin.panels import Panel
 
 from salesman.conf import app_settings
 
 from ..utils import format_price
-
-if get_wagtail_version() < "3.0.0":  # pragma: no cover
-    # Attach dummy BoundPanel class for older Wagtail versions
-    Panel.BoundPanel = object
 
 
 class ReadOnlyPanel(Panel):
@@ -59,22 +54,22 @@ class ReadOnlyPanel(Panel):
         if field and not self.help_text:
             self.help_text: str = getattr(field, "help_text", "")
 
-    def get_value(self) -> Any:  # pragma: no cover
+    def get_value(self) -> Any:
         value = getattr(self.instance, self.attr)
         if callable(value):
             value = value(self.instance)
         return value
 
-    def format_value(self, value: Any) -> Any:  # pragma: no cover
+    def format_value(self, value: Any) -> Any:
         if self.formatter and value is not None:
             value = self.formatter(value, self.instance, self.request)
         return value
 
-    def render(self) -> Any:  # pragma: no cover
+    def render(self) -> Any:
         value = self.get_value()
         return self.format_value(value)
 
-    def render_as_object(self) -> Any:  # pragma: no cover
+    def render_as_object(self) -> Any:
         if self.renderer:
             return self.renderer(self.get_value(), self.instance, self.request)
         return format_html(
@@ -87,7 +82,7 @@ class ReadOnlyPanel(Panel):
             self.render(),
         )
 
-    def render_as_field(self) -> Any:  # pragma: no cover
+    def render_as_field(self) -> Any:
         if self.renderer:
             return self.renderer(self.get_value(), self.instance, self.request)
         help_html = (
@@ -184,7 +179,7 @@ class ReadOnlyPanel(Panel):
 
 
 class OrderDatePanel(ReadOnlyPanel):
-    def format_value(self, value: Any) -> Any:  # pragma: no cover
+    def format_value(self, value: Any) -> Any:
         if value:
             value = date_format(value, format="DATETIME_FORMAT")
         return value
@@ -197,7 +192,7 @@ class OrderDatePanel(ReadOnlyPanel):
 
 
 class OrderCheckboxPanel(ReadOnlyPanel):
-    def format_value(self, value: Any) -> str:  # pragma: no cover
+    def format_value(self, value: Any) -> str:
         icon, color = ("tick", "#157b57") if value else ("cross", "#cd3238")
         template = '<span class="icon icon-{}" style="color: {};"></span>'
         return format_html(template, icon, color)
@@ -210,13 +205,13 @@ class OrderCheckboxPanel(ReadOnlyPanel):
 
 
 class OrderItemsPanel(ReadOnlyPanel):
-    def classes(self) -> list[str]:  # pragma: no cover
+    def classes(self) -> list[str]:
         return ["salesman-order-items"]
 
-    def render_as_field(self) -> str:  # pragma: no cover
+    def render_as_field(self) -> str:
         return self.render()
 
-    def render_as_object(self) -> str:  # pragma: no cover
+    def render_as_object(self) -> str:
         return self.render()
 
     def format_json(
@@ -224,12 +219,12 @@ class OrderItemsPanel(ReadOnlyPanel):
         value: dict[str, Any],
         obj: Any,
         request: HttpRequest,
-    ) -> str:  # pragma: no cover
+    ) -> str:
         return app_settings.SALESMAN_ADMIN_JSON_FORMATTER(
             value, context={"order_item": True}
         )
 
-    def render(self) -> str:  # pragma: no cover
+    def render(self) -> str:
         head = f"""<tr>
             <td>{_('Name')}</td>
             <td>{_('Code')}</td>
@@ -323,7 +318,7 @@ class OrderAdminPanel(ReadOnlyPanel):
     def on_model_bound(self) -> None:
         pass
 
-    def on_form_bound(self) -> None:  # pragma: no cover
+    def on_form_bound(self) -> None:
         if not hasattr(self.form, "model_admin"):
             raise AssertionError("OrderAdminPanel can only be used in OrderModelAdmin.")
 
@@ -332,7 +327,7 @@ class OrderAdminPanel(ReadOnlyPanel):
         if heading and not self.heading:
             self.heading = heading
 
-    def get_value(self) -> Any:  # pragma: no cover
+    def get_value(self) -> Any:
         return getattr(self.form.model_admin, self.attr)(self.instance)
 
     class BoundPanel(ReadOnlyPanel.BoundPanel):
