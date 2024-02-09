@@ -13,9 +13,9 @@ which accepts a list of dotted paths to :class:`salesman.checkout.payment.Paymen
 
 .. raw:: html
 
-    <h3>1. Create order model</h3>
+    <h3>1. Create swappable order model</h3>
 
-In this example we don't modify the Order model, but you can if you want to.
+It is recommended to configure and setup all Salesman models as swappable even if it's not necessary at the beginning. This will future-proof your application in case you wish to add it later. This has to be done before the initial migrations are created. See :ref:`swappable_models`.
 
 .. literalinclude:: /../example/shop/models/order.py
 
