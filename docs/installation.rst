@@ -38,7 +38,7 @@ A guide on how to install Salesman.
 
 .. raw:: html
 
-    <h3>3. Add neccesary urls in <code class="literal">urls.py</code></h3>
+    <h3>3. Add necessary urls in <code class="literal">urls.py</code></h3>
 
 .. code:: python
 
@@ -59,8 +59,8 @@ A guide on how to install Salesman.
     python manage.py runserver
 
 .. tip::
-    It is recommended to configure and setup all Salesman models as swappable even if it's not neccesary at the begining.
-    This will future proof your application in case you wish to add it later.
+    It is recommended to configure and setup all Salesman models as swappable even if it's not necessary at the beginning.
+    This will future-proof your application in case you wish to add it later.
     This has to be done before the initial migrations are created. See :ref:`swappable_models`.
 
 **Done!** Salesman is installed and you can navigate the API by going to ``http://localhost:8000/api/``.
