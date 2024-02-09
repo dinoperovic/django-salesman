@@ -13,7 +13,15 @@ which accepts a list of dotted paths to :class:`salesman.checkout.payment.Paymen
 
 .. raw:: html
 
-    <h3>1. Create payment method</h3>
+    <h3>1. Create order model</h3>
+
+In this example we don't modify the Order model, but you can if you want to.
+
+.. literalinclude:: /../example/shop/models/order.py
+
+.. raw:: html
+
+    <h3>2. Create payment method</h3>
 
 First create your custom payment method. Payment methods are required to specify a ``label`` and
 a unique ``identifier`` property on class. To enable payment for the basket you should also
@@ -23,7 +31,7 @@ override the :meth:`salesman.checkout.payment.PaymentMethod.basket_payment` meth
 
 .. raw:: html
 
-    <h3>2. Register payment method</h3>
+    <h3>3. Register payment method</h3>
 
 Then register your payment method in ``settings.py``:
 
