@@ -290,7 +290,12 @@ class BaseOrder(ClusterableModel):
         if (
             "salesman.admin" in settings.INSTALLED_APPS
             and "wagtail.admin" in settings.INSTALLED_APPS
-            and "wagtail.contrib.modeladmin" in settings.INSTALLED_APPS
+            and any(
+                [
+                    "wagtail.contrib.modeladmin" in settings.INSTALLED_APPS,
+                    "wagtail_modeladmin" in settings.INSTALLED_APPS,
+                ]
+            )
         ):
             from salesman.admin.wagtail.mixins import WagtailOrderAdminMixin
 
