@@ -9,7 +9,7 @@ from django.urls import NoReverseMatch
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin import messages
-from wagtail.contrib.modeladmin.views import DeleteView, EditView, IndexView
+from wagtail.snippets.views.snippets import DeleteView, EditView, IndexView
 
 
 class OrderIndexView(IndexView):
