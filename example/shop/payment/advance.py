@@ -2,7 +2,9 @@
 from django.urls import reverse
 
 from salesman.checkout.payment import PaymentMethod
-from shop.models import Order
+from salesman.core.utils import get_salesman_model
+
+Order = get_salesman_model("Order")
 
 
 class PayInAdvance(PaymentMethod):
