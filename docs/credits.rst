@@ -26,3 +26,4 @@ Thanks to people contributing on GitHub:
 - `@laricko <https://github.com/laricko>`_
 - `@chriswedgwood <https://github.com/chriswedgwood>`_
 - `@vegaelle <https://github.com/vegaelle>`_
+- `@pbadeer <https://github.com/pbadeer>`_
