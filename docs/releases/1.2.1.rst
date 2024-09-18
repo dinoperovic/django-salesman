@@ -1,0 +1,11 @@
+#####
+1.2.1
+#####
+
+*TBA*
+
+Added
+-----
+
+- Added support for Wagtail `6.0` (`@vegaelle <https://github.com/vegaelle>`_)
+
