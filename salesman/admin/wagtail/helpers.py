@@ -2,11 +2,19 @@ from typing import Any
 
 from django.contrib.auth.models import AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
-from wagtail.contrib.modeladmin.helpers import (
-    AdminURLHelper,
-    ButtonHelper,
-    PermissionHelper,
-)
+
+try:
+    from wagtail.contrib.modeladmin.helpers import (
+        AdminURLHelper,
+        ButtonHelper,
+        PermissionHelper,
+    )
+except ImportError:
+    from wagtail_modeladmin.helpers import (
+        AdminURLHelper,
+        ButtonHelper,
+        PermissionHelper,
+    )
 
 
 class OrderPermissionHelper(PermissionHelper):

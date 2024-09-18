@@ -3,7 +3,11 @@ from __future__ import annotations
 from typing import Type
 
 from wagtail.admin.panels import ObjectList, Panel
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+
+try:
+    from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+except ImportError:
+    from wagtail_modeladmin.options import ModelAdmin, modeladmin_register
 
 from salesman.conf import app_settings
 from salesman.core.utils import get_salesman_model
