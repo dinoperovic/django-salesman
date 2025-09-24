@@ -14,7 +14,6 @@ classifiers = [
     "Framework :: Django",
     "Framework :: Django :: 5",
     "Framework :: Wagtail",
-    "Framework :: Wagtail :: 5",
     "Framework :: Wagtail :: 6",
     "Framework :: Wagtail :: 7",
     "Intended Audience :: Developers",
@@ -33,7 +32,7 @@ djangorestframework = ">=3.11.1,<4.0"
 
 # Optional
 Pygments = {version = "^2.6", optional = true}
-wagtail = {version = ">=5.0,<8.0", optional = true}
+wagtail = {version = ">=6.0,<8.0", optional = true}
 wagtail_modeladmin = {version = ">=2.0", optional = true}
 pytest = {version = "~7.3.1", optional = true}
 pytest-django = {version = "~4.5.2", optional = true}
