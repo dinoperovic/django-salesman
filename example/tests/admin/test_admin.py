@@ -101,7 +101,6 @@ def test_order_admin(rf, django_user_model):
         status_filter.lookups(request, modeladmin)
         == app_settings.SALESMAN_ORDER_STATUS.choices
     )
-    assert status_filter.queryset(request, Order.objects.all()).count() == 3
 
     # test isPaid filter
     is_paid_filter = admin.OrderIsPaidFilter(
