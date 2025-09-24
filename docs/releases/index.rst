@@ -24,6 +24,7 @@ Release notes and upgrade information. This project adheres to
     :caption: v1.2
     :maxdepth: 1
 
+    1.2.1
     1.2.0
 
 .. toctree::
