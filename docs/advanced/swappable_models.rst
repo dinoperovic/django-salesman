@@ -14,7 +14,7 @@ Swapped models must extend their "Base" versions to maintain original functional
     `Read more <https://docs.djangoproject.com/en/4.0/topics/auth/customizing/#changing-to-a-custom-user-model-mid-project>`_
 
 .. tip::
-    It is recommended to configure and setup all Salesman models as swappable even if it's not neccesary at the begining.
+    It is recommended to configure and setup all Salesman models as swappable even if it's not necessary at the beginning.
     This will future proof your application in case you wish to add it later.
 
 .. note::
